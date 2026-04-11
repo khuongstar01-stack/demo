@@ -38,17 +38,14 @@ function parseUrlSafe(url) {
   }
 }
 
-// Link đích thật trên Shopee
 function isShopeeProductHost(hostname = "") {
   return /(^|\.)shopee\.vn$/i.test(hostname) && !/^s\.shopee\.vn$/i.test(hostname);
 }
 
-// Link redirect của Shopee, ví dụ s.shopee.vn/an_redir hoặc short link s.shopee.vn/xxxx
 function isShopeeRedirectHost(hostname = "") {
   return /^s\.shopee\.vn$/i.test(hostname);
 }
 
-// Link rút gọn kiểu vn.shp.ee
 function isShopeeShortHost(hostname = "") {
   return /(^|\.)shp\.ee$/i.test(hostname);
 }
@@ -68,7 +65,6 @@ function buildSubId(sub1 = "", sub2 = "", sub3 = "", sub4 = "", sub5 = "") {
   return [sub1, sub2, sub3, sub4, sub5].join("-");
 }
 
-// Đây là đúng kiểu link theo hướng dẫn Shopee
 function buildAffiliateLink(originUrl, affiliateId, shareChannelCode, subId) {
   const params = new URLSearchParams({
     origin_link: originUrl,
@@ -120,12 +116,10 @@ async function resolveOriginUrl(inputUrl) {
     throw new Error("Link không hợp lệ.");
   }
 
-  // Nếu người dùng dán link sản phẩm/shophome Shopee thật thì dùng luôn
   if (isShopeeProductHost(parsed.hostname)) {
     return inputUrl;
   }
 
-  // Nếu người dùng dán link redirect/rút gọn thì resolve ra link đích thật
   if (isShopeeRedirectHost(parsed.hostname) || isShopeeShortHost(parsed.hostname)) {
     const finalUrl = await resolveShopeeRedirectUrl(inputUrl);
     const finalParsed = parseUrlSafe(finalUrl);
@@ -138,6 +132,39 @@ async function resolveOriginUrl(inputUrl) {
   }
 
   throw new Error("Chỉ hỗ trợ link từ shopee.vn, s.shopee.vn hoặc vn.shp.ee.");
+}
+
+function sanitizeOriginUrl(rawUrl) {
+  const parsed = parseUrlSafe(rawUrl);
+
+  if (!parsed) {
+    return rawUrl;
+  }
+
+  const keysToRemove = [
+    "d_id",
+    "uls_trackid",
+    "utm_content",
+    "utm_source",
+    "utm_medium",
+    "utm_campaign",
+    "utm_term",
+    "utm_id",
+    "affiliate_id",
+    "sub_id",
+    "share_channel_code",
+    "af_click_lookback",
+    "aff_trace_key",
+    "smtt",
+  ];
+
+  for (const key of [...parsed.searchParams.keys()]) {
+    if (keysToRemove.includes(key) || /^utm_/i.test(key)) {
+      parsed.searchParams.delete(key);
+    }
+  }
+
+  return parsed.toString();
 }
 
 app.get("/api/config", (_req, res) => {
@@ -172,8 +199,10 @@ app.get("/api/create-link", async (req, res) => {
       });
     }
 
-    const originUrl = await resolveOriginUrl(inputUrl);
+    const resolvedUrl = await resolveOriginUrl(inputUrl);
+    const originUrl = sanitizeOriginUrl(resolvedUrl);
     const subId = buildSubId(sub1, sub2, sub3, sub4, sub5);
+
     const affiliateLink = buildAffiliateLink(
       originUrl,
       AFFILIATE_ID,
