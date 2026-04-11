@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tạo Link Shopee</title>
+  <meta name="description" content="Công cụ tạo link Shopee affiliate" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <h1 class="hero-title">🔗 Tạo Link Shopee</h1>
+      <div id="siteDomainText" class="hero-domain">cuongtws.xyz</div>
+    </header>
+
+    <section class="card">
+      <label class="label" for="productUrl">🔒 Link sản phẩm Shopee</label>
+
+      <div class="input-wrap">
+        <input
+                   id="productUrl"
+                   class="input"
+                   type="text"
+                   placeholder="Dán link Shopee..."
+                   autocomplete="off"
+                   spellcheck="false"
+                   autocapitalize="off"
+                   autocorrect="off"
+                />
+        <button id="pasteBtn" class="paste-btn" type="button" title="Dán link">
+          📋
+        </button>
+      </div>
+
+      <button id="createBtn" class="create-btn" type="button">✏️ Tạo Link Ngay</button>
+
+      <div id="resultSection" class="result-section hidden">
+        <div class="result-box">
+          <div class="result-top">
+            <div class="result-title">✅ Link 1</div>
+            <button id="copyBtn" class="copy-btn" type="button">📋 Copy</button>
+          </div>
+
+          <textarea
+            id="affiliateLinkValue"
+            class="result-text"
+            readonly
+            placeholder="Link sau khi tạo sẽ hiển thị ở đây"
+          ></textarea>
+        </div>
+
+        <a
+          id="buyNowBtn"
+          class="action-btn buy-btn disabled"
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          🛒 Mua Ngay
+        </a>
+
+        <a
+                  id="shareBtn"
+                  class="action-btn share-btn"
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                   ⓕ Chia sẻ lấy mã 
+              </a>
+      </div>
+
+      <div id="alertBox" class="alert hidden"></div>
+    </section>
+
+    <section class="card guide-card">
+      <h2 class="guide-title">ℹ️ Hướng dẫn</h2>
+      <ol class="guide-list">
+        <li>Sau khi tạo link, nhấn <strong>Copy Link</strong>.</li>
+        <li>Bấm Chia sẻ lấy mã rồi dán link dưới bình luận bài đăng FB.</li>
+        <li>Click vào link để mở Shopee sẽ nhận được mã.</li>
+      </ol>
+
+      <a
+        id="facebookPostBtn"
+        class="facebook-link hidden"
+        href="#"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        ⓕ Đến bài đăng Facebook
+      </a>
+
+      <div class="voucher-image-wrap">
+        <img id="voucherImage" class="voucher-image" src="/images/voucher.jpg" alt="Voucher" />
+      </div>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
