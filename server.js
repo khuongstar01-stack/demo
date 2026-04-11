@@ -141,30 +141,15 @@ function sanitizeOriginUrl(rawUrl) {
     return rawUrl;
   }
 
-  const keysToRemove = [
-    "d_id",
-    "uls_trackid",
-    "utm_content",
-    "utm_source",
-    "utm_medium",
-    "utm_campaign",
-    "utm_term",
-    "utm_id",
-    "affiliate_id",
-    "sub_id",
-    "share_channel_code",
-    "af_click_lookback",
-    "aff_trace_key",
-    "smtt",
-  ];
+  parsed.search = "";
+  parsed.hash = "";
 
-  for (const key of [...parsed.searchParams.keys()]) {
-    if (keysToRemove.includes(key) || /^utm_/i.test(key)) {
-      parsed.searchParams.delete(key);
-    }
+  let pathname = parsed.pathname || "/";
+  if (pathname.length > 1) {
+    pathname = pathname.replace(/\/+$/, "");
   }
 
-  return parsed.toString();
+  return `${parsed.protocol}//${parsed.host}${pathname}`;
 }
 
 app.get("/api/config", (_req, res) => {
