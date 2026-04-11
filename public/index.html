@@ -19,15 +19,15 @@
 
       <div class="input-wrap">
         <input
-                   id="productUrl"
-                   class="input"
-                   type="text"
-                   placeholder="Dán link Shopee vào đây..."
-                   autocomplete="off"
-                   spellcheck="false"
-                   autocapitalize="off"
-                   autocorrect="off"
-                />
+          id="productUrl"
+          class="input"
+          type="text"
+          placeholder="Dán link Shopee vào đây..."
+          autocomplete="off"
+          spellcheck="false"
+          autocapitalize="off"
+          autocorrect="off"
+        />
         <button id="pasteBtn" class="paste-btn" type="button" title="Dán link">
           📋
         </button>
@@ -61,14 +61,14 @@
         </a>
 
         <a
-                  id="shareBtn"
-                  class="action-btn share-btn"
-                  href="#"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                   ⓕ Chia sẻ lấy mã 
-              </a>
+          id="shareBtn"
+          class="action-btn share-btn"
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          ⓕ Chia sẻ lấy mã
+        </a>
       </div>
 
       <div id="alertBox" class="alert hidden"></div>
@@ -77,16 +77,17 @@
     <section class="card guide-card">
       <h2 class="guide-title">ℹ️ Hướng dẫn</h2>
       <ol class="guide-list">
-       <li>Truy cập vào shopee chọn sản phẩm muốn mua , chọn biểu tượng chia sẻ
-  <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; background-color: #bebebe; border-radius: 50%; vertical-align: middle; margin: 0 4px; transform: translateY(-1px);">
-    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
-      <polyline points="15 14 20 9 15 4"></polyline>
-      <path d="M4 20v-7a4 4 0 0 1 4-4h12"></path>
-    </svg>
-  </span> 
-  ở góc phải màn hình và chọn copy link.
-</li>
-        <li>Quay lại web bấm 📋rồi chọn Dán vào ô để tạo link và chọn copy <strong>Copy Link</strong>.</li>
+        <li>
+          Truy cập vào Shopee, chọn sản phẩm muốn mua, chọn biểu tượng chia sẻ
+          <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; background-color: #bebebe; border-radius: 50%; vertical-align: middle; margin: 0 4px; transform: translateY(-1px);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
+              <polyline points="15 14 20 9 15 4"></polyline>
+              <path d="M4 20v-7a4 4 0 0 1 4-4h12"></path>
+            </svg>
+          </span>
+          ở góc phải màn hình và chọn copy link.
+        </li>
+        <li>Quay lại web, bấm 📋 rồi chọn Dán vào ô để tạo link và chọn <strong>Copy Link</strong>.</li>
         <li>Bấm [Chia sẻ lấy mã] rồi dán link dưới bình luận bài đăng FB.</li>
         <li>Click vào link vừa bình luận để mở Shopee sẽ nhận được mã.</li>
       </ol>
@@ -106,6 +107,13 @@
       </div>
     </section>
   </main>
+
+  <div id="toastPopup" class="toast-popup hidden">
+    <div class="toast-card">
+      <div class="toast-icon">✓</div>
+      <div id="toastMessage" class="toast-message">Tạo 1 link thành công!</div>
+    </div>
+  </div>
 
   <script src="/app.js"></script>
 </body>
