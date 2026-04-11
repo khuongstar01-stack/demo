@@ -10,10 +10,14 @@ const affiliateLinkValue = document.getElementById("affiliateLinkValue");
 const facebookPostBtn = document.getElementById("facebookPostBtn");
 const siteDomainText = document.getElementById("siteDomainText");
 const voucherImage = document.getElementById("voucherImage");
+const toastPopup = document.getElementById("toastPopup");
+const toastMessage = document.getElementById("toastMessage");
 
 let currentAffiliateLink = "";
 let creating = false;
 let facebookPostUrl = "";
+let toastTimer;
+let pasteTimer;
 
 function setAlert(type, message) {
   alertBox.className = `alert ${type}`;
@@ -23,6 +27,18 @@ function setAlert(type, message) {
 function clearAlert() {
   alertBox.className = "alert hidden";
   alertBox.textContent = "";
+}
+
+function showToast(message) {
+  if (!toastPopup || !toastMessage) return;
+
+  toastMessage.textContent = message;
+  toastPopup.classList.remove("hidden");
+
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toastPopup.classList.add("hidden");
+  }, 1800);
 }
 
 function normalizeUrl(value) {
@@ -107,6 +123,8 @@ async function createLink() {
     buyNowBtn.href = affiliateLink;
     buyNowBtn.classList.remove("disabled");
     resultSection.classList.remove("hidden");
+
+    showToast("Tạo 1 link thành công!");
   } catch (error) {
     setAlert("error", error.message || "Đã có lỗi xảy ra.");
   } finally {
@@ -124,6 +142,7 @@ async function copyAffiliateLink() {
 
   try {
     await navigator.clipboard.writeText(affiliateLinkValue.value);
+    showToast("Đã copy link!");
     setAlert("success", "Đã copy link.");
   } catch {
     setAlert("error", "Không thể copy tự động.");
@@ -142,6 +161,7 @@ async function pasteAndCreate() {
     }
 
     productUrlInput.value = text.trim();
+    showToast("Đã dán link!");
     await createLink();
   } catch {
     setAlert("error", "Trình duyệt không cho đọc clipboard. Hãy dán thủ công bằng Ctrl+V.");
@@ -152,14 +172,14 @@ createBtn.addEventListener("click", createLink);
 copyBtn.addEventListener("click", copyAffiliateLink);
 pasteBtn.addEventListener("click", pasteAndCreate);
 
-let pasteTimer;
-
 productUrlInput.addEventListener("paste", () => {
   clearTimeout(pasteTimer);
   pasteTimer = setTimeout(() => {
+    showToast("Đã dán link!");
     createLink();
   }, 120);
 });
+
 productUrlInput.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
     createLink();
