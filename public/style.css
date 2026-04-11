@@ -313,6 +313,51 @@ a {
   display: none !important;
 }
 
+.toast-popup {
+  position: fixed;
+  top: 84px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 28px);
+  max-width: 620px;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.toast-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #ffffff;
+  border-radius: 18px;
+  min-height: 88px;
+  padding: 18px 22px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+  border: 1px solid #efefef;
+}
+
+.toast-icon {
+  width: 62px;
+  height: 62px;
+  min-width: 62px;
+  border-radius: 50%;
+  border: 4px solid #dff1d8;
+  color: #8fd27d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.toast-message {
+  color: #4a4a4a;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
 /* Tablet trở lên */
 @media (min-width: 768px) {
   .page {
@@ -425,5 +470,31 @@ a {
     border-radius: 8px;
     font-size: 22px;
     margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .toast-popup {
+    top: 74px;
+    width: calc(100% - 24px);
+  }
+
+  .toast-card {
+    min-height: 74px;
+    padding: 14px 16px;
+    gap: 12px;
+    border-radius: 14px;
+  }
+
+  .toast-icon {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    font-size: 28px;
+    border-width: 3px;
+  }
+
+  .toast-message {
+    font-size: 16px;
   }
 }
