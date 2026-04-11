@@ -13,7 +13,7 @@ const SITE_DOMAIN_TEXT = String(process.env.SITE_DOMAIN_TEXT || "linkcuaban.vn")
 const VOUCHER_IMAGE_URL = String(process.env.VOUCHER_IMAGE_URL || "/images/voucher.jpg").trim();
 
 if (!AFFILIATE_ID) {
-  console.error("Thiếu AFFILIATE_ID trong file .env");
+  console.error("Thiếu AFFILIATE_ID trong file .env hoặc Railway Variables");
   process.exit(1);
 }
 
@@ -38,10 +38,17 @@ function parseUrlSafe(url) {
   }
 }
 
-function isShopeeHost(hostname = "") {
-  return /(^|\.)shopee\.vn$/i.test(hostname);
+// Link đích thật trên Shopee
+function isShopeeProductHost(hostname = "") {
+  return /(^|\.)shopee\.vn$/i.test(hostname) && !/^s\.shopee\.vn$/i.test(hostname);
 }
 
+// Link redirect của Shopee, ví dụ s.shopee.vn/an_redir hoặc short link s.shopee.vn/xxxx
+function isShopeeRedirectHost(hostname = "") {
+  return /^s\.shopee\.vn$/i.test(hostname);
+}
+
+// Link rút gọn kiểu vn.shp.ee
 function isShopeeShortHost(hostname = "") {
   return /(^|\.)shp\.ee$/i.test(hostname);
 }
@@ -49,25 +56,34 @@ function isShopeeShortHost(hostname = "") {
 function isAllowedShopeeInputUrl(url) {
   const parsed = parseUrlSafe(url);
   if (!parsed) return false;
-  return isShopeeHost(parsed.hostname) || isShopeeShortHost(parsed.hostname);
+
+  return (
+    isShopeeProductHost(parsed.hostname) ||
+    isShopeeRedirectHost(parsed.hostname) ||
+    isShopeeShortHost(parsed.hostname)
+  );
 }
 
 function buildSubId(sub1 = "", sub2 = "", sub3 = "", sub4 = "", sub5 = "") {
   return [sub1, sub2, sub3, sub4, sub5].join("-");
 }
 
+// Đây là đúng kiểu link theo hướng dẫn Shopee
 function buildAffiliateLink(originUrl, affiliateId, shareChannelCode, subId) {
   const params = new URLSearchParams({
     origin_link: originUrl,
-    share_channel_code: shareChannelCode,
     affiliate_id: affiliateId,
     sub_id: subId,
   });
 
+  if (shareChannelCode) {
+    params.set("share_channel_code", shareChannelCode);
+  }
+
   return `https://s.shopee.vn/an_redir?${params.toString()}`;
 }
 
-async function resolveShortShopeeUrl(inputUrl) {
+async function resolveShopeeRedirectUrl(inputUrl) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 10000);
 
@@ -99,30 +115,29 @@ async function resolveShortShopeeUrl(inputUrl) {
 
 async function resolveOriginUrl(inputUrl) {
   const parsed = parseUrlSafe(inputUrl);
+
   if (!parsed) {
     throw new Error("Link không hợp lệ.");
   }
 
-  if (isShopeeHost(parsed.hostname)) {
+  // Nếu người dùng dán link sản phẩm/shophome Shopee thật thì dùng luôn
+  if (isShopeeProductHost(parsed.hostname)) {
     return inputUrl;
   }
 
-  if (isShopeeShortHost(parsed.hostname)) {
-    try {
-      const finalUrl = await resolveShortShopeeUrl(inputUrl);
-      const finalParsed = parseUrlSafe(finalUrl);
+  // Nếu người dùng dán link redirect/rút gọn thì resolve ra link đích thật
+  if (isShopeeRedirectHost(parsed.hostname) || isShopeeShortHost(parsed.hostname)) {
+    const finalUrl = await resolveShopeeRedirectUrl(inputUrl);
+    const finalParsed = parseUrlSafe(finalUrl);
 
-      if (finalParsed && isShopeeHost(finalParsed.hostname)) {
-        return finalUrl;
-      }
-
-      return inputUrl;
-    } catch {
-      return inputUrl;
+    if (finalParsed && isShopeeProductHost(finalParsed.hostname)) {
+      return finalUrl;
     }
+
+    throw new Error("Không resolve được link Shopee đích.");
   }
 
-  throw new Error("Chỉ hỗ trợ link từ shopee.vn hoặc vn.shp.ee.");
+  throw new Error("Chỉ hỗ trợ link từ shopee.vn, s.shopee.vn hoặc vn.shp.ee.");
 }
 
 app.get("/api/config", (_req, res) => {
@@ -153,7 +168,7 @@ app.get("/api/create-link", async (req, res) => {
     if (!isAllowedShopeeInputUrl(inputUrl)) {
       return res.status(400).json({
         success: false,
-        message: "Chỉ hỗ trợ link từ shopee.vn hoặc vn.shp.ee.",
+        message: "Chỉ hỗ trợ link từ shopee.vn, s.shopee.vn hoặc vn.shp.ee.",
       });
     }
 
@@ -190,6 +205,6 @@ app.get("*", (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-app.listen(PORT, () => {
-  console.log(`Server đang chạy tại http://localhost:${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server đang chạy tại port ${PORT}`);
 });
