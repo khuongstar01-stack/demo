@@ -1,0 +1,429 @@
+:root {
+  --bg: #f8cfc4;
+  --card: #efefef;
+  --block: #ececec;
+  --input: #f7f7f7;
+  --line: #dddddd;
+  --text: #2d3344;
+  --muted: #6e7380;
+  --orange-1: #f4522f;
+  --orange-2: #ff6835;
+  --green-1: #2fd671;
+  --green-2: #27cb68;
+  --blue-1: #4c78e8;
+  --blue-2: #416be0;
+  --danger: #f05833;
+  --white: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body,
+input,
+textarea,
+button,
+a {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button,
+input,
+textarea,
+a {
+  touch-action: manipulation;
+}
+
+.page {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 14px 12px 28px;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.hero-title {
+  margin: 0 0 12px;
+  font-size: 28px;
+  line-height: 1.15;
+  font-weight: 800;
+  color: #ee5b36;
+  text-shadow: 0 4px 14px rgba(238, 91, 54, 0.16);
+}
+
+.hero-domain {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 170px;
+  max-width: 100%;
+  padding: 0 18px;
+  height: 46px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.28);
+  color: #de643f;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 22px;
+  padding: 16px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.4);
+}
+
+.card + .card {
+  margin-top: 14px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 20px;
+  font-weight: 800;
+  color: #2d3344;
+}
+
+.input-wrap {
+  display: flex;
+  align-items: stretch;
+  background: var(--input);
+  border: 2px solid #dedee3;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.input {
+  width: 100%;
+  min-width: 0;
+  height: 64px;
+  padding: 0 16px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: 17px;
+  color: #515760;
+}
+
+.input::placeholder {
+  color: #7a7f89;
+}
+
+.paste-btn {
+  width: 68px;
+  min-width: 68px;
+  border: 0;
+  border-left: 2px solid #dfdfe4;
+  background: transparent;
+  color: #555b66;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.create-btn {
+  width: 100%;
+  height: 60px;
+  margin-top: 14px;
+  border: 0;
+  border-radius: 20px;
+  background: linear-gradient(90deg, var(--orange-1), var(--orange-2));
+  color: #fff;
+  font-size: 22px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.result-section {
+  margin-top: 14px;
+  background: var(--block);
+  border-radius: 18px;
+  padding: 12px;
+}
+
+.result-box {
+  background: #f5f5f5;
+  border: 2px solid var(--danger);
+  border-radius: 20px;
+  padding: 14px;
+}
+
+.result-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.result-title {
+  font-size: 21px;
+  font-weight: 800;
+  color: #354052;
+}
+
+.copy-btn {
+  min-width: 96px;
+  height: 42px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--orange-1);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.result-text {
+  width: 100%;
+  min-height: 110px;
+  resize: none;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #4b5058;
+  font-size: 18px;
+  line-height: 1.45;
+  padding: 0;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 56px;
+  border: 0;
+  border-radius: 18px;
+  text-decoration: none;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 800;
+  margin-top: 12px;
+  cursor: pointer;
+  padding: 0 14px;
+  text-align: center;
+}
+
+.buy-btn {
+  background: linear-gradient(90deg, var(--green-1), var(--green-2));
+}
+
+.share-btn {
+  background: linear-gradient(90deg, var(--blue-1), var(--blue-2));
+}
+
+.buy-btn.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.alert {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.alert.success {
+  background: #edf9f1;
+  border: 1px solid #bee1ca;
+  color: #1c7a42;
+}
+
+.alert.error {
+  background: #fff1f1;
+  border: 1px solid #efc5c5;
+  color: #bf2b2b;
+}
+
+.guide-card {
+  padding-top: 18px;
+}
+
+.guide-title {
+  margin: 0 0 10px;
+  font-size: 23px;
+  font-weight: 800;
+  color: #26354b;
+}
+
+.guide-list {
+  margin: 0 0 16px 22px;
+  padding: 0;
+  font-size: 18px;
+  line-height: 1.55;
+  color: #2b2f38;
+}
+
+.facebook-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 16px;
+  border-radius: 10px;
+  text-decoration: none;
+  border: 2px solid #2f80ff;
+  color: #2f80ff;
+  background: #fff;
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.voucher-image-wrap {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #f4f4f4;
+}
+
+.voucher-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Tablet trở lên */
+@media (min-width: 768px) {
+  .page {
+    padding: 28px 14px 40px;
+  }
+
+  .hero {
+    margin-bottom: 24px;
+  }
+
+  .hero-title {
+    font-size: 38px;
+    margin-bottom: 16px;
+  }
+
+  .hero-domain {
+    min-width: 230px;
+    height: 58px;
+    padding: 0 24px;
+    font-size: 26px;
+  }
+
+  .card {
+    border-radius: 28px;
+    padding: 20px;
+  }
+
+  .card + .card {
+    margin-top: 18px;
+  }
+
+  .label {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+
+  .input-wrap {
+    border-radius: 26px;
+  }
+
+  .input {
+    height: 92px;
+    padding: 0 26px;
+    font-size: 28px;
+  }
+
+  .paste-btn {
+    width: 96px;
+    min-width: 96px;
+    font-size: 36px;
+  }
+
+  .create-btn {
+    height: 84px;
+    margin-top: 18px;
+    border-radius: 28px;
+    font-size: 32px;
+  }
+
+  .result-section {
+    margin-top: 18px;
+    border-radius: 22px;
+    padding: 16px;
+  }
+
+  .result-box {
+    border-radius: 24px;
+    padding: 18px;
+  }
+
+  .result-title {
+    font-size: 28px;
+  }
+
+  .copy-btn {
+    min-width: 150px;
+    height: 56px;
+    border-radius: 16px;
+    font-size: 22px;
+  }
+
+  .result-text {
+    min-height: 180px;
+    font-size: 26px;
+  }
+
+  .action-btn {
+    height: 74px;
+    border-radius: 24px;
+    font-size: 28px;
+    margin-top: 16px;
+  }
+
+  .guide-card {
+    padding-top: 22px;
+  }
+
+  .guide-title {
+    font-size: 30px;
+  }
+
+  .guide-list {
+    margin-left: 28px;
+    font-size: 28px;
+  }
+
+  .facebook-link {
+    height: 52px;
+    padding: 0 18px;
+    border-radius: 8px;
+    font-size: 22px;
+    margin-bottom: 16px;
+  }
+}
