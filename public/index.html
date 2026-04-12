@@ -3,9 +3,63 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tạo Link Shopee</title>
-  <meta name="description" content="Công cụ tạo link Shopee affiliate" />
+
+  <title>Tạo Link Shopee Affiliate Nhanh | Shopeevn.net</title>
+  <meta
+    name="description"
+    content="Dán link sản phẩm Shopee để tạo affiliate link nhanh chóng, dễ copy, dễ chia sẻ và hỗ trợ mở mua ngay."
+  />
+  <meta
+    name="keywords"
+    content="shopee affiliate, tạo link shopee, shopee deeplink, tạo link affiliate, shopeevn"
+  />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#ee4d2d" />
+
+  <link rel="canonical" href="https://shopeevn.net/" />
+  <link rel="icon" href="/favicon.ico" />
   <link rel="stylesheet" href="/style.css" />
+
+  <!-- Open Graph -->
+  <meta property="og:locale" content="vi_VN" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Shopeevn.net" />
+  <meta property="og:url" content="https://shopeevn.net/" />
+  <meta property="og:title" content="Tạo Link Shopee Affiliate Nhanh" />
+  <meta
+    property="og:description"
+    content="Dán link sản phẩm Shopee và tạo affiliate link ngay chỉ với một thao tác. Hỗ trợ copy nhanh và chia sẻ tiện lợi."
+  />
+  <meta property="og:image" content="https://shopeevn.net/images/preview-share.jpg" />
+  <meta property="og:image:secure_url" content="https://shopeevn.net/images/preview-share.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta
+    property="og:image:alt"
+    content="Công cụ tạo link Shopee Affiliate nhanh chóng tại Shopeevn.net"
+  />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Tạo Link Shopee Affiliate Nhanh" />
+  <meta
+    name="twitter:description"
+    content="Dán link sản phẩm Shopee và tạo affiliate link ngay chỉ với một thao tác."
+  />
+  <meta name="twitter:image" content="https://shopeevn.net/images/preview-share.jpg" />
+
+  <!-- Schema -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Shopeevn.net",
+      "url": "https://shopeevn.net/",
+      "description": "Công cụ tạo link Shopee Affiliate nhanh chóng, hỗ trợ dán link sản phẩm và tạo link chia sẻ ngay.",
+      "inLanguage": "vi-VN"
+    }
+  </script>
 </head>
 <body>
   <main class="page">
@@ -17,38 +71,46 @@
     <section class="card">
       <label class="label" for="productUrl">🔒 Link sản phẩm Shopee</label>
 
-      <div class="input-wrap">
-        <input
-          id="productUrl"
-          class="input"
-          type="text"
-          placeholder="Dán link Shopee vào đây..."
-          autocomplete="off"
-          spellcheck="false"
-          autocapitalize="off"
-          autocorrect="off"
-        />
-        <button id="pasteBtn" class="paste-btn" type="button" title="Dán link">
-          📋
-        </button>
-      </div>
+      <div class="input-wrap input-wrap-hint" id="inputWrap">
+  <div id="inputHintBadge" class="input-hint-badge">
+    👆 Dán link Shopee vào đây
+  </div>
+
+  <input
+    id="productUrl"
+    class="input"
+    type="text"
+    placeholder="Dán link Shopee vào đây..."
+    autocomplete="off"
+    spellcheck="false"
+    autocapitalize="off"
+    autocorrect="off"
+  />
+  <button id="pasteBtn" class="paste-btn" type="button" title="Dán link">
+    📋
+  </button>
+</div>
 
       <button id="createBtn" class="create-btn" type="button">✏️ Tạo Link Ngay</button>
 
       <div id="resultSection" class="result-section hidden">
-        <div class="result-box">
-          <div class="result-top">
-            <div class="result-title">✅ Link 1</div>
-            <button id="copyBtn" class="copy-btn" type="button">📋 Copy</button>
-          </div>
+        <div id="resultBoxCard" class="result-box">
+  <div class="result-top">
+    <div class="result-title">✅ Link Nhận Mã</div>
+    <button id="copyBtn" class="copy-btn" type="button">📋 Copy</button>
+  </div>
 
-          <textarea
-            id="affiliateLinkValue"
-            class="result-text"
-            readonly
-            placeholder="Link sau khi tạo sẽ hiển thị ở đây"
-          ></textarea>
-        </div>
+  <div id="copyHint" class="copy-hint">
+    👉 Copy link này và bấm chia sẻ để lấy mã
+  </div>
+
+  <textarea
+    id="affiliateLinkValue"
+    class="result-text"
+    readonly
+    placeholder="Link sau khi tạo sẽ hiển thị ở đây"
+  ></textarea>
+</div>
 
         <a
           id="buyNowBtn"
@@ -67,7 +129,7 @@
           target="_blank"
           rel="noopener noreferrer"
         >
-          ⓕ Chia sẻ lấy mã
+          ⓕ Nhận Mã Giảm Giá
         </a>
       </div>
 
@@ -85,10 +147,10 @@
               <path d="M4 20v-7a4 4 0 0 1 4-4h12"></path>
             </svg>
           </span>
-          ở góc phải màn hình và chọn copy link.
+          ở góc phải màn hình và Sao chép đường dẫn.
         </li>
         <li>Quay lại web, bấm 📋 rồi chọn Dán vào ô để tạo link và chọn <strong>Copy Link</strong>.</li>
-        <li>Bấm [Chia sẻ lấy mã] rồi dán link dưới bình luận bài đăng FB.</li>
+        <li>Bấm [Nhận Mã Giảm Giá] rồi dán link dưới bình luận vào bài đăng FB.</li>
         <li>Click vào link vừa bình luận để mở Shopee sẽ nhận được mã.</li>
       </ol>
 
