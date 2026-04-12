@@ -13,11 +13,17 @@ const voucherImage = document.getElementById("voucherImage");
 const toastPopup = document.getElementById("toastPopup");
 const toastMessage = document.getElementById("toastMessage");
 
+const inputWrap = document.getElementById("inputWrap");
+const inputHintBadge = document.getElementById("inputHintBadge");
+const resultBoxCard = document.getElementById("resultBoxCard");
+const copyHint = document.getElementById("copyHint");
+
 let currentAffiliateLink = "";
 let creating = false;
 let facebookPostUrl = "";
 let toastTimer;
 let pasteTimer;
+let resultEffectTimer;
 
 function setAlert(type, message) {
   alertBox.className = `alert ${type}`;
@@ -48,12 +54,61 @@ function normalizeUrl(value) {
   return `https://${trimmed}`;
 }
 
+function showCopyHintWaiting() {
+  if (!resultBoxCard || !copyHint) return;
+
+  resultBoxCard.classList.add("show-copy-hint");
+  copyHint.classList.remove("is-copied");
+  copyHint.textContent = "👉 Copy link này để lấy mã";
+}
+
+function showCopyHintCopied() {
+  if (!resultBoxCard || !copyHint) return;
+
+  resultBoxCard.classList.add("show-copy-hint");
+  copyHint.classList.add("is-copied");
+  copyHint.textContent = "✅ Đã copy link, giờ bấm Chia sẻ lấy mã";
+}
+
+function clearResultEffect() {
+  clearTimeout(resultEffectTimer);
+
+  if (resultBoxCard) {
+    resultBoxCard.classList.remove("is-created");
+    resultBoxCard.classList.remove("show-copy-hint");
+  }
+
+  if (copyBtn) {
+    copyBtn.classList.remove("attention");
+  }
+
+  if (copyHint) {
+    copyHint.classList.remove("is-copied");
+    copyHint.textContent = "👉 Copy link này để lấy mã";
+  }
+}
+
+function playCreatedResultEffect() {
+  clearTimeout(resultEffectTimer);
+
+  if (resultBoxCard) {
+    resultBoxCard.classList.add("is-created");
+  }
+
+  if (copyBtn) {
+    copyBtn.classList.add("attention");
+  }
+
+  showCopyHintWaiting();
+}
+
 function resetResult() {
   currentAffiliateLink = "";
   affiliateLinkValue.value = "";
   buyNowBtn.href = "#";
   buyNowBtn.classList.add("disabled");
   resultSection.classList.add("hidden");
+  clearResultEffect();
 }
 
 async function loadConfig() {
@@ -91,6 +146,7 @@ async function createLink() {
   const inputUrl = normalizeUrl(productUrlInput.value);
 
   if (!inputUrl) {
+    setAlert("error", "Vui lòng nhập link Shopee.");
     return;
   }
 
@@ -124,6 +180,7 @@ async function createLink() {
     buyNowBtn.classList.remove("disabled");
     resultSection.classList.remove("hidden");
 
+    playCreatedResultEffect();
     showToast("Tạo 1 link thành công!");
   } catch (error) {
     setAlert("error", error.message || "Đã có lỗi xảy ra.");
@@ -142,6 +199,17 @@ async function copyAffiliateLink() {
 
   try {
     await navigator.clipboard.writeText(affiliateLinkValue.value);
+
+    showCopyHintCopied();
+
+    if (copyBtn) {
+      copyBtn.classList.remove("attention");
+    }
+
+    if (resultBoxCard) {
+      resultBoxCard.classList.remove("is-created");
+    }
+
     showToast("Đã copy link!");
     setAlert("success", "Đã copy link.");
   } catch {
@@ -151,6 +219,7 @@ async function copyAffiliateLink() {
 
 async function pasteAndCreate() {
   clearAlert();
+  stopInputHint();
 
   try {
     const text = await navigator.clipboard.readText();
@@ -161,6 +230,7 @@ async function pasteAndCreate() {
     }
 
     productUrlInput.value = text.trim();
+    updateInputState();
     showToast("Đã dán link!");
     await createLink();
   } catch {
@@ -168,13 +238,48 @@ async function pasteAndCreate() {
   }
 }
 
-createBtn.addEventListener("click", createLink);
+function stopInputHint() {
+  if (!inputWrap) return;
+  inputWrap.classList.remove("is-hinting");
+}
+
+function updateInputState() {
+  if (!inputWrap || !productUrlInput) return;
+
+  const hasValue = Boolean(productUrlInput.value.trim());
+  inputWrap.classList.toggle("is-filled", hasValue);
+}
+
+function startInputHint() {
+  if (!inputWrap || !productUrlInput) return;
+
+  const hasValue = Boolean(productUrlInput.value.trim());
+  if (hasValue) {
+    inputWrap.classList.add("is-filled");
+    inputWrap.classList.remove("is-hinting");
+    return;
+  }
+
+  inputWrap.classList.add("is-hinting");
+}
+
+createBtn.addEventListener("click", () => {
+  stopInputHint();
+  createLink();
+});
+
 copyBtn.addEventListener("click", copyAffiliateLink);
-pasteBtn.addEventListener("click", pasteAndCreate);
+
+pasteBtn.addEventListener("click", () => {
+  stopInputHint();
+  pasteAndCreate();
+});
 
 productUrlInput.addEventListener("paste", () => {
   clearTimeout(pasteTimer);
   pasteTimer = setTimeout(() => {
+    stopInputHint();
+    updateInputState();
     showToast("Đã dán link!");
     createLink();
   }, 120);
@@ -182,9 +287,27 @@ productUrlInput.addEventListener("paste", () => {
 
 productUrlInput.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
+    stopInputHint();
     createLink();
   }
 });
+
+productUrlInput.addEventListener("focus", () => {
+  if (inputWrap) inputWrap.classList.add("is-focused");
+  stopInputHint();
+});
+
+productUrlInput.addEventListener("blur", () => {
+  if (inputWrap) inputWrap.classList.remove("is-focused");
+  updateInputState();
+});
+
+productUrlInput.addEventListener("input", () => {
+  stopInputHint();
+  updateInputState();
+});
+
+productUrlInput.addEventListener("click", stopInputHint);
 
 shareBtn.addEventListener("click", (event) => {
   if (!facebookPostUrl) {
@@ -193,5 +316,13 @@ shareBtn.addEventListener("click", (event) => {
   }
 });
 
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    startInputHint();
+    updateInputState();
+  }, 500);
+});
+
 loadConfig();
 resetResult();
+updateInputState();
