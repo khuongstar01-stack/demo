@@ -498,3 +498,248 @@ a {
     font-size: 16px;
   }
 }
+/* ===== Hiệu ứng gợi ý ô dán link ===== */
+.input-wrap-hint {
+  position: relative;
+  border-radius: 18px;
+}
+
+.input-wrap-hint::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 22px;
+  background: linear-gradient(
+    90deg,
+    rgba(238, 77, 45, 0.18),
+    rgba(255, 179, 71, 0.18),
+    rgba(238, 77, 45, 0.18)
+  );
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.25s ease;
+}
+
+.input-wrap-hint.is-hinting::before {
+  opacity: 1;
+  animation: inputGlowPulse 1.8s ease-in-out infinite;
+}
+
+.input-wrap-hint .input,
+.input-wrap-hint .paste-btn {
+  position: relative;
+  z-index: 1;
+}
+
+.input-wrap-hint.is-hinting {
+  animation: inputFloatShake 2.2s ease-in-out infinite;
+}
+
+/* Badge gợi ý nằm trong ô input, không che label */
+.input-hint-badge {
+  position: absolute;
+  left: 12px;
+  top: 8px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(238, 77, 45, 0.1);
+  color: #ee4d2d;
+  border: 1px solid rgba(238, 77, 45, 0.18);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 7px 10px;
+  border-radius: 999px;
+  box-shadow: 0 6px 14px rgba(238, 77, 45, 0.08);
+  opacity: 0;
+  transform: translateY(4px) scale(0.96);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  white-space: nowrap;
+}
+
+.input-wrap-hint.is-hinting .input-hint-badge {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  animation: badgeBounceHint 1.6s ease-in-out infinite;
+}
+
+.input-wrap-hint.is-focused .input-hint-badge,
+.input-wrap-hint.is-filled .input-hint-badge {
+  opacity: 0;
+  transform: translateY(-4px) scale(0.96);
+}
+
+/* Chừa chỗ phía trên cho badge và bên phải cho nút paste */
+.input-wrap-hint .input {
+  padding: 28px 56px 12px 16px;
+}
+
+@keyframes inputGlowPulse {
+  0% {
+    transform: scale(1);
+    filter: blur(0px);
+  }
+  50% {
+    transform: scale(1.01);
+    filter: blur(1px);
+  }
+  100% {
+    transform: scale(1);
+    filter: blur(0px);
+  }
+}
+
+@keyframes inputFloatShake {
+  0% {
+    transform: translateY(0);
+  }
+  15% {
+    transform: translateY(-1px);
+  }
+  30% {
+    transform: translateY(0);
+  }
+  45% {
+    transform: translateX(-1.5px);
+  }
+  60% {
+    transform: translateX(1.5px);
+  }
+  75% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes badgeBounceHint {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.02);
+  }
+}
+
+@media (max-width: 640px) {
+  .input-hint-badge {
+    left: 10px;
+    top: 6px;
+    font-size: 11px;
+    padding: 6px 9px;
+  }
+
+  .input-wrap-hint .input {
+    padding: 26px 52px 12px 14px;
+  }
+}
+/* ===== Hiệu ứng khi tạo link xong ===== */
+.result-box {
+  position: relative;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.result-box.is-created {
+  border-color: #ff6a3d;
+  box-shadow: 0 14px 34px rgba(255, 106, 61, 0.18);
+  animation: resultBoxPop 0.55s ease;
+}
+
+.result-box.is-created::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 24px;
+  pointer-events: none;
+  border: 2px solid rgba(255, 106, 61, 0.28);
+  animation: resultRingFade 1.2s ease-out;
+}
+
+.copy-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(255, 106, 61, 0.10), rgba(255, 196, 71, 0.12));
+  color: #f05a28;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+  border: 1px solid rgba(255, 106, 61, 0.16);
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.result-box.is-created .copy-hint,
+.result-box.show-copy-hint .copy-hint {
+  opacity: 1;
+  transform: translateY(0);
+  animation: copyHintPulse 1.6s ease-in-out infinite;
+}
+.copy-btn.attention {
+  animation: copyBtnPulse 1.15s ease-in-out infinite;
+  box-shadow: 0 10px 22px rgba(255, 106, 61, 0.22);
+}
+
+.copy-hint.is-copied {
+  background: rgba(31, 176, 110, 0.10);
+  border-color: rgba(31, 176, 110, 0.18);
+  color: #1f9d63;
+}
+
+@keyframes resultBoxPop {
+  0% {
+    transform: scale(0.985);
+  }
+  45% {
+    transform: scale(1.01);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes resultRingFade {
+  0% {
+    opacity: 0.75;
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+}
+
+@keyframes copyHintPulse {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1px);
+  }
+}
+
+@keyframes copyBtnPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+@media (max-width: 640px) {
+  .copy-hint {
+    font-size: 13px;
+    padding: 9px 11px;
+  }
+}
