@@ -9,7 +9,7 @@ const alertBox = document.getElementById("alertBox");
 const affiliateLinkValue = document.getElementById("affiliateLinkValue");
 const facebookPostBtn = document.getElementById("facebookPostBtn");
 const siteDomainText = document.getElementById("siteDomainText");
-const voucherImage = document.getElementById("voucherImage");
+const voucherImages = document.querySelectorAll(".voucher-sync-image");
 const toastPopup = document.getElementById("toastPopup");
 const toastMessage = document.getElementById("toastMessage");
 
@@ -122,8 +122,10 @@ async function loadConfig() {
         shareBtn.href = data.facebookPostUrl;
       }
 
-      if (data.voucherImageUrl) {
-        voucherImage.src = data.voucherImageUrl;
+      if (data.voucherImageUrl && voucherImages.length) {
+        voucherImages.forEach((img) => {
+          img.src = data.voucherImageUrl;
+        });
       }
     }
   } catch {}
