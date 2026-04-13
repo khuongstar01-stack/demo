@@ -14,7 +14,6 @@ const toastPopup = document.getElementById("toastPopup");
 const toastMessage = document.getElementById("toastMessage");
 
 const inputWrap = document.getElementById("inputWrap");
-const inputHintBadge = document.getElementById("inputHintBadge");
 const resultBoxCard = document.getElementById("resultBoxCard");
 const copyHint = document.getElementById("copyHint");
 
@@ -23,7 +22,6 @@ let creating = false;
 let facebookPostUrl = "";
 let toastTimer;
 let pasteTimer;
-let resultEffectTimer;
 
 function setAlert(type, message) {
   alertBox.className = `alert ${type}`;
@@ -56,26 +54,22 @@ function normalizeUrl(value) {
 
 function showCopyHintWaiting() {
   if (!resultBoxCard || !copyHint) return;
-
-  resultBoxCard.classList.add("show-copy-hint");
+  resultBoxCard.classList.add("show-copy-hint", "is-created");
   copyHint.classList.remove("is-copied");
   copyHint.textContent = "👉 Copy link này để lấy mã";
 }
 
 function showCopyHintCopied() {
   if (!resultBoxCard || !copyHint) return;
-
   resultBoxCard.classList.add("show-copy-hint");
+  resultBoxCard.classList.remove("is-created");
   copyHint.classList.add("is-copied");
   copyHint.textContent = "✅ Đã copy link, giờ bấm Chia sẻ lấy mã";
 }
 
 function clearResultEffect() {
-  clearTimeout(resultEffectTimer);
-
   if (resultBoxCard) {
-    resultBoxCard.classList.remove("is-created");
-    resultBoxCard.classList.remove("show-copy-hint");
+    resultBoxCard.classList.remove("is-created", "show-copy-hint");
   }
 
   if (copyBtn) {
@@ -89,8 +83,6 @@ function clearResultEffect() {
 }
 
 function playCreatedResultEffect() {
-  clearTimeout(resultEffectTimer);
-
   if (resultBoxCard) {
     resultBoxCard.classList.add("is-created");
   }
@@ -199,15 +191,10 @@ async function copyAffiliateLink() {
 
   try {
     await navigator.clipboard.writeText(affiliateLinkValue.value);
-
     showCopyHintCopied();
 
     if (copyBtn) {
       copyBtn.classList.remove("attention");
-    }
-
-    if (resultBoxCard) {
-      resultBoxCard.classList.remove("is-created");
     }
 
     showToast("Đã copy link!");
