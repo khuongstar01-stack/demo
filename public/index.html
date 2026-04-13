@@ -72,45 +72,41 @@
       <label class="label" for="productUrl">🔒 Link sản phẩm Shopee</label>
 
       <div class="input-wrap input-wrap-hint" id="inputWrap">
-  <div id="inputHintBadge" class="input-hint-badge">
-    👆 Dán link Shopee vào đây
-  </div>
-
-  <input
-    id="productUrl"
-    class="input"
-    type="text"
-    placeholder="Dán link Shopee vào đây..."
-    autocomplete="off"
-    spellcheck="false"
-    autocapitalize="off"
-    autocorrect="off"
-  />
-  <button id="pasteBtn" class="paste-btn" type="button" title="Dán link">
-    📋
-  </button>
-</div>
+        <input
+          id="productUrl"
+          class="input"
+          type="text"
+          placeholder="Dán link Shopee vào đây..."
+          autocomplete="off"
+          spellcheck="false"
+          autocapitalize="off"
+          autocorrect="off"
+        />
+        <button id="pasteBtn" class="paste-btn" type="button" title="Dán link">
+          📋
+        </button>
+      </div>
 
       <button id="createBtn" class="create-btn" type="button">✏️ Tạo Link Ngay</button>
 
       <div id="resultSection" class="result-section hidden">
         <div id="resultBoxCard" class="result-box">
-  <div class="result-top">
-    <div class="result-title">✅ Link Nhận Mã</div>
-    <button id="copyBtn" class="copy-btn" type="button">📋 Copy</button>
-  </div>
+          <div class="result-top">
+            <div class="result-title">✅ Link Nhận Mã</div>
+            <button id="copyBtn" class="copy-btn" type="button">📋 Copy</button>
+          </div>
 
-  <div id="copyHint" class="copy-hint">
-    👉 Copy link này và bấm chia sẻ để lấy mã
-  </div>
+          <div id="copyHint" class="copy-hint">
+            👉 Copy link này để lấy mã
+          </div>
 
-  <textarea
-    id="affiliateLinkValue"
-    class="result-text"
-    readonly
-    placeholder="Link sau khi tạo sẽ hiển thị ở đây"
-  ></textarea>
-</div>
+          <textarea
+            id="affiliateLinkValue"
+            class="result-text"
+            readonly
+            placeholder="Link sau khi tạo sẽ hiển thị ở đây"
+          ></textarea>
+        </div>
 
         <a
           id="buyNowBtn"
@@ -138,34 +134,91 @@
 
     <section class="card guide-card">
       <h2 class="guide-title">ℹ️ Hướng dẫn</h2>
-      <ol class="guide-list">
-        <li>
-          Truy cập vào Shopee, chọn sản phẩm muốn mua, chọn biểu tượng chia sẻ
-          <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; background-color: #bebebe; border-radius: 50%; vertical-align: middle; margin: 0 4px; transform: translateY(-1px);">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
-              <polyline points="15 14 20 9 15 4"></polyline>
-              <path d="M4 20v-7a4 4 0 0 1 4-4h12"></path>
-            </svg>
-          </span>
-          ở góc phải màn hình và Sao chép đường dẫn.
-        </li>
-        <li>Quay lại web, bấm 📋 rồi chọn Dán vào ô để tạo link và chọn <strong>Copy Link</strong>.</li>
-        <li>Bấm [Nhận Mã Giảm Giá] rồi dán link dưới bình luận vào bài đăng FB.</li>
-        <li>Click vào link vừa bình luận để mở Shopee sẽ nhận được mã.</li>
-      </ol>
 
-      <a
-        id="facebookPostBtn"
-        class="facebook-link hidden"
-        href="#"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        ⓕ Đến bài đăng Facebook
-      </a>
+      <div class="guide-tabs">
+        <button type="button" class="guide-tab-btn active" data-tab="text">
+          📄 Hướng dẫn chữ
+        </button>
+        <button type="button" class="guide-tab-btn" data-tab="image">
+          🖼️ Hướng dẫn hình ảnh
+        </button>
+      </div>
 
-      <div class="voucher-image-wrap">
-        <img id="voucherImage" class="voucher-image" src="/images/voucher.jpg" alt="Voucher" />
+      <div id="guidePanelText" class="guide-panel active">
+        <ol class="guide-list">
+          <li>
+            Vào Shopee, chọn sản phẩm muốn mua, bấm biểu tượng chia sẻ
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background-color:#bebebe;border-radius:50%;vertical-align:middle;margin:0 4px;transform:translateY(-1px);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;">
+                <polyline points="15 14 20 9 15 4"></polyline>
+                <path d="M4 20v-7a4 4 0 0 1 4-4h12"></path>
+              </svg>
+            </span>
+            rồi chọn <strong>Sao chép đường dẫn</strong>.
+          </li>
+          <li>Quay lại web, bấm 📋 để dán link vào ô rồi nhấn <strong>Tạo Link Ngay</strong>.</li>
+          <li>Khi link hiện ra, bấm <strong>Copy</strong> để sao chép link nhận mã.</li>
+          <li>Bấm <strong>Nhận Mã Giảm Giá</strong> rồi dán link vào bình luận bài đăng Facebook.</li>
+          <li>Nhấn vào link vừa bình luận để mở Shopee và nhận mã.</li>
+        </ol>
+
+        <a
+          id="facebookPostBtn"
+          class="facebook-link hidden"
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          ⓕ Đến bài đăng Facebook
+        </a>
+
+        <div class="voucher-image-wrap">
+          <img
+            id="voucherImage"
+            class="voucher-image"
+            src="/images/voucher.jpg"
+            alt="Voucher"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      </div>
+
+      <div id="guidePanelImage" class="guide-panel hidden">
+        <div class="guide-image-list">
+          <article class="guide-image-step">
+            <div class="guide-image-title">Bước 1: Copy link sản phẩm trên Shopee</div>
+            <img
+              src="/images/guide-step-1.jpg"
+              alt="Bước 1 copy link sản phẩm trên Shopee"
+              class="guide-step-image"
+              loading="lazy"
+              decoding="async"
+            />
+          </article>
+
+          <article class="guide-image-step">
+            <div class="guide-image-title">Bước 2: Dán link vào web và tạo link</div>
+            <img
+              src="/images/guide-step-2.jpg"
+              alt="Bước 2 dán link vào web và tạo link"
+              class="guide-step-image"
+              loading="lazy"
+              decoding="async"
+            />
+          </article>
+
+          <article class="guide-image-step">
+            <div class="guide-image-title">Bước 3: Dán link vào bình luận Facebook rồi mở link</div>
+            <img
+              src="/images/guide-step-3.jpg"
+              alt="Bước 3 dán link vào bình luận Facebook rồi mở link"
+              class="guide-step-image"
+              loading="lazy"
+              decoding="async"
+            />
+          </article>
+        </div>
       </div>
     </section>
   </main>
@@ -176,6 +229,35 @@
       <div id="toastMessage" class="toast-message">Tạo 1 link thành công!</div>
     </div>
   </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const guideTabButtons = document.querySelectorAll(".guide-tab-btn");
+      const guidePanelText = document.getElementById("guidePanelText");
+      const guidePanelImage = document.getElementById("guidePanelImage");
+
+      guideTabButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const tab = button.dataset.tab;
+
+          guideTabButtons.forEach((btn) => btn.classList.remove("active"));
+          button.classList.add("active");
+
+          if (tab === "text") {
+            guidePanelText.classList.remove("hidden");
+            guidePanelText.classList.add("active");
+            guidePanelImage.classList.add("hidden");
+            guidePanelImage.classList.remove("active");
+          } else {
+            guidePanelImage.classList.remove("hidden");
+            guidePanelImage.classList.add("active");
+            guidePanelText.classList.add("hidden");
+            guidePanelText.classList.remove("active");
+          }
+        });
+      });
+    });
+  </script>
 
   <script src="/app.js"></script>
 </body>
