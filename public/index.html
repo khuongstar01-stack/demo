@@ -133,18 +133,23 @@
     </section>
 
     <section class="card guide-card">
-      <h2 class="guide-title">ℹ️ Hướng dẫn</h2>
+      <div class="guide-title-box">
+  <h2 class="guide-title">
+    <span class="guide-title-icon">ℹ️</span>
+    <span class="guide-title-text">Hướng dẫn</span>
+  </h2>
+</div>
 
       <div class="guide-tabs">
-        <button type="button" class="guide-tab-btn active" data-tab="text">
-          📄 Hướng dẫn chữ
-        </button>
-        <button type="button" class="guide-tab-btn" data-tab="image">
+        <button type="button" class="guide-tab-btn active" data-tab="image">
           🖼️ Hướng dẫn hình ảnh
+        </button>
+        <button type="button" class="guide-tab-btn" data-tab="text">
+          📄 Hướng dẫn chữ
         </button>
       </div>
 
-      <div id="guidePanelText" class="guide-panel active">
+      <div id="guidePanelText" class="guide-panel hidden">
         <ol class="guide-list">
           <li>
             Vào Shopee, chọn sản phẩm muốn mua, bấm biểu tượng chia sẻ
@@ -184,7 +189,7 @@
         </div>
       </div>
 
-      <div id="guidePanelImage" class="guide-panel hidden">
+      <div id="guidePanelImage" class="guide-panel active">
         <div class="guide-image-list">
           <article class="guide-image-step">
             <div class="guide-image-title">Bước 1: Copy link sản phẩm trên Shopee</div>
@@ -219,6 +224,16 @@
             />
           </article>
         </div>
+
+        <div class="voucher-image-wrap guide-image-voucher-wrap">
+          <img
+            class="voucher-image"
+            src="/images/voucher.jpg"
+            alt="Voucher"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
       </div>
     </section>
   </main>
@@ -235,27 +250,37 @@
       const guideTabButtons = document.querySelectorAll(".guide-tab-btn");
       const guidePanelText = document.getElementById("guidePanelText");
       const guidePanelImage = document.getElementById("guidePanelImage");
+      const guideImageList = document.querySelector(".guide-image-list");
+
+      function switchGuideTab(tab) {
+        guideTabButtons.forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.tab === tab);
+        });
+
+        if (tab === "text") {
+          guidePanelText.classList.remove("hidden");
+          guidePanelText.classList.add("active");
+          guidePanelImage.classList.add("hidden");
+          guidePanelImage.classList.remove("active");
+        } else {
+          guidePanelImage.classList.remove("hidden");
+          guidePanelImage.classList.add("active");
+          guidePanelText.classList.add("hidden");
+          guidePanelText.classList.remove("active");
+
+          if (guideImageList) {
+            guideImageList.scrollTo({ left: 0, behavior: "smooth" });
+          }
+        }
+      }
 
       guideTabButtons.forEach((button) => {
         button.addEventListener("click", () => {
-          const tab = button.dataset.tab;
-
-          guideTabButtons.forEach((btn) => btn.classList.remove("active"));
-          button.classList.add("active");
-
-          if (tab === "text") {
-            guidePanelText.classList.remove("hidden");
-            guidePanelText.classList.add("active");
-            guidePanelImage.classList.add("hidden");
-            guidePanelImage.classList.remove("active");
-          } else {
-            guidePanelImage.classList.remove("hidden");
-            guidePanelImage.classList.add("active");
-            guidePanelText.classList.add("hidden");
-            guidePanelText.classList.remove("active");
-          }
+          switchGuideTab(button.dataset.tab);
         });
       });
+
+      switchGuideTab("image");
     });
   </script>
 
