@@ -1019,19 +1019,133 @@ a {
   position: relative;
 }
 
-.guide-title-text::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -6px;
-  width: 100%;
-  height: 4px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #f4522f, #ff9d66, #f4522f);
-  background-size: 200% 100%;
-  animation: guideUnderlineFlow 2.6s linear infinite;
+.guide-title-box {
+  position: relative;
+  margin-bottom: 14px;
+  padding: 14px 16px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #ff7a45 0%, #f4522f 52%, #eb4d2d 100%);
+  box-shadow:
+    0 14px 28px rgba(244, 82, 47, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -2px 0 rgba(180, 50, 22, 0.12);
+  overflow: hidden;
 }
 
+.guide-title-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -35%;
+  width: 42%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 45%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0.2) 55%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-22deg);
+  animation: guideTitleShineOrange 3.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.guide-title-box::after {
+  content: "";
+  position: absolute;
+  right: -22px;
+  top: -22px;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 210, 160, 0.32) 0%,
+    rgba(255, 210, 160, 0.08) 45%,
+    rgba(255, 210, 160, 0) 74%
+  );
+  pointer-events: none;
+}
+
+.guide-title {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+
+.guide-title-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #ffffff, #fff2ea);
+  color: #f05833;
+  font-size: 24px;
+  box-shadow:
+    0 10px 18px rgba(128, 35, 14, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  animation: guideIconPopOrange 2.3s ease-in-out infinite;
+}
+
+.guide-title-text {
+  color: #fff8f4;
+  font-size: 22px;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  text-shadow: 0 2px 8px rgba(132, 39, 18, 0.2);
+}
+
+.guide-title-text::after {
+  display: none;
+}
+
+@keyframes guideTitleShineOrange {
+  0% {
+    left: -35%;
+  }
+  55% {
+    left: 120%;
+  }
+  100% {
+    left: 120%;
+  }
+}
+
+@keyframes guideIconPopOrange {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.04);
+  }
+}
+
+@media (min-width: 768px) {
+  .guide-title-box {
+    margin-bottom: 16px;
+    padding: 16px 18px;
+    border-radius: 24px;
+  }
+
+  .guide-title-icon {
+    width: 56px;
+    height: 56px;
+    font-size: 28px;
+    border-radius: 17px;
+  }
+
+  .guide-title-text {
+    font-size: 30px;
+  }
+}
 .guide-tabs {
   position: relative;
   z-index: 1;
@@ -1325,5 +1439,52 @@ a {
 
   .guide-title-text {
     font-size: 30px;
+  }
+}
+.facebook-quick-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 52px;
+  margin-top: 10px;
+  padding: 0 16px;
+  border-radius: 14px;
+  border: 2px solid #2f80ff;
+  background: #ffffff;
+  color: #2f80ff;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 800;
+  box-shadow: 0 6px 14px rgba(47, 128, 255, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.facebook-quick-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(47, 128, 255, 0.12);
+}
+
+.facebook-quick-btn:active {
+  transform: translateY(0);
+}
+
+.facebook-quick-btn-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+@media (min-width: 768px) {
+  .facebook-quick-btn {
+    min-height: 62px;
+    margin-top: 12px;
+    border-radius: 16px;
+    font-size: 20px;
+    gap: 10px;
+  }
+
+  .facebook-quick-btn-icon {
+    font-size: 22px;
   }
 }
