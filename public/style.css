@@ -51,79 +51,85 @@ a {
   touch-action: manipulation;
 }
 
+.hidden {
+  display: none !important;
+}
+
+/* ===== Layout ===== */
 .page {
   width: 100%;
   max-width: 760px;
   margin: 0 auto;
-  padding: 14px 12px 28px;
+  padding: 12px 12px 24px;
 }
 
 .hero {
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .hero-title {
-  margin: 0 0 12px;
-  font-size: 28px;
-  line-height: 1.15;
+  margin: 0 0 10px;
+  font-size: 24px;
+  line-height: 1.12;
   font-weight: 800;
   color: #ee5b36;
-  text-shadow: 0 4px 14px rgba(238, 91, 54, 0.16);
+  text-shadow: 0 4px 14px rgba(238, 91, 54, 0.14);
 }
 
 .hero-domain {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 170px;
+  min-width: 160px;
   max-width: 100%;
-  padding: 0 18px;
-  height: 46px;
+  padding: 0 16px;
+  height: 42px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.3);
   color: #de643f;
-  font-size: 18px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .card {
   background: var(--card);
-  border-radius: 22px;
-  padding: 16px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.4);
+  border-radius: 20px;
+  padding: 14px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
 .card + .card {
-  margin-top: 14px;
+  margin-top: 12px;
 }
 
 .label {
   display: block;
-  margin-bottom: 10px;
-  font-size: 20px;
+  margin-bottom: 9px;
+  font-size: 18px;
   font-weight: 800;
   color: #2d3344;
 }
 
+/* ===== Input ===== */
 .input-wrap {
   display: flex;
   align-items: stretch;
   background: var(--input);
   border: 2px solid #dedee3;
-  border-radius: 20px;
+  border-radius: 18px;
   overflow: hidden;
 }
 
 .input {
   width: 100%;
   min-width: 0;
-  height: 64px;
-  padding: 0 16px;
+  height: 58px;
+  padding: 0 14px;
   border: 0;
   outline: 0;
   background: transparent;
-  font-size: 17px;
+  font-size: 16px;
   color: #515760;
 }
 
@@ -132,373 +138,30 @@ a {
 }
 
 .paste-btn {
-  width: 68px;
-  min-width: 68px;
+  width: 60px;
+  min-width: 60px;
   border: 0;
   border-left: 2px solid #dfdfe4;
   background: transparent;
   color: #555b66;
-  font-size: 24px;
+  font-size: 22px;
   cursor: pointer;
 }
 
 .create-btn {
   width: 100%;
-  height: 60px;
-  margin-top: 14px;
+  height: 54px;
+  margin-top: 12px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 18px;
   background: linear-gradient(90deg, var(--orange-1), var(--orange-2));
-  color: #fff;
-  font-size: 22px;
-  font-weight: 800;
-  cursor: pointer;
-}
-
-.result-section {
-  margin-top: 14px;
-  background: var(--block);
-  border-radius: 18px;
-  padding: 12px;
-}
-
-.result-box {
-  background: #f5f5f5;
-  border: 2px solid var(--danger);
-  border-radius: 20px;
-  padding: 14px;
-}
-
-.result-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.result-title {
-  font-size: 21px;
-  font-weight: 800;
-  color: #354052;
-}
-
-.copy-btn {
-  min-width: 96px;
-  height: 42px;
-  padding: 0 14px;
-  border: 0;
-  border-radius: 12px;
-  background: var(--orange-1);
-  color: #fff;
-  font-size: 17px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.result-text {
-  width: 100%;
-  min-height: 110px;
-  resize: none;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: #4b5058;
-  font-size: 18px;
-  line-height: 1.45;
-  padding: 0;
-}
-
-.action-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 56px;
-  border: 0;
-  border-radius: 18px;
-  text-decoration: none;
   color: #fff;
   font-size: 20px;
   font-weight: 800;
-  margin-top: 12px;
   cursor: pointer;
-  padding: 0 14px;
-  text-align: center;
 }
 
-.buy-btn {
-  background: linear-gradient(90deg, var(--green-1), var(--green-2));
-}
-
-.share-btn {
-  background: linear-gradient(90deg, var(--blue-1), var(--blue-2));
-}
-
-.buy-btn.disabled {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-.alert {
-  margin-top: 12px;
-  padding: 12px 14px;
-  border-radius: 14px;
-  font-size: 15px;
-  line-height: 1.45;
-}
-
-.alert.success {
-  background: #edf9f1;
-  border: 1px solid #bee1ca;
-  color: #1c7a42;
-}
-
-.alert.error {
-  background: #fff1f1;
-  border: 1px solid #efc5c5;
-  color: #bf2b2b;
-}
-
-.guide-card {
-  padding-top: 18px;
-}
-
-.guide-title {
-  margin: 0 0 10px;
-  font-size: 23px;
-  font-weight: 800;
-  color: #26354b;
-}
-
-.guide-list {
-  margin: 0 0 16px 22px;
-  padding: 0;
-  font-size: 18px;
-  line-height: 1.55;
-  color: #2b2f38;
-}
-
-.facebook-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 46px;
-  padding: 0 16px;
-  border-radius: 10px;
-  text-decoration: none;
-  border: 2px solid #2f80ff;
-  color: #2f80ff;
-  background: #fff;
-  font-size: 17px;
-  font-weight: 600;
-  margin-bottom: 14px;
-  text-align: center;
-}
-
-.voucher-image-wrap {
-  width: 100%;
-  overflow: hidden;
-  border-radius: 12px;
-  background: #f4f4f4;
-}
-
-.voucher-image {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.toast-popup {
-  position: fixed;
-  top: 84px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 28px);
-  max-width: 620px;
-  z-index: 9999;
-  pointer-events: none;
-}
-
-.toast-card {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  background: #ffffff;
-  border-radius: 18px;
-  min-height: 88px;
-  padding: 18px 22px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
-  border: 1px solid #efefef;
-}
-
-.toast-icon {
-  width: 62px;
-  height: 62px;
-  min-width: 62px;
-  border-radius: 50%;
-  border: 4px solid #dff1d8;
-  color: #8fd27d;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 38px;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.toast-message {
-  color: #4a4a4a;
-  font-size: 26px;
-  font-weight: 700;
-  line-height: 1.25;
-}
-
-/* Tablet trở lên */
-@media (min-width: 768px) {
-  .page {
-    padding: 28px 14px 40px;
-  }
-
-  .hero {
-    margin-bottom: 24px;
-  }
-
-  .hero-title {
-    font-size: 38px;
-    margin-bottom: 16px;
-  }
-
-  .hero-domain {
-    min-width: 230px;
-    height: 58px;
-    padding: 0 24px;
-    font-size: 26px;
-  }
-
-  .card {
-    border-radius: 28px;
-    padding: 20px;
-  }
-
-  .card + .card {
-    margin-top: 18px;
-  }
-
-  .label {
-    font-size: 28px;
-    margin-bottom: 12px;
-  }
-
-  .input-wrap {
-    border-radius: 26px;
-  }
-
-  .input {
-    height: 92px;
-    padding: 0 26px;
-    font-size: 28px;
-  }
-
-  .paste-btn {
-    width: 96px;
-    min-width: 96px;
-    font-size: 36px;
-  }
-
-  .create-btn {
-    height: 84px;
-    margin-top: 18px;
-    border-radius: 28px;
-    font-size: 32px;
-  }
-
-  .result-section {
-    margin-top: 18px;
-    border-radius: 22px;
-    padding: 16px;
-  }
-
-  .result-box {
-    border-radius: 24px;
-    padding: 18px;
-  }
-
-  .result-title {
-    font-size: 28px;
-  }
-
-  .copy-btn {
-    min-width: 150px;
-    height: 56px;
-    border-radius: 16px;
-    font-size: 22px;
-  }
-
-  .result-text {
-    min-height: 180px;
-    font-size: 26px;
-  }
-
-  .action-btn {
-    height: 74px;
-    border-radius: 24px;
-    font-size: 28px;
-    margin-top: 16px;
-  }
-
-  .guide-card {
-    padding-top: 22px;
-  }
-
-  .guide-title {
-    font-size: 30px;
-  }
-
-  .guide-list {
-    margin-left: 28px;
-    font-size: 28px;
-  }
-
-  .facebook-link {
-    height: 52px;
-    padding: 0 18px;
-    border-radius: 8px;
-    font-size: 22px;
-    margin-bottom: 16px;
-  }
-}
-
-@media (max-width: 768px) {
-  .toast-popup {
-    top: 74px;
-    width: calc(100% - 24px);
-  }
-
-  .toast-card {
-    min-height: 74px;
-    padding: 14px 16px;
-    gap: 12px;
-    border-radius: 14px;
-  }
-
-  .toast-icon {
-    width: 46px;
-    height: 46px;
-    min-width: 46px;
-    font-size: 28px;
-    border-width: 3px;
-  }
-
-  .toast-message {
-    font-size: 16px;
-  }
-}
-/* ===== Hiệu ứng gợi ý ô dán link ===== */
+/* ===== Input hint effect: chỉ cho chữ lớn trong input ===== */
 .input-wrap-hint {
   position: relative;
   border-radius: 18px;
@@ -511,9 +174,9 @@ a {
   border-radius: 22px;
   background: linear-gradient(
     90deg,
-    rgba(238, 77, 45, 0.18),
-    rgba(255, 179, 71, 0.18),
-    rgba(238, 77, 45, 0.18)
+    rgba(238, 77, 45, 0.16),
+    rgba(255, 179, 71, 0.16),
+    rgba(238, 77, 45, 0.16)
   );
   opacity: 0;
   pointer-events: none;
@@ -532,56 +195,32 @@ a {
   z-index: 1;
 }
 
-.input-wrap-hint.is-hinting {
+.input-wrap-hint .input {
+  padding: 0 52px 0 14px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.input-wrap-hint.is-hinting .input {
+  border-color: rgba(238, 77, 45, 0.35);
+  box-shadow: 0 0 0 4px rgba(238, 77, 45, 0.08);
   animation: inputFloatShake 2.2s ease-in-out infinite;
 }
 
-/* Badge gợi ý nằm trong ô input, không che label */
-.input-hint-badge {
-  position: absolute;
-  left: 12px;
-  top: 8px;
-  z-index: 3;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(238, 77, 45, 0.1);
+.input-wrap-hint .input::placeholder {
+  color: #7a7f89;
+  transition: color 0.25s ease, opacity 0.25s ease, letter-spacing 0.25s ease;
+}
+
+.input-wrap-hint.is-hinting .input::placeholder {
   color: #ee4d2d;
-  border: 1px solid rgba(238, 77, 45, 0.18);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1;
-  padding: 7px 10px;
-  border-radius: 999px;
-  box-shadow: 0 6px 14px rgba(238, 77, 45, 0.08);
-  opacity: 0;
-  transform: translateY(4px) scale(0.96);
-  pointer-events: none;
-  transition: opacity 0.25s ease, transform 0.25s ease;
-  white-space: nowrap;
-}
-
-.input-wrap-hint.is-hinting .input-hint-badge {
   opacity: 1;
-  transform: translateY(0) scale(1);
-  animation: badgeBounceHint 1.6s ease-in-out infinite;
-}
-
-.input-wrap-hint.is-focused .input-hint-badge,
-.input-wrap-hint.is-filled .input-hint-badge {
-  opacity: 0;
-  transform: translateY(-4px) scale(0.96);
-}
-
-/* Chừa chỗ phía trên cho badge và bên phải cho nút paste */
-.input-wrap-hint .input {
-  padding: 28px 56px 12px 16px;
+  animation: placeholderPulse 1.25s ease-in-out infinite;
 }
 
 @keyframes inputGlowPulse {
   0% {
     transform: scale(1);
-    filter: blur(0px);
+    filter: blur(0);
   }
   50% {
     transform: scale(1.01);
@@ -589,7 +228,7 @@ a {
   }
   100% {
     transform: scale(1);
-    filter: blur(0px);
+    filter: blur(0);
   }
 }
 
@@ -617,62 +256,135 @@ a {
   }
 }
 
-@keyframes badgeBounceHint {
-  0%, 100% {
-    transform: translateY(0) scale(1);
+@keyframes placeholderPulse {
+  0%,
+  100% {
+    opacity: 1;
+    letter-spacing: 0;
   }
   50% {
-    transform: translateY(-2px) scale(1.02);
+    opacity: 0.72;
+    letter-spacing: 0.3px;
   }
 }
 
-@media (max-width: 640px) {
-  .input-hint-badge {
-    left: 10px;
-    top: 6px;
-    font-size: 11px;
-    padding: 6px 9px;
-  }
-
-  .input-wrap-hint .input {
-    padding: 26px 52px 12px 14px;
-  }
+/* ===== Result area ===== */
+.result-section {
+  margin-top: 12px;
+  background: #f1f1f1;
+  border-radius: 18px;
+  padding: 12px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-/* ===== Hiệu ứng khi tạo link xong ===== */
+
 .result-box {
   position: relative;
+  background: #f6f6f6;
+  border: 2px solid #f05833;
+  border-radius: 18px;
+  padding: 14px;
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 .result-box.is-created {
   border-color: #ff6a3d;
-  box-shadow: 0 14px 34px rgba(255, 106, 61, 0.18);
+  box-shadow:
+    0 0 0 5px rgba(255, 106, 61, 0.1),
+    0 14px 30px rgba(255, 106, 61, 0.16);
   animation: resultBoxPop 0.55s ease;
 }
 
 .result-box.is-created::after {
   content: "";
   position: absolute;
-  inset: -3px;
-  border-radius: 24px;
+  inset: -4px;
+  border-radius: 22px;
   pointer-events: none;
-  border: 2px solid rgba(255, 106, 61, 0.28);
-  animation: resultRingFade 1.2s ease-out;
+  border: 2px solid rgba(255, 106, 61, 0.22);
+  animation: resultRingFade 1.2s ease-out infinite;
+}
+
+.result-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.result-title {
+  font-size: 19px;
+  font-weight: 800;
+  color: #2f3a4d;
+}
+
+.copy-btn {
+  position: relative;
+  z-index: 2;
+  min-width: 98px;
+  height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #f4522f, #ff6835);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(244, 82, 47, 0.16);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.copy-btn:hover {
+  transform: translateY(-1px);
+}
+
+.copy-btn.attention {
+  animation: copyBtnPulse 1.05s ease-in-out infinite;
+  box-shadow:
+    0 0 0 5px rgba(255, 106, 61, 0.1),
+    0 12px 24px rgba(255, 106, 61, 0.22);
+}
+
+.copy-btn.attention::before {
+  content: "👉";
+  position: absolute;
+  left: -34px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24px;
+  line-height: 1;
+  animation: copyArrowBounce 0.9s ease-in-out infinite;
+  filter: drop-shadow(0 4px 10px rgba(240, 88, 51, 0.22));
+}
+
+.copy-btn.attention::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 16px;
+  box-shadow: 0 0 0 6px rgba(244, 82, 47, 0.08);
+  animation: copyBtnHalo 1.1s ease-in-out infinite;
+  pointer-events: none;
 }
 
 .copy-hint {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 12px 0 10px;
-  padding: 10px 12px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, rgba(255, 106, 61, 0.10), rgba(255, 196, 71, 0.12));
-  color: #f05a28;
+  margin: 4px 0 10px;
+  padding: 9px 11px;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 106, 61, 0.12),
+    rgba(255, 196, 71, 0.14)
+  );
+  color: #ee5b36;
   font-size: 14px;
-  font-weight: 700;
-  line-height: 1.4;
-  border: 1px solid rgba(255, 106, 61, 0.16);
+  font-weight: 800;
+  line-height: 1.35;
+  border: 1px solid rgba(255, 106, 61, 0.18);
   opacity: 0;
   transform: translateY(6px);
   pointer-events: none;
@@ -685,15 +397,56 @@ a {
   transform: translateY(0);
   animation: copyHintPulse 1.6s ease-in-out infinite;
 }
-.copy-btn.attention {
-  animation: copyBtnPulse 1.15s ease-in-out infinite;
-  box-shadow: 0 10px 22px rgba(255, 106, 61, 0.22);
-}
 
 .copy-hint.is-copied {
-  background: rgba(31, 176, 110, 0.10);
+  background: rgba(31, 176, 110, 0.1);
   border-color: rgba(31, 176, 110, 0.18);
   color: #1f9d63;
+}
+
+.result-text {
+  width: 100%;
+  min-height: 106px;
+  resize: none;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #404854;
+  font-size: 16px;
+  line-height: 1.45;
+  padding: 0;
+  word-break: break-word;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 52px;
+  border: 0;
+  border-radius: 16px;
+  text-decoration: none;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 800;
+  margin-top: 10px;
+  cursor: pointer;
+  padding: 0 14px;
+  text-align: center;
+}
+
+.buy-btn {
+  background: linear-gradient(90deg, var(--green-1), var(--green-2));
+}
+
+.share-btn {
+  background: linear-gradient(90deg, var(--blue-1), var(--blue-2));
+}
+
+.buy-btn.disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 @keyframes resultBoxPop {
@@ -710,8 +463,8 @@ a {
 
 @keyframes resultRingFade {
   0% {
-    opacity: 0.75;
-    transform: scale(0.98);
+    opacity: 0.7;
+    transform: scale(0.985);
   }
   100% {
     opacity: 0;
@@ -720,7 +473,8 @@ a {
 }
 
 @keyframes copyHintPulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -729,17 +483,436 @@ a {
 }
 
 @keyframes copyBtnPulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
-    transform: scale(1.04);
+    transform: scale(1.06);
   }
 }
 
-@media (max-width: 640px) {
+@keyframes copyArrowBounce {
+  0%,
+  100% {
+    transform: translateY(-50%) translateX(0);
+  }
+  50% {
+    transform: translateY(-50%) translateX(6px);
+  }
+}
+
+@keyframes copyBtnHalo {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+}
+
+/* ===== Alerts ===== */
+.alert {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.alert.success {
+  background: #edf9f1;
+  border: 1px solid #bee1ca;
+  color: #1c7a42;
+}
+
+.alert.error {
+  background: #fff1f1;
+  border: 1px solid #efc5c5;
+  color: #bf2b2b;
+}
+
+/* ===== Guide ===== */
+.guide-card {
+  padding-top: 16px;
+}
+
+.guide-title {
+  margin: 0 0 10px;
+  font-size: 21px;
+  font-weight: 800;
+  color: #26354b;
+}
+
+.guide-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.guide-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.guide-tab-btn {
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #445066;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: inset 0 0 0 2px #dfe3ea;
+  transition: all 0.2s ease;
+}
+
+.guide-tab-btn.active {
+  background: linear-gradient(90deg, #f4522f, #ff6835);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(244, 82, 47, 0.16);
+}
+
+.guide-panel {
+  width: 100%;
+}
+
+.guide-list {
+  margin: 0 0 14px 18px;
+  padding: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #2b2f38;
+}
+
+.guide-list li + li {
+  margin-top: 8px;
+}
+
+.facebook-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 10px;
+  text-decoration: none;
+  border: 2px solid #2f80ff;
+  color: #2f80ff;
+  background: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.voucher-image-wrap {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #f4f4f4;
+}
+
+.voucher-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* ===== Guide image: slider ngang trên mobile ===== */
+.guide-image-list {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 2px;
+  -webkit-overflow-scrolling: touch;
+  padding: 2px 2px 6px;
+  margin: 0 -2px;
+  scrollbar-width: none;
+}
+
+.guide-image-list::-webkit-scrollbar {
+  display: none;
+}
+
+.guide-image-step {
+  flex: 0 0 86%;
+  min-width: 86%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  background: #f8f8f8;
+  border: 1.5px solid #e5e5e5;
+  border-radius: 16px;
+  padding: 10px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.04);
+}
+
+.guide-image-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #2d3344;
+  line-height: 1.35;
+  margin-bottom: 8px;
+}
+
+.guide-step-image {
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  border-radius: 12px;
+  border: 1px solid #ececec;
+  background: #fff;
+  object-fit: cover;
+}
+
+/* ===== Toast popup ===== */
+.toast-popup {
+  position: fixed;
+  top: 64px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 20px);
+  max-width: 420px;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.toast-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border-radius: 14px;
+  min-height: 62px;
+  padding: 12px 14px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+  border: 1px solid #efefef;
+}
+
+.toast-icon {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: 50%;
+  border: 3px solid #dff1d8;
+  color: #8fd27d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.toast-message {
+  color: #4a4a4a;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+/* ===== Desktop ===== */
+@media (min-width: 768px) {
+  .page {
+    padding: 24px 14px 36px;
+  }
+
+  .hero {
+    margin-bottom: 22px;
+  }
+
+  .hero-title {
+    font-size: 34px;
+    margin-bottom: 14px;
+  }
+
+  .hero-domain {
+    min-width: 220px;
+    height: 54px;
+    padding: 0 22px;
+    font-size: 23px;
+  }
+
+  .card {
+    border-radius: 26px;
+    padding: 18px;
+  }
+
+  .card + .card {
+    margin-top: 16px;
+  }
+
+  .label {
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+
+  .input-wrap {
+    border-radius: 24px;
+  }
+
+  .input {
+    height: 82px;
+    padding: 0 24px;
+    font-size: 24px;
+  }
+
+  .input-wrap-hint .input {
+    padding: 0 78px 0 24px;
+  }
+
+  .paste-btn {
+    width: 88px;
+    min-width: 88px;
+    font-size: 34px;
+  }
+
+  .create-btn {
+    height: 76px;
+    margin-top: 16px;
+    border-radius: 24px;
+    font-size: 28px;
+  }
+
+  .result-section {
+    margin-top: 16px;
+    border-radius: 22px;
+    padding: 16px;
+  }
+
+  .result-box {
+    border-radius: 24px;
+    padding: 18px;
+  }
+
+  .result-title {
+    font-size: 26px;
+  }
+
+  .copy-btn {
+    min-width: 132px;
+    height: 52px;
+    border-radius: 16px;
+    font-size: 21px;
+  }
+
+  .copy-btn.attention::before {
+    left: -42px;
+    font-size: 28px;
+  }
+
   .copy-hint {
-    font-size: 13px;
-    padding: 9px 11px;
+    font-size: 18px;
+    padding: 11px 14px;
+  }
+
+  .result-text {
+    min-height: 160px;
+    font-size: 22px;
+  }
+
+  .action-btn {
+    min-height: 68px;
+    border-radius: 22px;
+    font-size: 26px;
+    margin-top: 14px;
+  }
+
+  .alert {
+    font-size: 16px;
+    padding: 12px 14px;
+  }
+
+  .guide-card {
+    padding-top: 20px;
+  }
+
+  .guide-title {
+    font-size: 28px;
+  }
+
+  .guide-tabs {
+    gap: 10px;
+    margin-bottom: 16px;
+    overflow: visible;
+  }
+
+  .guide-tab-btn {
+    font-size: 18px;
+    padding: 12px 18px;
+    border-radius: 14px;
+  }
+
+  .guide-list {
+    margin-left: 24px;
+    font-size: 20px;
+    line-height: 1.6;
+  }
+
+  .facebook-link {
+    min-height: 48px;
+    padding: 0 18px;
+    font-size: 18px;
+    margin-bottom: 14px;
+  }
+
+  .guide-image-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow: visible;
+    scroll-snap-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .guide-image-step {
+    flex: none;
+    min-width: 100%;
+    border-radius: 18px;
+    padding: 14px;
+  }
+
+  .guide-image-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .guide-step-image {
+    aspect-ratio: auto;
+    max-height: 680px;
+    object-fit: contain;
+  }
+
+  .toast-popup {
+    top: 76px;
+    max-width: 500px;
+  }
+
+  .toast-card {
+    min-height: 74px;
+    padding: 14px 16px;
+    gap: 12px;
+    border-radius: 16px;
+  }
+
+  .toast-icon {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    font-size: 28px;
+  }
+
+  .toast-message {
+    font-size: 18px;
   }
 }
