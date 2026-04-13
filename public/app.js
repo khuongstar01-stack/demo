@@ -8,6 +8,7 @@ const copyBtn = document.getElementById("copyBtn");
 const alertBox = document.getElementById("alertBox");
 const affiliateLinkValue = document.getElementById("affiliateLinkValue");
 const facebookPostBtn = document.getElementById("facebookPostBtn");
+const facebookPostQuickBtn = document.getElementById("facebookPostQuickBtn");
 const siteDomainText = document.getElementById("siteDomainText");
 const voucherImages = document.querySelectorAll(".voucher-sync-image");
 const toastPopup = document.getElementById("toastPopup");
@@ -16,7 +17,6 @@ const toastMessage = document.getElementById("toastMessage");
 const inputWrap = document.getElementById("inputWrap");
 const resultBoxCard = document.getElementById("resultBoxCard");
 const copyHint = document.getElementById("copyHint");
-
 let currentAffiliateLink = "";
 let creating = false;
 let facebookPostUrl = "";
@@ -116,11 +116,20 @@ async function loadConfig() {
       }
 
       if (data.facebookPostUrl) {
-        facebookPostUrl = data.facebookPostUrl;
-        facebookPostBtn.href = data.facebookPostUrl;
-        facebookPostBtn.classList.remove("hidden");
-        shareBtn.href = data.facebookPostUrl;
-      }
+  facebookPostUrl = data.facebookPostUrl;
+
+  if (facebookPostBtn) {
+    facebookPostBtn.href = data.facebookPostUrl;
+    facebookPostBtn.classList.remove("hidden");
+  }
+
+  if (facebookPostQuickBtn) {
+    facebookPostQuickBtn.href = data.facebookPostUrl;
+    facebookPostQuickBtn.classList.remove("hidden");
+  }
+
+  shareBtn.href = data.facebookPostUrl;
+}
 
       if (data.voucherImageUrl && voucherImages.length) {
         voucherImages.forEach((img) => {
