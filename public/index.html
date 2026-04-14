@@ -82,12 +82,69 @@
           autocapitalize="off"
           autocorrect="off"
         />
-        <button id="pasteBtn" class="paste-btn" type="button" title="Dán link">
-          📋
-        </button>
+        <button id="pasteBtn" class="paste-btn" type="button" title="Dán link" aria-label="Dán link">
+  <div class="icon-conatiner">
+    <svg
+      width="19px"
+      height="21px"
+      viewBox="0 0 19 21"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <g fill="none" fill-rule="evenodd">
+        <path
+          d="M3.4,4 L11.5,4 L11.5,4 L16,8.25 L16,17.6 C16,19.4777681 14.4777681,21 12.6,21 L3.4,21 C1.52223185,21 0,19.4777681 0,17.6 L0,7.4 C0,5.52223185 1.52223185,4 3.4,4 Z"
+          fill="#C4FFE4"
+        ></path>
+        <path
+          d="M6.4,0 L12,0 L12,0 L19,6.5 L19,14.6 C19,16.4777681 17.4777681,18 15.6,18 L6.4,18 C4.52223185,18 3,16.4777681 3,14.6 L3,3.4 C3,1.52223185 4.52223185,0 6.4,0 Z"
+          fill="#85EBBC"
+        ></path>
+        <path
+          d="M12,0 L12,5.5 C12,6.05228475 12.4477153,6.5 13,6.5 L19,6.5 L19,6.5 L12,0 Z"
+          fill="#64B18D"
+        ></path>
+      </g>
+    </svg>
+
+    <svg
+      width="19px"
+      height="21px"
+      viewBox="0 0 19 21"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <g fill="none" fill-rule="evenodd">
+        <path
+          d="M3.4,4 L11.5,4 L11.5,4 L16,8.25 L16,17.6 C16,19.4777681 14.4777681,21 12.6,21 L3.4,21 C1.52223185,21 0,19.4777681 0,17.6 L0,7.4 C0,5.52223185 1.52223185,4 3.4,4 Z"
+          fill="#C4FFE4"
+        ></path>
+        <path
+          d="M6.4,0 L12,0 L12,0 L19,6.5 L19,14.6 C19,16.4777681 17.4777681,18 15.6,18 L6.4,18 C4.52223185,18 3,16.4777681 3,14.6 L3,3.4 C3,1.52223185 4.52223185,0 6.4,0 Z"
+          fill="#85EBBC"
+        ></path>
+        <path
+          d="M12,0 L12,5.5 C12,6.05228475 12.4477153,6.5 13,6.5 L19,6.5 L19,6.5 L12,0 Z"
+          fill="#64B18D"
+        ></path>
+      </g>
+    </svg>
+  </div>
+</button>
       </div>
 
-      <button id="createBtn" class="create-btn" type="button">✏️ Tạo Link Ngay</button>
+      <button id="createBtn" class="super-button" type="button">
+  <span id="createBtnText">Tạo Link Ngay</span>
+  <svg fill="none" viewBox="0 0 24 24" class="arrow" aria-hidden="true">
+    <path
+      stroke-linejoin="round"
+      stroke-linecap="round"
+      stroke-width="2"
+      stroke="currentColor"
+      d="M5 12h14M13 6l6 6-6 6"
+    ></path>
+  </svg>
+</button>
              <a
   id="facebookPostQuickBtn"
   class="facebook-quick-btn hidden"
@@ -100,23 +157,27 @@
 </a>
 
       <div id="resultSection" class="result-section hidden">
-        <div id="resultBoxCard" class="result-box">
-          <div class="result-top">
-            <div class="result-title">✅ Link Nhận Mã</div>
-            <button id="copyBtn" class="copy-btn" type="button">📋 Copy</button>
-          </div>
+        <div id="resultBox" class="result-box">
+  <div class="result-top">
+  <div class="result-title">✅ Link Nhận Mã</div>
 
-          <div id="copyHint" class="copy-hint">
-            👉 Copy link này để lấy mã
-          </div>
+  <div class="copy-btn-wrap">
+    <div id="copyArrow" class="copy-arrow hidden"></div>
+    <button id="copyBtn" class="copy-btn" type="button">📋 Copy</button>
+  </div>
+</div>
 
-          <textarea
-            id="affiliateLinkValue"
-            class="result-text"
-            readonly
-            placeholder="Link sau khi tạo sẽ hiển thị ở đây"
-          ></textarea>
-        </div>
+<div id="copyGuideText" class="copy-guide-text hidden">
+  nhấn copy link này mới có mã nhé
+</div>
+
+  <textarea
+    id="affiliateLinkValue"
+    class="result-text"
+    readonly
+    placeholder="Link sau khi tạo sẽ hiển thị ở đây"
+  ></textarea>
+</div>
 
         <a
           id="buyNowBtn"
@@ -144,10 +205,6 @@
 
     <section class="card guide-card">
       <div class="guide-title-box">
-  <h2 class="guide-title">
-    <span class="guide-title-icon">ℹ️</span>
-    <span class="guide-title-text">Hướng dẫn</span>
-  </h2>
 </div>
 
       <div class="guide-tabs">
@@ -294,6 +351,18 @@
     });
   </script>
 
-  <script src="/app.js"></script>
+  <div id="pageLoader" class="page-loader hidden" aria-hidden="true">
+  <div class="page-loader-box">
+    <svg class="pl" width="240" height="240" viewBox="0 0 240 240">
+      <circle class="pl__ring pl__ring--a" cx="120" cy="120" r="105" fill="none" stroke-width="20" stroke-dasharray="0 660" stroke-dashoffset="-330" stroke-linecap="round"></circle>
+      <circle class="pl__ring pl__ring--b" cx="120" cy="120" r="35" fill="none" stroke-width="20" stroke-dasharray="0 220" stroke-dashoffset="-110" stroke-linecap="round"></circle>
+      <circle class="pl__ring pl__ring--c" cx="85" cy="120" r="70" fill="none" stroke-width="20" stroke-dasharray="0 440" stroke-linecap="round"></circle>
+      <circle class="pl__ring pl__ring--d" cx="155" cy="120" r="70" fill="none" stroke-width="20" stroke-dasharray="0 440" stroke-linecap="round"></circle>
+    </svg>
+    <div class="page-loader-text">Đang tạo link Shopee có mã giảm giá, chờ một chút...</div>
+  </div>
+</div>
+
+<script src="/app.js"></script>
 </body>
 </html>
