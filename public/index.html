@@ -203,13 +203,30 @@
 </div>
 
       <div class="guide-tabs">
-        <button type="button" class="guide-tab-btn active" data-tab="image">
-          🖼️ Hướng dẫn hình ảnh
-        </button>
-        <button type="button" class="guide-tab-btn" data-tab="text">
-          📄 Hướng dẫn chữ
-        </button>
-      </div>
+  <button type="button" class="guide-tab-btn active" data-tab="video">
+    🎬 Hướng dẫn video
+  </button>
+  <button type="button" class="guide-tab-btn" data-tab="image">
+    🖼️ Hướng dẫn hình ảnh
+  </button>
+  <button type="button" class="guide-tab-btn" data-tab="text">
+    📄 Hướng dẫn chữ
+  </button>
+</div>
+<div id="guidePanelVideo" class="guide-panel hidden">
+  <div class="guide-video-wrap">
+    <video
+      class="guide-video"
+      controls
+      playsinline
+      preload="metadata"
+      poster="/images/video-cover.jpg"
+    >
+      <source src="/videos/guide-video.mp4" type="video/mp4" />
+      Trình duyệt của bạn không hỗ trợ video.
+    </video>
+  </div>
+</div>
 
       <div id="guidePanelText" class="guide-panel hidden">
         <ol class="guide-list">
@@ -263,6 +280,20 @@
               decoding="async"
             />
           </article>
+<div id="guidePanelVideo" class="guide-panel hidden">
+  <div class="guide-video-wrap">
+    <video
+      class="guide-video"
+      controls
+      playsinline
+      preload="metadata"
+      poster="/images/video-cover.jpg"
+    >
+      <source src="/videos/guide-video.mp4" type="video/mp4" />
+      Trình duyệt của bạn không hỗ trợ video.
+    </video>
+  </div>
+</div>
 
           <article class="guide-image-step">
             <div class="guide-image-title">Bước 2: Dán link vào web và tạo link</div>
@@ -308,43 +339,41 @@
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const guideTabButtons = document.querySelectorAll(".guide-tab-btn");
-      const guidePanelText = document.getElementById("guidePanelText");
-      const guidePanelImage = document.getElementById("guidePanelImage");
-      const guideImageList = document.querySelector(".guide-image-list");
+  document.addEventListener("DOMContentLoaded", () => {
+    const guideTabButtons = document.querySelectorAll(".guide-tab-btn");
+    const guidePanels = {
+      text: document.getElementById("guidePanelText"),
+      image: document.getElementById("guidePanelImage"),
+      video: document.getElementById("guidePanelVideo")
+    };
+    const guideImageList = document.querySelector(".guide-image-list");
 
-      function switchGuideTab(tab) {
-        guideTabButtons.forEach((btn) => {
-          btn.classList.toggle("active", btn.dataset.tab === tab);
-        });
-
-        if (tab === "text") {
-          guidePanelText.classList.remove("hidden");
-          guidePanelText.classList.add("active");
-          guidePanelImage.classList.add("hidden");
-          guidePanelImage.classList.remove("active");
-        } else {
-          guidePanelImage.classList.remove("hidden");
-          guidePanelImage.classList.add("active");
-          guidePanelText.classList.add("hidden");
-          guidePanelText.classList.remove("active");
-
-          if (guideImageList) {
-            guideImageList.scrollTo({ left: 0, behavior: "smooth" });
-          }
-        }
-      }
-
-      guideTabButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-          switchGuideTab(button.dataset.tab);
-        });
+    function switchGuideTab(tab) {
+      guideTabButtons.forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.tab === tab);
       });
 
-      switchGuideTab("image");
+      Object.entries(guidePanels).forEach(([key, panel]) => {
+        if (!panel) return;
+        const isActive = key === tab;
+        panel.classList.toggle("hidden", !isActive);
+        panel.classList.toggle("active", isActive);
+      });
+
+      if (tab === "image" && guideImageList) {
+        guideImageList.scrollTo({ left: 0, behavior: "smooth" });
+      }
+    }
+
+    guideTabButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        switchGuideTab(button.dataset.tab);
+      });
     });
-  </script>
+
+    switchGuideTab("video");
+  });
+</script>
 
   <div id="pageLoader" class="page-loader hidden" aria-hidden="true">
   <div class="page-loader-box">
