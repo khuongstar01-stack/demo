@@ -1785,3 +1785,18 @@ a {
     white-space: normal;
   }
 }
+.guide-video-wrap {
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.guide-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 9 / 16; /* video dọc điện thoại */
+  background: #000;
+}
