@@ -1,7 +1,3 @@
-const copyArrow = document.getElementById("copyArrow");
-const copyGuideText = document.getElementById("copyGuideText");
-const COPY_GUIDE_DEFAULT = "nhấn copy link này mới có mã nhé";
-const COPY_GUIDE_AFTER_COPY = "chọn ⓕ Bình Luận Link Nhận Mã Giảm Giá rồi bình luận link đó vào bài viết, vào đường dẫn shopee vừa bình luận đó là có mã giảm giá nhé";
 const productUrlInput = document.getElementById("productUrl");
 const pasteBtn = document.getElementById("pasteBtn");
 const createBtn = document.getElementById("createBtn");
@@ -120,7 +116,6 @@ function playCreatedResultEffect() {
   void resultBox.offsetWidth;
   resultBox.classList.add("is-created");
 
-  showCopyGuide();
   showCopyHintWaiting();
 }
 function scrollToResultBox() {
@@ -157,7 +152,6 @@ function resetResult() {
     resultSection.classList.add("hidden");
   }
 
-  hideCopyGuide();
   resetCopyHint();
   clearResultEffect();
 }
@@ -286,19 +280,6 @@ async function copyAffiliateLink() {
 
   try {
     await navigator.clipboard.writeText(affiliateLinkValue.value);
-
-    if (copyGuideText) {
-  copyGuideText.classList.remove("hidden");
-  copyGuideText.classList.remove("is-after-copy", "is-popup");
-  copyGuideText.classList.add("is-popup-overlay");
-  copyGuideText.textContent = COPY_GUIDE_AFTER_COPY;
-}
-
-resultBox?.classList.add("copy-popup-open");
-
-    copyArrow?.classList.add("hidden");
-    copyBtn?.classList.remove("is-attention");
-
     showToast("Đã copy link!");
     setAlert("success", "Đã copy link.");
   } catch {
