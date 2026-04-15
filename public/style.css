@@ -339,33 +339,9 @@ a {
   transform: translateY(-1px);
 }
 
-.copy-btn.attention {
-  animation: copyBtnPulse 1.05s ease-in-out infinite;
-  box-shadow:
-    0 0 0 5px rgba(255, 106, 61, 0.1),
-    0 12px 24px rgba(255, 106, 61, 0.22);
-}
-
-.copy-btn.attention::before {
-  content: "";
-  position: absolute;
-  left: -34px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 24px;
-  line-height: 1;
-  animation: copyArrowBounce 0.9s ease-in-out infinite;
-  filter: drop-shadow(0 4px 10px rgba(240, 88, 51, 0.22));
-}
-
-.copy-btn.attention::after {
-  content: "";
-  position: absolute;
-  inset: -5px;
-  border-radius: 16px;
-  box-shadow: 0 0 0 6px rgba(244, 82, 47, 0.08);
-  animation: copyBtnHalo 1.1s ease-in-out infinite;
-  pointer-events: none;
+.copy-btn-wrap {
+  display: inline-flex;
+  align-items: center;
 }
 
 .copy-hint {
@@ -482,32 +458,16 @@ a {
   }
 }
 
-@keyframes copyBtnPulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
   50% {
     transform: scale(1.06);
   }
 }
 
-@keyframes copyArrowBounce {
-  0%,
-  100% {
-    transform: translateY(-50%) translateX(0);
-  }
   50% {
     transform: translateY(-50%) translateX(6px);
   }
 }
 
-@keyframes copyBtnHalo {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.7;
-  }
   50% {
     transform: scale(1.04);
     opacity: 1;
@@ -798,11 +758,7 @@ a {
     font-size: 21px;
   }
 
-  .copy-btn.attention::before {
-    left: -42px;
-    font-size: 28px;
-  }
-
+  
   .copy-hint {
     font-size: 18px;
     padding: 11px 14px;
@@ -1466,7 +1422,7 @@ a {
   justify-content: center;
 }
 .icon-conatiner svg {
-  width: 43px;
+  width: 24px;
   height: 45px;
   display: block;
 }
@@ -1746,118 +1702,22 @@ a {
   }
 }
 
-.copy-btn-wrap {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-}
-
-.copy-arrow {
-  position: absolute;
-  right: calc(100% + 18px);
-  top: 50%;
-  transform: translateY(-50%);
-  width: 170px;
-  height: 16px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #ff2d2d 0%, #ff5a36 55%, #ff7a45 100%);
-  box-shadow:
-    0 6px 18px rgba(255, 74, 46, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35);
-  animation: copyArrowMove 0.9s ease-in-out infinite;
-}
-
-.copy-arrow::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.38) 0%,
-    rgba(255, 255, 255, 0.08) 45%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  pointer-events: none;
-}
-
-.copy-arrow::after {
-  content: "";
-  position: absolute;
-  right: -30px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0;
-  height: 0;
-  border-top: 18px solid transparent;
-  border-bottom: 18px solid transparent;
-  border-left: 30px solid #ff5a36;
-  filter: drop-shadow(0 4px 10px rgba(255, 74, 46, 0.24));
-}
-
-.copy-guide-text {
-  margin: 8px 0 10px;
-  text-align: center;
-  color: #1296db;
-  font-size: 34px;
-  font-weight: 700;
-  line-height: 1.25;
-  letter-spacing: 0.2px;
-  text-shadow: 0 2px 8px rgba(19, 150, 219, 0.16);
-  animation: copyGuideBlink 1.2s ease-in-out infinite;
-}
-
-@keyframes copyArrowMove {
-  0%, 100% {
-    transform: translateY(-50%) translateX(0) scale(1);
-  }
   50% {
     transform: translateY(-50%) translateX(12px) scale(1.05);
   }
 }
 
-@keyframes copyGuideBlink {
-  0%, 100% {
-    opacity: 1;
-  }
   50% {
     opacity: 0.55;
   }
 }
 
-.copy-guide-text.is-popup {
-  margin: 14px 0 16px;
-  padding: 14px 16px;
-  border-radius: 16px;
-  background: linear-gradient(180deg, #ffffff 0%, #f4fbff 100%);
-  border: 1px solid rgba(34, 127, 230, 0.18);
-  box-shadow:
-    0 14px 28px rgba(32, 86, 170, 0.16),
-    0 4px 10px rgba(32, 86, 170, 0.08);
-  color: #187fd6;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1.55;
-  text-align: center;
-  text-shadow: none;
-  animation: copyPopupIn 0.28s ease, copyPopupFloat 2.6s ease-in-out infinite;
-}
-
-@keyframes copyPopupIn {
-  0% {
-    opacity: 0;
-    transform: translateY(12px) scale(0.96);
-  }
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
 }
 
-@keyframes copyPopupFloat {
-  0%, 100% {
-    transform: translateY(0);
-  }
   50% {
     transform: translateY(-2px);
   }
@@ -1868,73 +1728,60 @@ a {
   overflow: hidden;
 }
 
-.result-box .result-text {
-  transition: filter 0.28s ease, opacity 0.28s ease, transform 0.28s ease;
-}
-
-.result-box.copy-popup-open .result-text {
-  filter: blur(5px);
-  opacity: 0.28;
-  transform: scale(0.985);
-  user-select: none;
-}
-
-.copy-guide-text.is-popup-overlay {
-  position: absolute;
-  left: 20px;
-  right: 20px;
-  top: 76px;
-  z-index: 6;
-  margin: 0;
-  padding: 18px 20px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(70, 140, 235, 0.22);
-  box-shadow:
-    0 18px 40px rgba(31, 71, 153, 0.18),
-    0 6px 18px rgba(31, 71, 153, 0.08);
-  color: #1976d2;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1.6;
-  text-align: center;
-  text-shadow: none;
-  animation: copyPopupIn 0.28s ease;
-}
-
 @media (max-width: 640px) {
-  .copy-arrow {
-    width: 110px;
-    height: 12px;
-    right: calc(100% + 10px);
+  
+  
+  
+  
   }
 
-  .copy-arrow::after {
-    right: -22px;
-    border-top: 13px solid transparent;
-    border-bottom: 13px solid transparent;
-    border-left: 22px solid #ff5a36;
+/* ===== Mobile fix for result area ===== */
+@media (max-width: 640px) {
+  .result-section {
+    padding: 10px;
   }
 
-  .copy-guide-text {
-    font-size: 22px;
-    margin: 10px 0 12px;
+  .result-box {
+    padding: 12px;
+    border-radius: 16px;
   }
 
-  .copy-guide-text.is-popup {
-    font-size: 15px;
-    padding: 12px 13px;
+  .result-top {
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .result-title {
+    font-size: 16px;
+    line-height: 1.2;
+  }
+
+  .copy-btn {
+    min-width: 84px;
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 10px;
+    font-size: 14px;
+  }
+
+  
+  
+  
+  
+  
+  .result-text {
+    min-height: 82px;
+    font-size: 13px;
     line-height: 1.5;
   }
 
-  .copy-guide-text.is-popup-overlay {
-    left: 14px;
-    right: 14px;
-    top: 72px;
-    padding: 14px 14px;
+  .action-btn {
+    min-height: 46px;
+    padding: 10px 12px;
+    border-radius: 14px;
     font-size: 15px;
-    line-height: 1.5;
+    line-height: 1.2;
+    white-space: normal;
   }
 }
