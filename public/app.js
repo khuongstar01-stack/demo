@@ -1,3 +1,5 @@
+const toastCard = document.querySelector("#toastPopup .toast-card");
+const toastIcon = document.querySelector("#toastPopup .toast-icon");
 const productUrlInput = document.getElementById("productUrl");
 const pasteBtn = document.getElementById("pasteBtn");
 const createBtn = document.getElementById("createBtn");
@@ -37,18 +39,35 @@ function clearAlert() {
   alertBox.textContent = "";
 }
 
-function showToast(message) {
+function showToast(message, type = "success") {
   if (!toastPopup || !toastMessage) return;
 
   toastMessage.textContent = message;
+
+  if (toastCard) {
+    toastCard.classList.remove("success", "error");
+    toastCard.classList.add(type);
+  }
+
+  if (toastIcon) {
+    toastIcon.classList.remove("success", "error");
+
+    if (type === "error") {
+      toastIcon.classList.add("error");
+      toastIcon.textContent = "✕";
+    } else {
+      toastIcon.classList.add("success");
+      toastIcon.textContent = "✓";
+    }
+  }
+
   toastPopup.classList.remove("hidden");
 
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => {
     toastPopup.classList.add("hidden");
-  }, 1800);
+  }, 2200);
 }
-
 function normalizeUrl(value) {
   const trimmed = String(value || "").trim();
   if (!trimmed) return "";
@@ -220,7 +239,7 @@ async function createLink() {
 
   showPageLoader();
 
-  try {
+    try {
     const params = new URLSearchParams({ url: inputUrl });
 
     const res = await fetch(`/api/create-link?${params.toString()}`, {
@@ -262,7 +281,8 @@ async function createLink() {
     }, 450);
   } catch (error) {
     hidePageLoader();
-    setAlert("error", error.message || "Đã có lỗi xảy ra.");
+    clearAlert();
+    showToast(error.message || "Tạo link không thành công!", "error");
   } finally {
     creating = false;
 
