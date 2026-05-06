@@ -316,6 +316,31 @@
     </section>
   </main>
 
+<div id="floatingNotice" class="notice-modal hidden" role="dialog" aria-live="polite">
+  <div class="floating-notice-card">
+    <button id="floatingNoticeClose" class="floating-notice-close" type="button" aria-label="Đóng thông báo">
+      ×
+    </button>
+
+    <div class="floating-notice-badge">🔔</div>
+
+    <div class="floating-notice-content">
+      <div id="floatingNoticeTitle" class="floating-notice-title">Thông báo</div>
+      <div id="floatingNoticeMessage" class="floating-notice-message"></div>
+
+      <a
+        id="floatingNoticeButton"
+        class="floating-notice-button hidden"
+        href="#"
+        target="_self"
+        rel="noopener noreferrer"
+      >
+        Xem thêm
+      </a>
+    </div>
+  </div>
+</div>
+
   <div id="toastPopup" class="toast-popup hidden">
     <div class="toast-card">
       <div class="toast-icon">✓</div>
@@ -368,10 +393,11 @@
       <circle class="pl__ring pl__ring--c" cx="85" cy="120" r="70" fill="none" stroke-width="20" stroke-dasharray="0 440" stroke-linecap="round"></circle>
       <circle class="pl__ring pl__ring--d" cx="155" cy="120" r="70" fill="none" stroke-width="20" stroke-dasharray="0 440" stroke-linecap="round"></circle>
     </svg>
-    <div class="page-loader-text">Đang tạo link Shopee có mã giảm giá, chờ một chút...</div>
+    <div class="page-loader-text">Chờ chút nhé...</div>
   </div>
 </div>
 
+<script src="/notice.js"></script>
 <script src="/app.js"></script>
 </body>
 </html>
