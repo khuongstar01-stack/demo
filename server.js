@@ -215,8 +215,101 @@ app.get("/api/create-link", async (req, res) => {
   }
 });
 
+
+const fs = require("fs/promises");
+
+app.use(express.json());
+
+const NOTICE_FILE =
+  process.env.NOTICE_FILE || path.join(__dirname, "notice.json");
+
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
+
+const DEFAULT_NOTICE = {
+  enabled: true,
+  title: "Thông báo",
+  message: "Dán link Shopee để nhận mã giảm giá nhanh chóng.",
+  buttonText: "Xem hướng dẫn",
+  buttonUrl: "#guidePanelVideo",
+  position: "bottom-right",
+  showOncePerSession: false,
+  version: "default"
+};
+
+async function readNotice() {
+  try {
+    const raw = await fs.readFile(NOTICE_FILE, "utf8");
+    return {
+      ...DEFAULT_NOTICE,
+      ...JSON.parse(raw)
+    };
+  } catch {
+    return DEFAULT_NOTICE;
+  }
+}
+
+async function saveNotice(data) {
+  await fs.mkdir(path.dirname(NOTICE_FILE), { recursive: true });
+
+  const noticeData = {
+    enabled: Boolean(data.enabled),
+    title: String(data.title || "").trim(),
+    message: String(data.message || "").trim(),
+    buttonText: String(data.buttonText || "").trim(),
+    buttonUrl: String(data.buttonUrl || "").trim(),
+    position: data.position || "bottom-right",
+    showOncePerSession: Boolean(data.showOncePerSession),
+    version: String(Date.now())
+  };
+
+  await fs.writeFile(
+    NOTICE_FILE,
+    JSON.stringify(noticeData, null, 2),
+    "utf8"
+  );
+
+  return noticeData;
+}
+
+function checkAdminPassword(req, res, next) {
+  const password = req.headers["x-admin-password"];
+
+  if (!ADMIN_PASSWORD) {
+    return res.status(500).json({
+      message: "Chưa cấu hình ADMIN_PASSWORD"
+    });
+  }
+
+  if (password !== ADMIN_PASSWORD) {
+    return res.status(401).json({
+      message: "Sai mật khẩu quản trị"
+    });
+  }
+
+  next();
+}
+
+app.get("/api/notice", async (req, res) => {
+  const notice = await readNotice();
+  res.json(notice);
+});
+
+
+app.post("/api/admin/notice", checkAdminPassword, async (req, res) => {
+  const notice = await saveNotice(req.body);
+  res.json({
+    success: true,
+    notice
+  });
+});
+
 app.get("*", (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+
+app.get("/admin/notice", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "admin-notice.html"));
 });
 
 app.listen(PORT, "0.0.0.0", () => {
