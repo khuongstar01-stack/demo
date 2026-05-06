@@ -1,0 +1,10 @@
+{
+  "enabled": true,
+  "title": "Thông báo",
+  "message": "Tạm Thời Hết Mã Giảm Giá\n20H có mã lại nhé mọi người",
+  "buttonText": "Xem hướng dẫn",
+  "buttonUrl": "#guidePanelVideo",
+  "position": "bottom-left",
+  "showOncePerSession": false,
+  "version": "1778054651519"
+}
