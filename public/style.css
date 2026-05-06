@@ -1126,19 +1126,6 @@ a {
     margin-bottom: 10px;
   }
 }
-.guide-title-box {
-  position: relative;
-  margin-bottom: 14px;
-  padding: 14px 16px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #ffffff, #f6f7fb);
-  border: 1.5px solid rgba(244, 82, 47, 0.18);
-  box-shadow:
-    0 10px 24px rgba(34, 43, 69, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.85);
-  overflow: hidden;
-}
-
 .guide-title-box::before {
   content: "";
   position: absolute;
@@ -1765,11 +1752,6 @@ a {
     font-size: 14px;
   }
 
-  
-  
-  
-  
-  
   .result-text {
     min-height: 82px;
     font-size: 13px;
@@ -1799,4 +1781,759 @@ a {
   height: auto;
   aspect-ratio: 9 / 16; /* video dọc điện thoại */
   background: #000;
+}
+.toast-card.success {
+  background: #ffffff;
+  border: 1px solid #efefef;
+}
+
+.toast-card.error {
+  background: #fff7f7;
+  border: 1px solid #ffd4d4;
+}
+
+.toast-icon.success {
+  border: 3px solid #dff1d8;
+  color: #8fd27d;
+}
+
+.toast-icon.error {
+  border: 3px solid #ffd0d0;
+  color: #ff6b6b;
+}
+/* ===== Floating Notice Center Modal ===== */
+.floating-notice {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9998;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(0, 0, 0, 0.38);
+  opacity: 0;
+  transform: scale(1);
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.floating-notice.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.floating-notice.hidden {
+  display: none !important;
+}
+
+.floating-notice.notice-bottom-right,
+.floating-notice.notice-bottom-left,
+.floating-notice.notice-top-right,
+.floating-notice.notice-top-left {
+  inset: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  top: 0 !important;
+}
+
+.floating-notice-card {
+  position: relative;
+  width: min(420px, 100%);
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  display: flex;
+  gap: 12px;
+  padding: 18px 46px 18px 16px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #fff7f3, #ffffff);
+  border: 1px solid rgba(238, 77, 45, 0.25);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.28);
+  transform: translateY(12px) scale(0.96);
+  transition: transform 0.25s ease;
+}
+
+.floating-notice.show .floating-notice-card {
+  transform: translateY(0) scale(1);
+}
+
+.floating-notice-badge {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: #ee4d2d;
+  color: #ffffff;
+  font-size: 21px;
+  box-shadow: 0 8px 18px rgba(238, 77, 45, 0.28);
+}
+
+.floating-notice-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.floating-notice-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #222;
+  margin-bottom: 6px;
+}
+
+.floating-notice-message {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #555;
+  white-space: pre-line;
+}
+
+.floating-notice-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 14px;
+  padding: 10px 15px;
+  border-radius: 999px;
+  background: #ee4d2d;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 8px 18px rgba(238, 77, 45, 0.24);
+}
+
+.floating-notice-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.07);
+  color: #555;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.floating-notice-close:hover {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+@media (max-width: 640px) {
+  .floating-notice {
+    padding: 14px;
+  }
+
+  .floating-notice-card {
+    width: 100%;
+    padding: 16px 42px 16px 14px;
+    border-radius: 20px;
+  }
+
+  .floating-notice-title {
+    font-size: 16px;
+  }
+
+  .floating-notice-message {
+    font-size: 13.5px;
+  }
+}
+/* ===== Notice Modal: không ảnh hưởng layout mobile ===== */
+.notice-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.38);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.notice-modal.hidden {
+  display: none !important;
+}
+
+.notice-modal.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.notice-modal .floating-notice-card {
+  position: relative;
+  width: min(420px, 100%);
+  max-height: calc(100vh - 36px);
+  overflow-y: auto;
+  display: flex;
+  gap: 12px;
+  padding: 18px 46px 18px 16px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #fff7f3, #ffffff);
+  border: 1px solid rgba(238, 77, 45, 0.25);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.28);
+  transform: translateY(12px) scale(0.96);
+  transition: transform 0.25s ease;
+}
+
+.notice-modal.show .floating-notice-card {
+  transform: translateY(0) scale(1);
+}
+
+.notice-modal .floating-notice-badge {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: #ee4d2d;
+  color: #ffffff;
+  font-size: 21px;
+  box-shadow: 0 8px 18px rgba(238, 77, 45, 0.28);
+}
+
+.notice-modal .floating-notice-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.notice-modal .floating-notice-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #222;
+  margin-bottom: 6px;
+}
+
+.notice-modal .floating-notice-message {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #555;
+  white-space: pre-line;
+}
+
+.notice-modal .floating-notice-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 14px;
+  padding: 10px 15px;
+  border-radius: 999px;
+  background: #ee4d2d;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 8px 18px rgba(238, 77, 45, 0.24);
+}
+
+.notice-modal .floating-notice-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.07);
+  color: #555;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .notice-modal {
+    padding: 14px;
+  }
+
+  .notice-modal .floating-notice-card {
+    width: 100%;
+    max-width: 360px;
+    padding: 16px 42px 16px 14px;
+    border-radius: 20px;
+  }
+
+  .notice-modal .floating-notice-title {
+    font-size: 16px;
+  }
+
+  .notice-modal .floating-notice-message {
+    font-size: 13.5px;
+  }
+}
+/* ===== FIX MOBILE KHÔNG BỊ KÉO NGANG ===== */
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important;
+}
+
+body {
+  position: relative;
+}
+
+.page {
+  width: 100%;
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+  overflow-x: hidden;
+}
+
+.card,
+.hero,
+.input-wrap,
+.result-section,
+.result-box,
+.guide-card,
+.guide-panel,
+.guide-video-wrap {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.super-button,
+.facebook-quick-btn,
+.action-btn,
+.buy-btn,
+.share-btn {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Chỉ cho phần hướng dẫn hình ảnh kéo ngang bên trong nó,
+   không cho kéo ngang cả trang */
+.guide-image-list,
+.guide-tabs {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* ===== FIX NOTICE MODAL Ở GIỮA MÀN HÌNH, KHÔNG LÀM RỘNG WEB ===== */
+.notice-modal {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  min-height: 100dvh;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  box-sizing: border-box;
+  overflow: hidden !important;
+  background: rgba(0, 0, 0, 0.38);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.notice-modal.hidden {
+  display: none !important;
+}
+
+.notice-modal.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.notice-modal .floating-notice-card {
+  width: min(340px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px);
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  gap: 12px;
+  padding: 16px 42px 16px 14px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #fff7f3, #ffffff);
+  border: 1px solid rgba(238, 77, 45, 0.25);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.28);
+  transform: translateY(10px) scale(0.96);
+  transition: transform 0.25s ease;
+}
+
+.notice-modal.show .floating-notice-card {
+  transform: translateY(0) scale(1);
+}
+
+.notice-modal .floating-notice-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.notice-modal .floating-notice-message {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .card {
+    width: 100%;
+  }
+
+  .notice-modal {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .notice-modal .floating-notice-card {
+    width: min(340px, calc(100vw - 24px));
+    max-width: calc(100vw - 24px);
+  }
+}
+/* ===== FINAL FIX: KHÓA TRÀN NGANG MOBILE ===== */
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important;
+  overscroll-behavior-x: none;
+}
+
+html.notice-open,
+body.notice-open {
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+
+body {
+  margin: 0;
+  position: relative;
+}
+
+.page {
+  width: 100%;
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  overflow-x: hidden !important;
+}
+
+.card,
+.hero,
+.input-wrap,
+.result-section,
+.result-box,
+.guide-card,
+.guide-panel,
+.guide-video-wrap,
+.voucher-image-wrap {
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.super-button,
+.facebook-quick-btn,
+.action-btn,
+.buy-btn,
+.share-btn {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden !important;
+}
+
+.guide-tabs,
+.guide-image-list {
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+}
+
+.guide-image-list {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* ===== FINAL FIX NOTICE MODAL ===== */
+.notice-modal {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+
+  width: auto !important;
+  max-width: none !important;
+  min-width: 0 !important;
+
+  min-height: 100svh;
+  z-index: 9998;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 12px;
+  box-sizing: border-box;
+  overflow: hidden !important;
+
+  background: rgba(0, 0, 0, 0.38);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.notice-modal.hidden {
+  display: none !important;
+}
+
+.notice-modal.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.notice-modal .floating-notice-card {
+  position: relative;
+  width: 100%;
+  max-width: 330px;
+  min-width: 0;
+  margin: 0 auto;
+  box-sizing: border-box;
+
+  display: flex;
+  gap: 12px;
+
+  padding: 16px 42px 16px 14px;
+  border-radius: 20px;
+
+  background: linear-gradient(135deg, #fff7f3, #ffffff);
+  border: 1px solid rgba(238, 77, 45, 0.25);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.28);
+
+  overflow: hidden;
+  transform: translateY(10px) scale(0.96);
+  transition: transform 0.25s ease;
+}
+
+.notice-modal.show .floating-notice-card {
+  transform: translateY(0) scale(1);
+}
+
+.notice-modal .floating-notice-badge {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #ff4d2d, #ff714d);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 8px 18px rgba(238, 77, 45, 0.28);
+}
+
+.notice-modal .floating-notice-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notice-modal .floating-notice-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #222;
+  margin-bottom: 6px;
+}
+
+.notice-modal .floating-notice-message {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #555;
+  white-space: pre-line;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.notice-modal .floating-notice-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 14px;
+  max-width: 100%;
+
+  padding: 10px 15px;
+  border-radius: 999px;
+
+  background: #ee4d2d;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+
+  white-space: normal;
+  text-align: center;
+}
+
+.notice-modal .floating-notice-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+
+  width: 28px;
+  height: 28px;
+
+  border: none;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.07);
+  color: #555;
+
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .page {
+    max-width: 100%;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .notice-modal {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .notice-modal .floating-notice-card {
+    max-width: calc(100vw - 24px);
+  }
+}
+/* ===== NOTICE CARD GRADIENT UI ===== */
+.notice-modal .floating-notice-card {
+  background-color: #4158D0 !important;
+  background-image: linear-gradient(
+    43deg,
+    #4158D0 0%,
+    #C850C0 46%,
+    #FFCC70 100%
+  ) !important;
+
+  border: none !important;
+  border-radius: 1rem !important;
+
+  box-shadow:
+    rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset,
+    rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset,
+    rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset,
+    rgba(0, 0, 0, 0.06) 0px 2px 1px,
+    rgba(0, 0, 0, 0.09) 0px 4px 2px,
+    rgba(0, 0, 0, 0.09) 0px 8px 4px,
+    rgba(0, 0, 0, 0.09) 0px 16px 8px,
+    rgba(0, 0, 0, 0.09) 0px 32px 16px !important;
+}
+
+/* Chữ trong bảng đổi sang trắng để dễ đọc */
+.notice-modal .floating-notice-title {
+  color: #ffffff !important;
+}
+
+.notice-modal .floating-notice-message {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+/* Icon chuông */
+.notice-modal .floating-notice-badge {
+  background: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+/* Nút xem hướng dẫn */
+.notice-modal .floating-notice-button {
+  background: rgba(255, 255, 255, 0.92) !important;
+  color: #4158D0 !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18) !important;
+}
+
+/* Nút đóng */
+.notice-modal .floating-notice-close {
+  background: rgba(255, 255, 255, 0.22) !important;
+  color: #ffffff !important;
+}
+.notice-modal .floating-notice-card {
+  min-height: 220px;
+  align-items: center;
+}
+/* ===== TEXT TO HƠN + NỔI HƠN CHO POPUP ===== */
+.notice-modal .floating-notice-title {
+  font-size: 30px !important;
+  line-height: 1.1 !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.3px;
+  color: #ffffff !important;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.15),
+    0 2px 0 rgba(0, 0, 0, 0.08),
+    0 4px 10px rgba(0, 0, 0, 0.22) !important;
+}
+
+.notice-modal .floating-notice-message {
+  font-size: 20px !important;
+  line-height: 1.45 !important;
+  font-weight: 800 !important;
+  color: rgba(255, 255, 255, 0.96) !important;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.18) !important;
+}
+
+.notice-modal .floating-notice-button {
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  padding: 14px 22px !important;
+  border-radius: 999px;
+  text-shadow: none !important;
+}
+
+/* mobile */
+@media (max-width: 640px) {
+  .notice-modal .floating-notice-title {
+    font-size: 24px !important;
+  }
+
+  .notice-modal .floating-notice-message {
+    font-size: 17px !important;
+  }
+
+  .notice-modal .floating-notice-button {
+    font-size: 16px !important;
+    padding: 12px 18px !important;
+  }
 }
