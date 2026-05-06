@@ -397,6 +397,31 @@
   </div>
 </div>
 
+<script>
+  (function () {
+    const loadedAt = Date.now();
+    const oneHour = 60 * 60 * 1000;
+
+    function reloadIfOldPage() {
+      const isOverOneHour = Date.now() - loadedAt > oneHour;
+
+      if (isOverOneHour) {
+        window.location.reload();
+      }
+    }
+
+    window.addEventListener("focus", reloadIfOldPage);
+
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) {
+        reloadIfOldPage();
+      }
+    });
+
+    window.addEventListener("pageshow", reloadIfOldPage);
+  })();
+</script>
+
 <script src="/notice.js"></script>
 <script src="/app.js"></script>
 </body>
