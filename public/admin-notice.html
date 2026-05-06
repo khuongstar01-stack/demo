@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản lý thông báo</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f6f6f6;
+      color: #222;
+    }
+
+    .admin-page {
+      max-width: 620px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .admin-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      font-size: 22px;
+      margin: 0 0 16px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin: 14px 0 6px;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 15px;
+    }
+
+    textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .row label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+
+    .row input {
+      width: auto;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 18px;
+      border: none;
+      border-radius: 14px;
+      padding: 14px;
+      background: #ee4d2d;
+      color: white;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .status {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 12px;
+      display: none;
+    }
+
+    .status.success {
+      display: block;
+      background: #ecfff4;
+      color: #08783f;
+    }
+
+    .status.error {
+      display: block;
+      background: #fff0f0;
+      color: #b00020;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="admin-page">
+    <section class="admin-card">
+      <h1>Quản lý thông báo nổi</h1>
+
+      <label>Mật khẩu quản trị</label>
+      <input id="adminPassword" type="password" placeholder="Nhập mật khẩu" />
+
+      <div class="row">
+        <label>
+          <input id="enabled" type="checkbox" />
+          Bật thông báo
+        </label>
+
+        <label>
+          <input id="showOncePerSession" type="checkbox" />
+          Chỉ hiện 1 lần
+        </label>
+      </div>
+
+      <label>Tiêu đề</label>
+      <input id="title" type="text" placeholder="Ví dụ: Thông báo" />
+
+      <label>Nội dung</label>
+      <textarea id="message" placeholder="Nhập nội dung thông báo"></textarea>
+
+      <label>Chữ trên nút</label>
+      <input id="buttonText" type="text" placeholder="Ví dụ: Xem hướng dẫn" />
+
+      <label>Link nút bấm</label>
+      <input id="buttonUrl" type="text" placeholder="Ví dụ: #guidePanelVideo hoặc link Facebook" />
+
+      <label>Vị trí hiển thị</label>
+      <select id="position">
+        <option value="bottom-right">Dưới bên phải</option>
+        <option value="bottom-left">Dưới bên trái</option>
+        <option value="top-right">Trên bên phải</option>
+        <option value="top-left">Trên bên trái</option>
+      </select>
+
+      <button id="saveBtn" type="button">Lưu thông báo</button>
+
+      <div id="statusBox" class="status"></div>
+    </section>
+  </main>
+
+  <script>
+    const fields = {
+      password: document.getElementById("adminPassword"),
+      enabled: document.getElementById("enabled"),
+      showOncePerSession: document.getElementById("showOncePerSession"),
+      title: document.getElementById("title"),
+      message: document.getElementById("message"),
+      buttonText: document.getElementById("buttonText"),
+      buttonUrl: document.getElementById("buttonUrl"),
+      position: document.getElementById("position")
+    };
+
+    const saveBtn = document.getElementById("saveBtn");
+    const statusBox = document.getElementById("statusBox");
+
+    function showStatus(type, message) {
+      statusBox.className = `status ${type}`;
+      statusBox.textContent = message;
+    }
+
+    async function loadNotice() {
+      try {
+        const res = await fetch("/api/notice", { cache: "no-store" });
+        const data = await res.json();
+
+        fields.enabled.checked = Boolean(data.enabled);
+        fields.showOncePerSession.checked = Boolean(data.showOncePerSession);
+        fields.title.value = data.title || "";
+        fields.message.value = data.message || "";
+        fields.buttonText.value = data.buttonText || "";
+        fields.buttonUrl.value = data.buttonUrl || "";
+        fields.position.value = data.position || "bottom-right";
+
+        const savedPassword = localStorage.getItem("notice_admin_password");
+        if (savedPassword) fields.password.value = savedPassword;
+      } catch {
+        showStatus("error", "Không tải được thông báo hiện tại.");
+      }
+    }
+
+    async function saveNotice() {
+      const password = fields.password.value.trim();
+
+      if (!password) {
+        showStatus("error", "Vui lòng nhập mật khẩu quản trị.");
+        return;
+      }
+
+      const payload = {
+        enabled: fields.enabled.checked,
+        showOncePerSession: fields.showOncePerSession.checked,
+        title: fields.title.value,
+        message: fields.message.value,
+        buttonText: fields.buttonText.value,
+        buttonUrl: fields.buttonUrl.value,
+        position: fields.position.value
+      };
+
+      try {
+        saveBtn.disabled = true;
+        saveBtn.textContent = "Đang lưu...";
+
+        const res = await fetch("/api/admin/notice", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-admin-password": password
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.message || "Lưu thất bại.");
+        }
+
+        localStorage.setItem("notice_admin_password", password);
+        showStatus("success", "Đã lưu thông báo thành công.");
+      } catch (error) {
+        showStatus("error", error.message || "Có lỗi xảy ra.");
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = "Lưu thông báo";
+      }
+    }
+
+    saveBtn.addEventListener("click", saveNotice);
+    loadNotice();
+  </script>
+</body>
+</html>
