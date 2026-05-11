@@ -43,7 +43,7 @@ function isShopeeProductHost(hostname = "") {
 }
 
 function isShopeeRedirectHost(hostname = "") {
-  return /^s\.shopee\.vn$/i.test(hostname);
+  return /^s\.shopee\.vn$/i.test(hostname) || /^shope\.ee$/i.test(hostname);
 }
 
 function isShopeeShortHost(hostname = "") {
@@ -76,7 +76,7 @@ function buildAffiliateLink(originUrl, affiliateId, shareChannelCode, subId) {
     params.set("share_channel_code", shareChannelCode);
   }
 
-  return `https://s.shopee.vn/an_redir?${params.toString()}`;
+  return `https://shope.ee/an_redir?${params.toString()}`;
 }
 
 async function resolveShopeeRedirectUrl(inputUrl) {
@@ -161,6 +161,22 @@ app.get("/api/config", (_req, res) => {
   });
 });
 
+function addFacebookMobileParams(rawUrl) {
+  const parsed = parseUrlSafe(rawUrl);
+
+  if (!parsed) {
+    return rawUrl;
+  }
+
+  parsed.searchParams.set("__mobile__", "1");
+  parsed.searchParams.set("channel_type", "fb");
+  parsed.searchParams.set("content_source", "fb");
+  parsed.searchParams.set("gads_t_sig", "");
+  parsed.searchParams.set("fb_content_id", "");
+  parsed.searchParams.set("fbclid", "");
+
+  return parsed.toString();
+}
 app.get("/api/create-link", async (req, res) => {
   try {
     const inputUrl = normalizeUrl(req.query.url);
@@ -185,8 +201,14 @@ app.get("/api/create-link", async (req, res) => {
     }
 
     const resolvedUrl = await resolveOriginUrl(inputUrl);
-    const originUrl = sanitizeOriginUrl(resolvedUrl);
-    const subId = buildSubId(sub1, sub2, sub3, sub4, sub5);
+
+// Link Shopee gốc sau khi đã resolve và làm sạch tracking cũ
+const cleanOriginUrl = sanitizeOriginUrl(resolvedUrl);
+
+// Gắn tham số mobile/Facebook vào link Shopee đó
+const originUrl = addFacebookMobileParams(cleanOriginUrl);
+
+const subId = buildSubId(sub1, sub2, sub3, sub4, sub5);
 
     const affiliateLink = buildAffiliateLink(
       originUrl,
@@ -303,13 +325,12 @@ app.post("/api/admin/notice", checkAdminPassword, async (req, res) => {
   });
 });
 
-app.get("*", (_req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
-
 app.get("/admin/notice", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "admin-notice.html"));
+});
+
+app.get("*", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 app.listen(PORT, "0.0.0.0", () => {
