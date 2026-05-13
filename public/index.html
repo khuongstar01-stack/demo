@@ -145,44 +145,46 @@
     ></path>
   </svg>
 </button>
-             <a
-  id="facebookPostQuickBtn"
-  class="facebook-quick-btn hidden"
-  href="#"
-  target="_blank"
-  rel="noopener noreferrer"
->
-  <span class="facebook-quick-btn-icon">ⓕ</span>
-  <span>Đến bài đăng Facebook</span>
-</a>
-
+             
       <div id="resultSection" class="result-section hidden">
-        <div id="resultBox" class="result-box">
-  <div class="result-top">
-  <div class="result-title">✅ Link Nhận Mã</div>
+  <div class="coupon-row">
+    <div class="coupon-left">
+      <span class="coupon-check">✓</span>
+      <span class="coupon-text">Mã 20% 250K ( back lượt 0H 9H 15H 20H )</span>
+    </div>
 
-  <div class="copy-btn-wrap">
-    <button id="copyBtn" class="copy-btn" type="button">📋 Copy</button>
+    <div class="coupon-actions">
+      <a
+        id="buyNowBtn"
+        class="coupon-btn coupon-buy disabled"
+        href="#"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        🛒 Mua Ngay
+      </a>
+
+      <button id="copyBtn" class="coupon-btn coupon-copy" type="button">
+        📋 Sao chép
+      </button>
+    </div>
   </div>
-</div>
 
   <textarea
     id="affiliateLinkValue"
-    class="result-text"
+    class="result-text-hidden"
     readonly
-    placeholder="Link sau khi tạo sẽ hiển thị ở đây"
   ></textarea>
-</div>
 
-        <a
-          id="buyNowBtn"
-          class="action-btn buy-btn disabled"
-          href="#"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          🛒 Mua Ngay
-        </a>
+  <a
+    id="shareBtn"
+    class="facebook-share-btn"
+    href="#"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+  </a>
+</div>
 
         <a
           id="shareBtn"
@@ -195,8 +197,7 @@
         </a>
       </div>
 
-      <div id="alertBox" class="alert hidden"></div>
-    </section>
+         </section>
 
     <section class="card guide-card">
       <div class="guide-title-box">
@@ -246,14 +247,7 @@
         </ol>
 
         <a
-          id="facebookPostBtn"
-          class="facebook-link hidden"
-          href="#"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          ⓕ Đến bài đăng Facebook
-        </a>
+                  </a>
 
         <div class="voucher-image-wrap">
           <img
