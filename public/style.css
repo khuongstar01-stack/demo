@@ -2537,3 +2537,173 @@ body {
     padding: 12px 18px !important;
   }
 }
+.result-section {
+  margin-top: 14px;
+}
+
+.coupon-row {
+  width: 100%;
+  min-height: 60px;
+  padding: 8px 10px;
+  border: 1px solid #e5e9f0;
+  border-radius: 12px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+}
+
+.coupon-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.coupon-check {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #18b957;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 800;
+  flex: 0 0 auto;
+}
+
+.coupon-text {
+  color: #172033;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.coupon-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.coupon-btn {
+  border: 0;
+  outline: 0;
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.coupon-buy {
+  background: #20c76b;
+}
+
+.coupon-copy {
+  background: #ff5638;
+}
+
+.coupon-btn:hover {
+  filter: brightness(0.97);
+}
+
+.coupon-btn:active {
+  transform: translateY(1px);
+}
+
+.coupon-buy.disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.result-text-hidden {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 520px) {
+  .coupon-row {
+    gap: 8px;
+  }
+
+  .coupon-text {
+    font-size: 12px;
+  }
+
+  .coupon-actions {
+    gap: 6px;
+  }
+
+  .coupon-btn {
+    min-height: 32px;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+}
+/* Làm thanh mã ở giữa to hơn và căn giữa */
+.result-section {
+  margin-top: 30px !important;
+  margin-bottom: 30px !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+.coupon-row {
+  width: 100% !important;
+  max-width: 664px;
+  min-height: 60px !important;
+  margin: 0 auto !important;
+  padding: 10px 12px !important;
+  border-radius: 10px !important;
+}
+
+.coupon-text {
+  font-size: 15px !important;
+  font-weight: 800 !important;
+}
+
+.coupon-btn {
+  min-height: 36px !important;
+  padding: 0 16px !important;
+  font-size: 13px !important;
+  border-radius: 7px !important;
+}
+
+/* Mobile */
+@media (max-width: 520px) {
+  .coupon-row {
+    width: 100% !important;
+    min-height: 56px !important;
+    padding: 9px 10px !important;
+  }
+
+  .coupon-text {
+    font-size: 12px !important;
+  }
+
+  .coupon-btn {
+    min-height: 32px !important;
+    padding: 0 10px !important;
+    font-size: 12px !important;
+  }
+}
