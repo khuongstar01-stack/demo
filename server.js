@@ -6,7 +6,6 @@ const app = express();
 const PORT = Number(process.env.PORT || 3000);
 
 const AFFILIATE_ID = String(process.env.AFFILIATE_ID || "").trim();
-const SHARE_CHANNEL_CODE = String(process.env.SHARE_CHANNEL_CODE || "4").trim();
 const DEFAULT_SUB1 = String(process.env.DEFAULT_SUB1 || "addlivetag").trim();
 const FACEBOOK_POST_URL = String(process.env.FACEBOOK_POST_URL || "").trim();
 const SITE_DOMAIN_TEXT = String(process.env.SITE_DOMAIN_TEXT || "linkcuaban.vn").trim();
