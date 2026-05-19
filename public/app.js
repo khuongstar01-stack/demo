@@ -1,3 +1,6 @@
+const copyArrow = document.getElementById("copyArrow");
+const copyGuideText = document.getElementById("copyGuideText");
+const COPY_GUIDE_DEFAULT = "📋 Copy link trước, rồi bấm chia sẻ để lấy mã";
 const toastCard = document.querySelector("#toastPopup .toast-card");
 const toastIcon = document.querySelector("#toastPopup .toast-icon");
 const productUrlInput = document.getElementById("productUrl");
