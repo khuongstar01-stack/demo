@@ -127,6 +127,28 @@ function clearResultEffect() {
   if (!resultBox) return;
   resultBox.classList.remove("is-created", "result-focus");
 }
+function lockShareBtn() {
+  if (!shareBtn) return;
+
+  shareBtn.classList.add("disabled");
+  shareBtn.setAttribute("aria-disabled", "true");
+  shareBtn.setAttribute("tabindex", "-1");
+  shareBtn.href = "#";
+}
+
+function unlockShareBtn() {
+  if (!shareBtn) return;
+
+  if (!facebookPostUrl || !currentAffiliateLink) {
+    lockShareBtn();
+    return;
+  }
+
+  shareBtn.classList.remove("disabled");
+  shareBtn.setAttribute("aria-disabled", "false");
+  shareBtn.removeAttribute("tabindex");
+  shareBtn.href = facebookPostUrl;
+}
 
 function playCreatedResultEffect() {
   if (!resultBox) return;
@@ -159,6 +181,7 @@ function scrollToResultBox() {
 
 function resetResult() {
   currentAffiliateLink = "";
+  lockShareBtn();
 
   if (affiliateLinkValue) affiliateLinkValue.value = "";
 
@@ -189,12 +212,20 @@ async function loadConfig() {
     }
 
     if (data.facebookPostUrl) {
-      facebookPostUrl = data.facebookPostUrl;
+  facebookPostUrl = data.facebookPostUrl;
 
-      if (facebookPostBtn) {
-        facebookPostBtn.href = data.facebookPostUrl;
-        facebookPostBtn.classList.remove("hidden");
-      }
+  if (facebookPostBtn) {
+    facebookPostBtn.href = data.facebookPostUrl;
+    facebookPostBtn.classList.remove("hidden");
+  }
+
+  if (facebookPostQuickBtn) {
+    facebookPostQuickBtn.href = data.facebookPostUrl;
+    facebookPostQuickBtn.classList.remove("hidden");
+  }
+
+  unlockShareBtn();
+}
 
       if (facebookPostQuickBtn) {
         facebookPostQuickBtn.href = data.facebookPostUrl;
@@ -261,7 +292,9 @@ async function createLink() {
 
     currentAffiliateLink = affiliateLink;
 
-    if (affiliateLinkValue) affiliateLinkValue.value = affiliateLink;
+if (affiliateLinkValue) affiliateLinkValue.value = affiliateLink;
+
+unlockShareBtn();
 
     if (buyNowBtn) {
       buyNowBtn.href = affiliateLink;
@@ -386,9 +419,16 @@ if (productUrlInput) {
 
 if (shareBtn) {
   shareBtn.addEventListener("click", (event) => {
+    if (!currentAffiliateLink) {
+      event.preventDefault();
+      showToast("Bạn cần tạo link trước!", "error");
+      return;
+    }
+
     if (!facebookPostUrl) {
       event.preventDefault();
-      setAlert("error", "Chưa cấu hình link Facebook.");
+      showToast("Chưa cấu hình link Facebook.", "error");
+      return;
     }
   });
 }
