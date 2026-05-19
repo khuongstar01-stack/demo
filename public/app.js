@@ -212,29 +212,19 @@ async function loadConfig() {
     }
 
     if (data.facebookPostUrl) {
-  facebookPostUrl = data.facebookPostUrl;
+      facebookPostUrl = data.facebookPostUrl;
 
-  if (facebookPostBtn) {
-    facebookPostBtn.href = data.facebookPostUrl;
-    facebookPostBtn.classList.remove("hidden");
-  }
-
-  if (facebookPostQuickBtn) {
-    facebookPostQuickBtn.href = data.facebookPostUrl;
-    facebookPostQuickBtn.classList.remove("hidden");
-  }
-
-  unlockShareBtn();
-}
+      if (facebookPostBtn) {
+        facebookPostBtn.href = data.facebookPostUrl;
+        facebookPostBtn.classList.remove("hidden");
+      }
 
       if (facebookPostQuickBtn) {
         facebookPostQuickBtn.href = data.facebookPostUrl;
         facebookPostQuickBtn.classList.remove("hidden");
       }
 
-      if (shareBtn) {
-        shareBtn.href = data.facebookPostUrl;
-      }
+      unlockShareBtn();
     }
 
     if (data.voucherImageUrl && voucherImages.length) {
@@ -244,7 +234,6 @@ async function loadConfig() {
     }
   } catch {}
 }
-
 async function createLink() {
   if (creating) return;
 
