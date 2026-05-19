@@ -2707,3 +2707,10 @@ body {
     font-size: 12px !important;
   }
 }
+.share-btn.disabled,
+.share-btn[aria-disabled="true"] {
+  opacity: 0.45;
+  pointer-events: none;
+  cursor: not-allowed;
+  filter: grayscale(1);
+}
