@@ -231,8 +231,10 @@ const DEFAULT_NOTICE = {
   message: "Dán link Shopee để nhận mã giảm giá nhanh chóng.",
   buttonText: "Xem hướng dẫn",
   buttonUrl: "#guidePanelVideo",
+imageUrl: "",
   position: "bottom-right",
   showOncePerSession: false,
+displaySeconds: 5,
   version: "default"
 };
 
@@ -303,14 +305,24 @@ async function readNotice() {
 async function saveNotice(data) {
   await fs.mkdir(path.dirname(NOTICE_FILE), { recursive: true });
 
+  const displaySeconds = Number(data.displaySeconds);
+
   const noticeData = {
     enabled: Boolean(data.enabled),
     title: String(data.title || "").trim(),
     message: String(data.message || "").trim(),
     buttonText: String(data.buttonText || "").trim(),
     buttonUrl: String(data.buttonUrl || "").trim(),
+    imageUrl: String(data.imageUrl || "").trim(),
     position: data.position || "bottom-right",
     showOncePerSession: Boolean(data.showOncePerSession),
+
+    // 0 = không tự tắt, chỉ tắt khi bấm X
+    // tối đa 300 giây để tránh nhập quá lớn
+    displaySeconds: Number.isFinite(displaySeconds)
+      ? Math.max(0, Math.min(300, Math.round(displaySeconds)))
+      : DEFAULT_NOTICE.displaySeconds,
+
     version: String(Date.now())
   };
 
@@ -355,13 +367,12 @@ app.post("/api/admin/notice", checkAdminPassword, async (req, res) => {
   });
 });
 
-app.get("*", (_req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
-
 app.get("/admin/notice", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "admin-notice.html"));
+});
+
+app.get("*", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 app.listen(PORT, "0.0.0.0", () => {
