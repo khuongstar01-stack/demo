@@ -185,8 +185,8 @@ app.get("/api/create-link", async (req, res) => {
     }
 
     const resolvedUrl = await resolveOriginUrl(inputUrl);
-    const originUrl = sanitizeOriginUrl(resolvedUrl);
-    const subId = buildSubId(sub1, sub2, sub3, sub4, sub5);
+const originUrl = canonicalizeShopeeProductUrl(resolvedUrl);
+const subId = buildSubId(sub1, sub2, sub3, sub4, sub5);
 
     const affiliateLink = buildAffiliateLink(
       originUrl,
@@ -235,6 +235,58 @@ const DEFAULT_NOTICE = {
   showOncePerSession: false,
   version: "default"
 };
+
+function canonicalizeShopeeProductUrl(rawUrl) {
+  const parsed = parseUrlSafe(rawUrl);
+
+  if (!parsed) {
+    return rawUrl;
+  }
+
+  const pathname = parsed.pathname || "";
+
+  // Dạng chuẩn sẵn có:
+  // https://shopee.vn/product/76219330/43670888876
+  const productMatch = pathname.match(/\/product\/(\d+)\/(\d+)/i);
+  if (productMatch) {
+    return `${parsed.protocol}//${parsed.host}/product/${productMatch[1]}/${productMatch[2]}`;
+  }
+
+  // Dạng Shopee đang trả về cho link rút gọn của bạn:
+  // https://shopee.vn/opaanlp/76219330/43670888876
+  const opaanlpMatch = pathname.match(/\/opaanlp\/(\d+)\/(\d+)/i);
+  if (opaanlpMatch) {
+    return `${parsed.protocol}//${parsed.host}/product/${opaanlpMatch[1]}/${opaanlpMatch[2]}`;
+  }
+
+  // Dạng link SEO phổ biến:
+  // https://shopee.vn/ten-san-pham-i.76219330.43670888876
+  const seoMatch = pathname.match(/-i\.(\d+)\.(\d+)/i);
+  if (seoMatch) {
+    return `${parsed.protocol}//${parsed.host}/product/${seoMatch[1]}/${seoMatch[2]}`;
+  }
+
+  // Dạng có shopid/itemid trong query nếu gặp link đặc biệt
+  const shopId =
+    parsed.searchParams.get("shopid") ||
+    parsed.searchParams.get("shop_id");
+
+  const itemId =
+    parsed.searchParams.get("itemid") ||
+    parsed.searchParams.get("item_id");
+
+  if (
+    shopId &&
+    itemId &&
+    /^\d+$/.test(shopId) &&
+    /^\d+$/.test(itemId)
+  ) {
+    return `${parsed.protocol}//${parsed.host}/product/${shopId}/${itemId}`;
+  }
+
+  // Nếu không nhận diện được sản phẩm thì dùng logic cũ
+  return sanitizeOriginUrl(rawUrl);
+}
 
 async function readNotice() {
   try {
