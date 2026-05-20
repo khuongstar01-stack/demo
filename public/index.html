@@ -315,6 +315,15 @@
       <div id="floatingNoticeTitle" class="floating-notice-title">Thông báo</div>
       <div id="floatingNoticeMessage" class="floating-notice-message"></div>
 
+      <img
+        id="floatingNoticeImage"
+        class="floating-notice-image hidden"
+        src=""
+        alt="Thông báo"
+        loading="lazy"
+        decoding="async"
+      />
+
       <a
         id="floatingNoticeButton"
         class="floating-notice-button hidden"
@@ -328,12 +337,12 @@
   </div>
 </div>
 
-  <div id="toastPopup" class="toast-popup hidden">
-    <div class="toast-card">
-      <div class="toast-icon">✓</div>
-      <div id="toastMessage" class="toast-message">Tạo 1 link thành công!</div>
-    </div>
+<div id="toastPopup" class="toast-popup hidden">
+  <div class="toast-card">
+    <div class="toast-icon">✓</div>
+    <div id="toastMessage" class="toast-message">Tạo 1 link thành công!</div>
   </div>
+</div>
 
   <script>
   document.addEventListener("DOMContentLoaded", () => {
