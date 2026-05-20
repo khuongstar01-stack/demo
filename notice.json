@@ -1,9 +1,10 @@
 {
   "enabled": true,
   "title": "Thông báo",
-  "message": "Tạm Thời Hết Mã Giảm Giá\n20H có mã lại nhé mọi người",
-  "buttonText": "Xem hướng dẫn",
-  "buttonUrl": "#guidePanelVideo",
+  "message": "Mã giảm 20%\nVào Group FB để cập nhập thông tin mới nhất",
+  "buttonText": "Group FB",
+  "buttonUrl": "https://www.facebook.com/share/g/14coiSJ6D68/?mibextid=wwXIfr",
+  "imageUrl": "/images/notice.jpg",
   "position": "bottom-left",
   "showOncePerSession": false,
   "version": "1778054651519"
