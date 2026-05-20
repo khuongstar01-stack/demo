@@ -3,21 +3,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   const titleEl = document.getElementById("floatingNoticeTitle");
   const messageEl = document.getElementById("floatingNoticeMessage");
   const buttonEl = document.getElementById("floatingNoticeButton");
+  const imageEl = document.getElementById("floatingNoticeImage");
   const closeBtn = document.getElementById("floatingNoticeClose");
 
   if (!noticeEl || !titleEl || !messageEl || !buttonEl || !closeBtn) return;
 
   let autoCloseTimer;
 
-function lockPageScroll() {
-  document.documentElement.classList.add("notice-open");
-  document.body.classList.add("notice-open");
-}
+  function lockPageScroll() {
+    document.documentElement.classList.add("notice-open");
+    document.body.classList.add("notice-open");
+  }
 
-function unlockPageScroll() {
-  document.documentElement.classList.remove("notice-open");
-  document.body.classList.remove("notice-open");
-}
+  function unlockPageScroll() {
+    document.documentElement.classList.remove("notice-open");
+    document.body.classList.remove("notice-open");
+  }
 
   function closeNotice(config, storageKey) {
     noticeEl.classList.remove("show");
@@ -27,7 +28,7 @@ function unlockPageScroll() {
     }
 
     clearTimeout(autoCloseTimer);
-unlockPageScroll();
+    unlockPageScroll();
 
     setTimeout(() => {
       noticeEl.classList.add("hidden");
@@ -55,6 +56,18 @@ unlockPageScroll();
     titleEl.textContent = config.title || "Thông báo";
     messageEl.textContent = config.message || "";
 
+    if (imageEl) {
+      if (config.imageUrl) {
+        imageEl.src = config.imageUrl;
+        imageEl.classList.remove("hidden");
+        noticeEl.classList.add("has-image");
+      } else {
+        imageEl.removeAttribute("src");
+        imageEl.classList.add("hidden");
+        noticeEl.classList.remove("has-image");
+      }
+    }
+
     if (config.buttonText && config.buttonUrl) {
       buttonEl.textContent = config.buttonText;
       buttonEl.href = config.buttonUrl;
@@ -69,16 +82,6 @@ unlockPageScroll();
       buttonEl.classList.add("hidden");
     }
 
-    setTimeout(() => {
-      noticeEl.classList.remove("hidden");
-noticeEl.classList.add("show");
-lockPageScroll();
-
-      autoCloseTimer = setTimeout(() => {
-        closeNotice(config, storageKey);
-      }, 5000);
-    }, 600);
-
     closeBtn.addEventListener("click", () => {
       closeNotice(config, storageKey);
     });
@@ -88,6 +91,20 @@ lockPageScroll();
         closeNotice(config, storageKey);
       }
     });
+
+    setTimeout(() => {
+      noticeEl.classList.remove("hidden");
+      noticeEl.classList.add("show");
+      lockPageScroll();
+
+      const displaySeconds = Number(config.displaySeconds ?? 5);
+
+      if (displaySeconds > 0) {
+        autoCloseTimer = setTimeout(() => {
+          closeNotice(config, storageKey);
+        }, displaySeconds * 1000);
+      }
+    }, 600);
   } catch (error) {
     console.warn("Không tải được thông báo nổi:", error);
   }
