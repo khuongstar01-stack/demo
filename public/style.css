@@ -2714,3 +2714,146 @@ body {
   cursor: not-allowed;
   filter: grayscale(1);
 }
+.notice-modal .floating-notice-image {
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 14px;
+  margin-top: 12px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+@media (max-width: 640px) {
+  .notice-modal .floating-notice-image {
+    max-height: 150px;
+    border-radius: 12px;
+  }
+}
+/* ===== Ảnh thông báo tối ưu mobile - giữ nguyên ảnh gốc ===== */
+.notice-modal.has-image {
+  padding: 8px !important;
+}
+
+.notice-modal.has-image .floating-notice-card {
+  width: calc(100vw - 16px) !important;
+  max-width: 430px !important;
+  padding: 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 10px !important;
+}
+
+.notice-modal.has-image .floating-notice-badge {
+  display: none !important;
+}
+
+.notice-modal.has-image .floating-notice-content {
+  width: 100% !important;
+}
+
+.notice-modal.has-image .floating-notice-title,
+.notice-modal.has-image .floating-notice-message {
+  text-align: center;
+}
+
+.notice-modal .floating-notice-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
+  border-radius: 12px;
+  margin-top: 10px;
+  background: #ffffff;
+}
+
+@media (max-width: 640px) {
+  .notice-modal.has-image .floating-notice-card {
+    width: calc(100vw - 12px) !important;
+    max-width: calc(100vw - 12px) !important;
+    border-radius: 16px !important;
+  }
+
+  .notice-modal .floating-notice-image {
+    border-radius: 10px;
+  }
+}
+/* ===== FIX: Cho loader và toast nổi trên popup thông báo ===== */
+.page-loader {
+  z-index: 10020 !important;
+}
+
+.toast-popup {
+  z-index: 10030 !important;
+}
+
+.toast-popup.hidden {
+  display: none !important;
+}
+
+.toast-popup:not(.hidden) {
+  display: block !important;
+}
+
+.page-loader.hidden {
+  display: none !important;
+}
+
+.page-loader:not(.hidden) {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+/* ===== FIX TOAST + LOADER KHÔNG BỊ NOTICE CHE ===== */
+
+#floatingNotice.notice-modal {
+  z-index: 10000 !important;
+}
+
+#pageLoader {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 10020 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+#pageLoader.hidden {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+#pageLoader:not(.hidden) {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+#toastPopup {
+  position: fixed !important;
+  top: 64px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: calc(100% - 20px) !important;
+  max-width: 420px !important;
+  z-index: 10030 !important;
+  pointer-events: none !important;
+}
+
+#toastPopup.hidden {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+#toastPopup:not(.hidden) {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
