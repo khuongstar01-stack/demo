@@ -2857,3 +2857,39 @@ body {
   opacity: 1 !important;
   visibility: visible !important;
 }
+.coupon-note {
+  position: relative;
+  margin: 14px auto 0;
+  padding: 10px 12px;
+  width: 100%;
+  border-radius: 10px;
+  background: #fff7e6;
+  color: #8a4b00;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  border: 1px solid #ffd591;
+  text-align: center;
+}
+
+/* Viền mũi tên */
+.coupon-note::before {
+  content: "";
+  position: absolute;
+  top: -11px;
+  right: 72px;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 11px solid #ffd591;
+}
+
+/* Nền mũi tên */
+.coupon-note::after {
+  content: "";
+  position: absolute;
+  top: -9px;
+  right: 73px;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-bottom: 10px solid #fff7e6;
+}
