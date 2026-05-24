@@ -36,7 +36,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   try {
-    const response = await fetch(`/api/notice?v=${Date.now()}`, {
+    const isVoucherPage =
+      window.location.pathname.replace(/\/+$/, "") === "/voucher";
+
+    const noticeApiUrl = isVoucherPage
+      ? "/api/voucher/notice"
+      : "/api/notice";
+
+    const response = await fetch(`${noticeApiUrl}?v=${Date.now()}`, {
       cache: "no-store"
     });
 
