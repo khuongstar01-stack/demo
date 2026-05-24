@@ -20,6 +20,8 @@ const AFFIPAD_TOOL_ID = String(process.env.AFFIPAD_TOOL_ID || "").trim();
 
 const NOTICE_FILE =
   process.env.NOTICE_FILE || path.join(__dirname, "notice.json");
+const VOUCHER_NOTICE_FILE =
+  process.env.VOUCHER_NOTICE_FILE || path.join(__dirname, "voucher-notice.json");
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
 
@@ -757,7 +759,18 @@ const DEFAULT_NOTICE = {
   displaySeconds: 5,
   version: "default"
 };
-
+const DEFAULT_VOUCHER_NOTICE = {
+  enabled: true,
+  title: "Mã giảm giá Shopee",
+  message: "Dán link sản phẩm Shopee vào Shopeevn.net/voucher để nhận mã giảm giá.",
+  buttonText: "Tạo link ngay",
+  buttonUrl: "/voucher",
+  imageUrl: "",
+  position: "bottom-right",
+  showOncePerSession: false,
+  displaySeconds: 5,
+  version: "voucher-default"
+};
 async function readNotice() {
   try {
     const raw = await fs.readFile(NOTICE_FILE, "utf8");
@@ -798,6 +811,46 @@ async function saveNotice(data) {
 
   return noticeData;
 }
+async function readVoucherNotice() {
+  try {
+    const raw = await fs.readFile(VOUCHER_NOTICE_FILE, "utf8");
+    return {
+      ...DEFAULT_VOUCHER_NOTICE,
+      ...JSON.parse(raw)
+    };
+  } catch {
+    return DEFAULT_VOUCHER_NOTICE;
+  }
+}
+
+async function saveVoucherNotice(data) {
+  await fs.mkdir(path.dirname(VOUCHER_NOTICE_FILE), { recursive: true });
+
+  const displaySeconds = Number(data.displaySeconds);
+
+  const noticeData = {
+    enabled: Boolean(data.enabled),
+    title: String(data.title || "").trim(),
+    message: String(data.message || "").trim(),
+    buttonText: String(data.buttonText || "").trim(),
+    buttonUrl: String(data.buttonUrl || "").trim(),
+    imageUrl: String(data.imageUrl || "").trim(),
+    position: data.position || "bottom-right",
+    showOncePerSession: Boolean(data.showOncePerSession),
+    displaySeconds: Number.isFinite(displaySeconds)
+      ? Math.max(0, Math.min(300, Math.round(displaySeconds)))
+      : DEFAULT_VOUCHER_NOTICE.displaySeconds,
+    version: String(Date.now())
+  };
+
+  await fs.writeFile(
+    VOUCHER_NOTICE_FILE,
+    JSON.stringify(noticeData, null, 2),
+    "utf8"
+  );
+
+  return noticeData;
+}
 
 function checkAdminPassword(req, res, next) {
   const password = req.headers["x-admin-password"];
@@ -824,6 +877,18 @@ app.get("/api/notice", async (_req, res) => {
 
 app.post("/api/admin/notice", checkAdminPassword, async (req, res) => {
   const notice = await saveNotice(req.body);
+  res.json({
+    success: true,
+    notice
+  });
+});
+app.get("/api/voucher/notice", async (_req, res) => {
+  const notice = await readVoucherNotice();
+  res.json(notice);
+});
+
+app.post("/api/admin/voucher-notice", checkAdminPassword, async (req, res) => {
+  const notice = await saveVoucherNotice(req.body);
   res.json({
     success: true,
     notice
