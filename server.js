@@ -358,6 +358,31 @@ async function convertVoucherWithAffipad(url) {
   return data.data;
 }
 
+async function fetchAffipadProductInfo(url) {
+  try {
+    const response = await fetch("https://api.affipad.com/v1/product-info", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${AFFIPAD_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        url
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data?.success) {
+      return null;
+    }
+
+    return normalizeAffipadProductInfo(data.data);
+  } catch {
+    return null;
+  }
+}
+
 function fixVietnameseText(value = "") {
   const text = String(value || "");
 
@@ -633,17 +658,18 @@ async function fetchShopeePageProductInfo(url) {
 app.post("/api/voucher/convert", async (req, res) => {
   try {
     const inputUrl = normalizeUrl(req.body.url);
-if (/\/video/i.test(inputUrl) || /smtt=/i.test(inputUrl)) {
-  return res.status(400).json({
-    success: false,
-    message: "Vui lòng lấy link trực tiếp từ sản phẩm (không lấy link từ video)."
-  });
-}
 
     if (!inputUrl) {
       return res.status(400).json({
         success: false,
         message: "Vui lòng nhập link Shopee."
+      });
+    }
+
+    if (/\/video/i.test(inputUrl) || /smtt=/i.test(inputUrl)) {
+      return res.status(400).json({
+        success: false,
+        message: "Vui lòng lấy link trực tiếp từ sản phẩm (không lấy link từ video)."
       });
     }
 
@@ -663,17 +689,16 @@ if (/\/video/i.test(inputUrl) || /smtt=/i.test(inputUrl)) {
 
     const resolvedUrl = await resolveOriginUrl(inputUrl);
 
-if (!isDirectShopeeProductUrl(resolvedUrl)) {
-  return res.status(400).json({
-    success: false,
-    message: "Vui lòng lấy link trực tiếp từ sản phẩm (không lấy link từ video)."
-  });
-}
+    if (!isDirectShopeeProductUrl(resolvedUrl)) {
+      return res.status(400).json({
+        success: false,
+        message: "Vui lòng lấy link trực tiếp từ sản phẩm (không lấy link từ video)."
+      });
+    }
 
-const originUrl = canonicalizeShopeeProductUrl(resolvedUrl);
+    const originUrl = canonicalizeShopeeProductUrl(resolvedUrl);
 
-const affipadData = await convertVoucherWithAffipad(originUrl);
-
+    const affipadData = await convertVoucherWithAffipad(originUrl);
     const results = Array.isArray(affipadData.results)
       ? affipadData.results
       : [];
@@ -686,11 +711,12 @@ const affipadData = await convertVoucherWithAffipad(originUrl);
     }
 
     const productInfo =
-      normalizeAffipadProductInfo(affipadData.productInfo) ||
-      (await fetchShopeeProductInfo(originUrl)) ||
-      (await fetchShopeePageProductInfo(resolvedUrl)) ||
-      (await fetchShopeePageProductInfo(originUrl)) ||
-      null;
+  normalizeAffipadProductInfo(affipadData.productInfo) ||
+  (await fetchAffipadProductInfo(originUrl)) ||
+  (await fetchShopeeProductInfo(originUrl)) ||
+  (await fetchShopeePageProductInfo(resolvedUrl)) ||
+  (await fetchShopeePageProductInfo(originUrl)) ||
+  null;
 
     return res.json({
       success: true,
