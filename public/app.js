@@ -45,32 +45,53 @@ function clearAlert() {
 function showToast(message, type = "success") {
   if (!toastPopup || !toastMessage) return;
 
+  const isError = type === "error";
+  const toastCheckMark = document.getElementById("toastCheckMark");
+
   toastMessage.textContent = message;
+
 
   if (toastCard) {
     toastCard.classList.remove("success", "error");
-    toastCard.classList.add(type);
+    toastCard.classList.add(isError ? "error" : "success");
   }
 
   if (toastIcon) {
     toastIcon.classList.remove("success", "error");
-
-    if (type === "error") {
-      toastIcon.classList.add("error");
-      toastIcon.textContent = "✕";
-    } else {
-      toastIcon.classList.add("success");
-      toastIcon.textContent = "✓";
-    }
+    toastIcon.classList.add(isError ? "error" : "success");
   }
 
-  toastPopup.classList.remove("hidden");
+  if (toastCheckMark) {
+    toastCheckMark.setAttribute(
+      "d",
+      isError ? "M17 17 L35 35 M35 17 L17 35" : "M14 27 L22 35 L38 18"
+    );
+  }
+
+  toastPopup.classList.remove("hidden", "is-hiding");
+
+  const animatedItems = toastPopup.querySelectorAll(
+    ".toast-card, .toast-wave, .toast-check-icon, .toast-check-circle, .toast-check-mark, .toast-progress"
+  );
+
+  animatedItems.forEach((item) => {
+    item.style.animation = "none";
+    void item.offsetWidth;
+    item.style.animation = "";
+  });
 
   clearTimeout(toastTimer);
+
   toastTimer = setTimeout(() => {
-    toastPopup.classList.add("hidden");
-  }, 2200);
+    toastPopup.classList.add("is-hiding");
+
+    setTimeout(() => {
+      toastPopup.classList.add("hidden");
+      toastPopup.classList.remove("is-hiding");
+    }, 350);
+  }, 1500);
 }
+
 function normalizeUrl(value) {
   const trimmed = String(value || "").trim();
   if (!trimmed) return "";
