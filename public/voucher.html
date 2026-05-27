@@ -61,16 +61,22 @@
       flex: 1;
     }
 
-    .product-badge {
-      display: inline-flex;
-      align-items: center;
+    .product-voucher-image-box {
+      width: 150px;
+      height: 39px;
       margin-bottom: 6px;
-      padding: 5px 9px;
-      border-radius: 999px;
-      background: #ecfff4;
-      color: #08783f;
-      font-size: 13px;
-      font-weight: 800;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #ffffff;
+      flex-shrink: 0;
+    }
+
+    .product-voucher-image {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center;
     }
 
     .product-name {
@@ -125,6 +131,13 @@
       pointer-events: none;
     }
 
+    @media (max-width: 360px) {
+      .product-voucher-image-box {
+        width: 135px;
+        height: 35px;
+      }
+    }
+
     @media (min-width: 768px) {
       .voucher-result {
         padding: 16px;
@@ -144,8 +157,10 @@
         border-radius: 18px;
       }
 
-      .product-badge {
-        font-size: 16px;
+      .product-voucher-image-box {
+        width: 220px;
+        height: 57px;
+        margin-bottom: 10px;
       }
 
       .product-name {
@@ -168,7 +183,6 @@
     }
   </style>
 
-  <!-- Open Graph -->
   <meta property="og:locale" content="vi_VN" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Shopeevn.net/Voucher" />
@@ -186,7 +200,6 @@
     content="Công cụ tạo link Shopee nhận mã giảm giá nhanh chóng tại Shopeevn.net/Voucher"
   />
 
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Tạo Link Shopee Nhận Mã Giảm Giá" />
   <meta
@@ -195,7 +208,6 @@
   />
   <meta name="twitter:image" content="https://shopeevn.net/images/preview-share.jpg" />
 
-  <!-- Schema -->
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -207,172 +219,94 @@
     }
   </script>
 </head>
+
 <body>
   <main class="page">
-    <<header class="hero">
-  <h1 class="hero-title">🔗 Tạo Link Shopee</h1>
-  <div class="hero-domain">ShopeeVn.Net/Voucher</div>
-</header>
+    <header class="hero">
+      <h1 class="hero-title">🔗 Tạo Link Shopee</h1>
+      <div class="hero-domain">Shopeevn.net/Voucher</div>
+    </header>
 
     <section class="card">
-  <label class="label" for="productUrl">🔒 Link sản phẩm Shopee</label>
+      <label class="label" for="productUrl">🔒 Link sản phẩm Shopee</label>
 
-  <div class="input-wrap input-wrap-hint" id="inputWrap">
-    <input
-      id="productUrl"
-      class="input"
-      type="text"
-      placeholder="Dán link Shopee vào đây..."
-      autocomplete="off"
-      spellcheck="false"
-      autocapitalize="off"
-      autocorrect="off"
-    />
-
-    <button id="pasteBtn" class="paste-btn" type="button" title="Dán link" aria-label="Dán link">
-      <div class="icon-conatiner">
-        <svg
-          width="19px"
-          height="21px"
-          viewBox="0 0 19 21"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <g fill="none" fill-rule="evenodd">
-            <path
-              d="M3.4,4 L11.5,4 L11.5,4 L16,8.25 L16,17.6 C16,19.4777681 14.4777681,21 12.6,21 L3.4,21 C1.52223185,21 0,19.4777681 0,17.6 L0,7.4 C0,5.52223185 1.52223185,4 3.4,4 Z"
-              fill="#C4FFE4"
-            ></path>
-            <path
-              d="M6.4,0 L12,0 L12,0 L19,6.5 L19,14.6 C19,16.4777681 17.4777681,18 15.6,18 L6.4,18 C4.52223185,18 3,16.4777681 3,14.6 L3,3.4 C3,1.52223185 4.52223185,0 6.4,0 Z"
-              fill="#85EBBC"
-            ></path>
-            <path
-              d="M12,0 L12,5.5 C12,6.05228475 12.4477153,6.5 13,6.5 L19,6.5 L19,6.5 L12,0 Z"
-              fill="#64B18D"
-            ></path>
-          </g>
-        </svg>
-
-        <svg
-          width="19px"
-          height="21px"
-          viewBox="0 0 19 21"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <g fill="none" fill-rule="evenodd">
-            <path
-              d="M3.4,4 L11.5,4 L11.5,4 L16,8.25 L16,17.6 C16,19.4777681 14.4777681,21 12.6,21 L3.4,21 C1.52223185,21 0,19.4777681 0,17.6 L0,7.4 C0,5.52223185 1.52223185,4 3.4,4 Z"
-              fill="#C4FFE4"
-            ></path>
-            <path
-              d="M6.4,0 L12,0 L12,0 L19,6.5 L19,14.6 C19,16.4777681 17.4777681,18 15.6,18 L6.4,18 C4.52223185,18 3,16.4777681 3,14.6 L3,3.4 C3,1.52223185 4.52223185,0 6.4,0 Z"
-              fill="#85EBBC"
-            ></path>
-            <path
-              d="M12,0 L12,5.5 C12,6.05228475 12.4477153,6.5 13,6.5 L19,6.5 L19,6.5 L12,0 Z"
-              fill="#64B18D"
-            ></path>
-          </g>
-        </svg>
-      </div>
-    </button>
-  </div>
-
-  <button id="createBtn" class="super-button" type="button">
-    <span id="createBtnText">Tạo Link Ngay</span>
-    <svg fill="none" viewBox="0 0 24 24" class="arrow" aria-hidden="true">
-      <path
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        stroke-width="2"
-        stroke="currentColor"
-        d="M5 12h14M13 6l6 6-6 6"
-      ></path>
-    </svg>
-  </button>
-
-  <div id="alertBox" class="alert hidden"></div>
-
-  <div id="resultSection" class="result-section voucher-result hidden">
-    <div id="productCard" class="product-card hidden">
-      <div class="product-image-wrap">
-        <img
-          id="productImage"
-          class="product-image"
-          src=""
-          alt="Sản phẩm Shopee"
-          loading="lazy"
-          decoding="async"
+      <div class="input-wrap input-wrap-hint" id="inputWrap">
+        <input
+          id="productUrl"
+          class="input"
+          type="text"
+          placeholder="Dán link Shopee vào đây..."
+          autocomplete="off"
+          spellcheck="false"
+          autocapitalize="off"
+          autocorrect="off"
         />
+
+        <button id="pasteBtn" class="paste-btn" type="button" title="Dán link" aria-label="Dán link">
+          <div class="icon-conatiner">
+            <svg
+              width="19px"
+              height="21px"
+              viewBox="0 0 19 21"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <g fill="none" fill-rule="evenodd">
+                <path
+                  d="M3.4,4 L11.5,4 L11.5,4 L16,8.25 L16,17.6 C16,19.4777681 14.4777681,21 12.6,21 L3.4,21 C1.52223185,21 0,19.4777681 0,17.6 L0,7.4 C0,5.52223185 1.52223185,4 3.4,4 Z"
+                  fill="#C4FFE4"
+                ></path>
+                <path
+                  d="M6.4,0 L12,0 L12,0 L19,6.5 L19,14.6 C19,16.4777681 17.4777681,18 15.6,18 L6.4,18 C4.52223185,18 3,16.4777681 3,14.6 L3,3.4 C3,1.52223185 4.52223185,0 6.4,0 Z"
+                  fill="#85EBBC"
+                ></path>
+                <path
+                  d="M12,0 L12,5.5 C12,6.05228475 12.4477153,6.5 13,6.5 L19,6.5 L19,6.5 L12,0 Z"
+                  fill="#64B18D"
+                ></path>
+              </g>
+            </svg>
+
+            <svg
+              width="19px"
+              height="21px"
+              viewBox="0 0 19 21"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <g fill="none" fill-rule="evenodd">
+                <path
+                  d="M3.4,4 L11.5,4 L11.5,4 L16,8.25 L16,17.6 C16,19.4777681 14.4777681,21 12.6,21 L3.4,21 C1.52223185,21 0,19.4777681 0,17.6 L0,7.4 C0,5.52223185 1.52223185,4 3.4,4 Z"
+                  fill="#C4FFE4"
+                ></path>
+                <path
+                  d="M6.4,0 L12,0 L12,0 L19,6.5 L19,14.6 C19,16.4777681 17.4777681,18 15.6,18 L6.4,18 C4.52223185,18 3,16.4777681 3,14.6 L3,3.4 C3,1.52223185 4.52223185,0 6.4,0 Z"
+                  fill="#85EBBC"
+                ></path>
+                <path
+                  d="M12,0 L12,5.5 C12,6.05228475 12.4477153,6.5 13,6.5 L19,6.5 L19,6.5 L12,0 Z"
+                  fill="#64B18D"
+                ></path>
+              </g>
+            </svg>
+          </div>
+        </button>
       </div>
 
-      <div class="product-info">
-        <div class="product-badge">✓ Mã 20% 250K</div>
-        <div id="productName" class="product-name">Đang tải sản phẩm...</div>
+      <button id="createBtn" class="super-button" type="button">
+        <span id="createBtnText">Tạo Link Ngay</span>
+        <svg fill="none" viewBox="0 0 24 24" class="arrow" aria-hidden="true">
+          <path
+            stroke-linejoin="round"
+            stroke-linecap="round"
+            stroke-width="2"
+            stroke="currentColor"
+            d="M5 12h14M13 6l6 6-6 6"
+          ></path>
+        </svg>
+      </button>
 
-        <div class="product-price-row">
-          <span id="productPrice" class="product-price"></span>
-          <span id="productOldPrice" class="product-old-price"></span>
-        </div>
-      </div>
-    </div>
-
-    <a
-      id="buyNowBtn"
-      class="buy-now-big disabled"
-      href="#"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      🛒 Mua Ngay
-    </a>
-
-    <textarea
-      id="affiliateLinkValue"
-      class="result-text-hidden"
-      readonly
-    ></textarea>
-
-    <button id="copyBtn" class="hidden" type="button" aria-hidden="true" tabindex="-1"></button>
-
-    <a
-      id="shareBtn"
-      class="hidden disabled"
-      href="#"
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-disabled="true"
-      aria-hidden="true"
-      tabindex="-1"
-    ></a>
-  </div>
-
-  <div class="voucher-guide-card">
-    <div class="voucher-guide-browser">
-      <div class="voucher-guide-circles">
-        <span class="voucher-guide-dot"></span>
-        <span class="voucher-guide-dot"></span>
-        <span class="voucher-guide-dot"></span>
-      </div>
-
-      <div class="voucher-guide-search">
-        🔎 shopeevn.net/voucher
-      </div>
-    </div>
-
-    <div class="voucher-guide-body">
-      <div class="voucher-guide-title">📌 Hướng dẫn nhận mã giảm giá</div>
-      <div class="voucher-guide-text">
-        Chỉ cần dán link Shopee, bấm <strong>Tạo Link Ngay</strong> rồi chọn
-        <strong>Mua Ngay</strong> là có mã giảm giá.
-      </div>
-    </div>
-  </div>
-</section>
-
-<div id="alertBox" class="alert hidden"></div>
+      <div id="alertBox" class="alert hidden"></div>
 
       <div id="resultSection" class="result-section voucher-result hidden">
         <div id="productCard" class="product-card hidden">
@@ -388,7 +322,7 @@
           </div>
 
           <div class="product-info">
-            <div class="product-badge">✓ Mã 20% 250K</div>
+          
             <div id="productName" class="product-name">Đang tải sản phẩm...</div>
 
             <div class="product-price-row">
@@ -400,12 +334,34 @@
 
         <a
           id="buyNowBtn"
-          class="buy-now-big disabled"
+          class="buy-now-big buy-cart-button disabled"
           href="#"
           target="_blank"
           rel="noopener noreferrer"
         >
-          🛒 Mua Ngay
+          <span class="buy-cart-icon">
+            <svg
+              stroke-linejoin="round"
+              stroke-linecap="round"
+              stroke-width="2"
+              stroke="currentColor"
+              fill="none"
+              viewBox="0 0 24 24"
+              height="24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <circle r="1" cy="21" cx="9"></circle>
+              <circle r="1" cy="21" cx="20"></circle>
+              <path
+                d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+              ></path>
+            </svg>
+          </span>
+
+          <span class="buy-cart-text">Mua Ngay</span>
+          <div class="buy-cart-progress"></div>
         </a>
 
         <textarea
@@ -414,8 +370,8 @@
           readonly
         ></textarea>
 
-        <!-- Giữ ID này để voucher.js không lỗi, nhưng không hiển thị cho người dùng. -->
         <button id="copyBtn" class="hidden" type="button" aria-hidden="true" tabindex="-1"></button>
+
         <a
           id="shareBtn"
           class="hidden disabled"
@@ -428,6 +384,27 @@
         ></a>
       </div>
 
+      <div class="voucher-guide-card">
+        <div class="voucher-guide-browser">
+          <div class="voucher-guide-circles">
+            <span class="voucher-guide-dot"></span>
+            <span class="voucher-guide-dot"></span>
+            <span class="voucher-guide-dot"></span>
+          </div>
+
+          <div class="voucher-guide-search">
+            🔎 shopeevn.net/voucher
+          </div>
+        </div>
+
+        <div class="voucher-guide-body">
+          <div class="voucher-guide-title">📌 Hướng dẫn nhận mã giảm giá</div>
+          <div class="voucher-guide-text">
+            Chỉ cần dán link Shopee, bấm <strong>Tạo Link Ngay</strong> rồi chọn
+            <strong>Mua Ngay</strong> là có mã giảm giá.
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
@@ -465,10 +442,26 @@
     </div>
   </div>
 
-  <div id="toastPopup" class="toast-popup hidden">
+  <div id="toastPopup" class="toast-popup hidden" role="status" aria-live="polite">
     <div class="toast-card">
-      <div class="toast-icon">✓</div>
-      <div id="toastMessage" class="toast-message">Tạo link thành công!</div>
+      <svg class="toast-wave" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M0,256L11.4,240C22.9,224,46,192,69,192C91.4,192,114,224,137,234.7C160,245,183,235,206,213.3C228.6,192,251,160,274,149.3C297.1,139,320,149,343,181.3C365.7,213,389,267,411,282.7C434.3,299,457,277,480,250.7C502.9,224,526,192,549,181.3C571.4,171,594,181,617,208C640,235,663,277,686,256C708.6,235,731,149,754,122.7C777.1,96,800,128,823,165.3C845.7,203,869,245,891,224C914.3,203,937,117,960,112C982.9,107,1006,181,1029,197.3C1051.4,213,1074,171,1097,144C1120,117,1143,107,1166,133.3C1188.6,160,1211,224,1234,218.7C1257.1,213,1280,139,1303,133.3C1325.7,128,1349,192,1371,192C1394.3,192,1417,128,1429,96L1440,64L1440,320L0,320Z"
+        ></path>
+      </svg>
+
+      <div class="toast-icon">
+        <svg class="toast-check-icon" viewBox="0 0 52 52">
+          <circle class="toast-check-circle" cx="26" cy="26" r="24"></circle>
+          <path id="toastCheckMark" class="toast-check-mark" d="M14 27 L22 35 L38 18"></path>
+        </svg>
+      </div>
+
+      <div class="toast-content">
+        <p id="toastMessage" class="toast-message">Tạo link thành công!</p>
+      </div>
+
+      <div class="toast-progress"></div>
     </div>
   </div>
 
