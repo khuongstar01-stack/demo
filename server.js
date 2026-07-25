@@ -16,7 +16,10 @@ const SITE_DOMAIN_TEXT = String(process.env.SITE_DOMAIN_TEXT || "linkcuaban.vn")
 const VOUCHER_IMAGE_URL = String(process.env.VOUCHER_IMAGE_URL || "/images/voucher.jpg").trim();
 
 const AFFIPAD_API_KEY = String(process.env.AFFIPAD_API_KEY || "").trim();
-const AFFIPAD_TOOL_ID = String(process.env.AFFIPAD_TOOL_ID || "").trim();
+const AFFIPAD_TOOL_ID_1 = String(
+  process.env.AFFIPAD_TOOL_ID_1 || process.env.AFFIPAD_TOOL_ID || ""
+).trim();
+const AFFIPAD_TOOL_ID_2 = String(process.env.AFFIPAD_TOOL_ID_2 || "").trim();
 
 const NOTICE_FILE =
   process.env.NOTICE_FILE || path.join(__dirname, "notice.json");
@@ -336,7 +339,7 @@ function isDirectShopeeProductUrl(rawUrl) {
   return Boolean(getShopeeProductIds(rawUrl));
 }
 
-async function convertVoucherWithAffipad(url) {
+async function convertVoucherWithAffipad(url, toolId) {
   const response = await fetch("https://api.affipad.com/v1/fb-convert", {
     method: "POST",
     headers: {
@@ -345,7 +348,7 @@ async function convertVoucherWithAffipad(url) {
     },
     body: JSON.stringify({
       url,
-      toolId: AFFIPAD_TOOL_ID,
+      toolId,
       useCache: true,
       useShortLink: true
     })
@@ -682,10 +685,11 @@ app.post("/api/voucher/convert", async (req, res) => {
       });
     }
 
-    if (!AFFIPAD_API_KEY || !AFFIPAD_TOOL_ID) {
+    if (!AFFIPAD_API_KEY || !AFFIPAD_TOOL_ID_1 || !AFFIPAD_TOOL_ID_2) {
       return res.status(500).json({
         success: false,
-        message: "Chưa cấu hình AFFIPAD_API_KEY hoặc AFFIPAD_TOOL_ID."
+        message:
+          "Chưa cấu hình AFFIPAD_API_KEY, AFFIPAD_TOOL_ID_1 hoặc AFFIPAD_TOOL_ID_2."
       });
     }
 
@@ -700,34 +704,55 @@ app.post("/api/voucher/convert", async (req, res) => {
 
     const originUrl = canonicalizeShopeeProductUrl(resolvedUrl);
 
-    const affipadData = await convertVoucherWithAffipad(originUrl);
-    const results = Array.isArray(affipadData.results)
-      ? affipadData.results
-      : [];
+    const toolConfigs = [
+      {
+        channel: "fb",
+        label: "Mã FB 22–25%",
+        toolId: AFFIPAD_TOOL_ID_1
+      },
+      {
+        channel: "ig",
+        label: "Mã IG 22%",
+        toolId: AFFIPAD_TOOL_ID_2
+      }
+    ];
 
-    if (!results.length) {
+    const affipadDataList = await Promise.all(
+      toolConfigs.map(({ toolId }) =>
+        convertVoucherWithAffipad(originUrl, toolId)
+      )
+    );
+
+    const results = affipadDataList.map((data) =>
+      Array.isArray(data.results) ? data.results[0] : null
+    );
+
+    if (results.some((item) => !item)) {
       return res.status(502).json({
         success: false,
-        message: "AffiPad không trả về link."
+        message: "AffiPad không trả về đủ hai link FB và IG."
       });
     }
 
     const productInfo =
-  normalizeAffipadProductInfo(affipadData.productInfo) ||
-  (await fetchAffipadProductInfo(originUrl)) ||
-  (await fetchShopeeProductInfo(originUrl)) ||
-  (await fetchShopeePageProductInfo(resolvedUrl)) ||
-  (await fetchShopeePageProductInfo(originUrl)) ||
-  null;
+      normalizeAffipadProductInfo(affipadDataList[0]?.productInfo) ||
+      normalizeAffipadProductInfo(affipadDataList[1]?.productInfo) ||
+      (await fetchAffipadProductInfo(originUrl)) ||
+      (await fetchShopeeProductInfo(originUrl)) ||
+      (await fetchShopeePageProductInfo(resolvedUrl)) ||
+      (await fetchShopeePageProductInfo(originUrl)) ||
+      null;
 
     return res.json({
       success: true,
       input_url: inputUrl,
       url: originUrl,
-      cached: Boolean(affipadData.cached),
+      cached: affipadDataList.every((data) => Boolean(data.cached)),
       productInfo,
 
-      affiliateLinks: results.map((item) => ({
+      affiliateLinks: results.map((item, index) => ({
+        channel: toolConfigs[index].channel,
+        label: toolConfigs[index].label,
         affiliate_id: item.affiliateId || "",
         affiliate_link: item.shortUrl || item.link,
         raw_link: item.link || "",
