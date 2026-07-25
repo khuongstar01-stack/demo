@@ -13,11 +13,11 @@ const pasteBtn = document.getElementById("pasteBtn");
 const createBtn = document.getElementById("createBtn");
 const resultSection = document.getElementById("resultSection");
 const resultBox = document.getElementById("resultBox");
-const buyNowBtn = document.getElementById("buyNowBtn");
+const buyNowBtn1 = document.getElementById("buyNowBtn1");
+const buyNowBtn2 = document.getElementById("buyNowBtn2");
 const shareBtn = document.getElementById("shareBtn");
-const copyBtn = document.getElementById("copyBtn");
+const copyBtn = null;
 const alertBox = document.getElementById("alertBox");
-const affiliateLinkValue = document.getElementById("affiliateLinkValue");
 const facebookPostBtn = document.getElementById("facebookPostBtn");
 const facebookPostQuickBtn = document.getElementById("facebookPostQuickBtn");
 const siteDomainText = document.getElementById("siteDomainText");
@@ -210,12 +210,14 @@ function resetResult() {
   currentAffiliateLink = "";
   lockShareBtn();
 
-  if (affiliateLinkValue) affiliateLinkValue.value = "";
-
-  if (buyNowBtn) {
-    buyNowBtn.href = "#";
-    buyNowBtn.classList.add("disabled");
-  }
+  setAffiliateOption({
+    link: "",
+    buyButton: buyNowBtn1
+  });
+  setAffiliateOption({
+    link: "",
+    buyButton: buyNowBtn2
+  });
 
   if (resultSection) {
     resultSection.classList.add("hidden");
@@ -305,8 +307,6 @@ async function createLink() {
   showPageLoader();
 
     try {
-    const params = new URLSearchParams({ url: inputUrl });
-
     const res = await fetch("/api/voucher/convert", {
   method: "POST",
   headers: {
@@ -324,23 +324,26 @@ async function createLink() {
       throw new Error(data?.message || "Không tạo được link.");
     }
 
-    const affiliateLink = data?.affiliateLinks?.[0]?.affiliate_link || "";
+    const affiliateLink1 = data?.affiliateLinks?.[0]?.affiliate_link || "";
+    const affiliateLink2 = data?.affiliateLinks?.[1]?.affiliate_link || "";
 
-    if (!affiliateLink) {
+    if (!affiliateLink1) {
       throw new Error("Không nhận được affiliate link.");
     }
 
-    currentAffiliateLink = affiliateLink;
-renderProductInfo(data.productInfo);
+    currentAffiliateLink = affiliateLink1;
+    renderProductInfo(data.productInfo);
 
-if (affiliateLinkValue) affiliateLinkValue.value = affiliateLink;
+    setAffiliateOption({
+      link: affiliateLink1,
+      buyButton: buyNowBtn1
+    });
+    setAffiliateOption({
+      link: affiliateLink2,
+      buyButton: buyNowBtn2
+    });
 
-unlockShareBtn();
-
-    if (buyNowBtn) {
-      buyNowBtn.href = affiliateLink;
-      buyNowBtn.classList.remove("disabled");
-    }
+    unlockShareBtn();
 
     if (resultSection) {
       resultSection.classList.remove("hidden");
@@ -366,18 +369,13 @@ unlockShareBtn();
     }
   }
 }
-async function copyAffiliateLink() {
-  if (!affiliateLinkValue?.value) {
-    setAlert("error", "Chưa có link để copy.");
-    return;
-  }
+function setAffiliateOption({ link, buyButton }) {
+  const hasLink = Boolean(link);
 
-  try {
-    await navigator.clipboard.writeText(affiliateLinkValue.value);
-    showToast("Đã copy link!");
-    setAlert("success", "Đã copy link.");
-  } catch {
-    setAlert("error", "Không thể copy tự động.");
+  if (buyButton) {
+    buyButton.href = hasLink ? link : "#";
+    buyButton.classList.toggle("disabled", !hasLink);
+    buyButton.setAttribute("aria-disabled", String(!hasLink));
   }
 }
 async function pasteAndCreate() {
@@ -409,10 +407,6 @@ if (createBtn) {
     stopInputHint();
     createLink();
   });
-}
-
-if (copyBtn) {
-  copyBtn.addEventListener("click", copyAffiliateLink);
 }
 
 if (pasteBtn) {
@@ -567,14 +561,19 @@ function renderProductInfo(productInfo) {
 
   productCard.classList.remove("hidden");
 }
-if (buyNowBtn) {
-  buyNowBtn.addEventListener("click", () => {
-    buyNowBtn.classList.remove("is-buying");
-    void buyNowBtn.offsetWidth;
-    buyNowBtn.classList.add("is-buying");
+function bindBuyButtonAnimation(button) {
+  if (!button) return;
+
+  button.addEventListener("click", () => {
+    button.classList.remove("is-buying");
+    void button.offsetWidth;
+    button.classList.add("is-buying");
 
     setTimeout(() => {
-      buyNowBtn.classList.remove("is-buying");
+      button.classList.remove("is-buying");
     }, 1200);
   });
 }
+
+bindBuyButtonAnimation(buyNowBtn1);
+bindBuyButtonAnimation(buyNowBtn2);
