@@ -786,10 +786,10 @@ const DEFAULT_NOTICE = {
 };
 const DEFAULT_VOUCHER_NOTICE = {
   enabled: true,
-  title: "Mã giảm giá Shopee",
-  message: "Dán link sản phẩm Shopee vào Shopeevn.net/voucher để nhận mã giảm giá.",
-  buttonText: "Tạo link ngay",
-  buttonUrl: "/voucher",
+  title: "THÔNG BÁO",
+  message: "",
+  buttonText: "Group FB",
+  buttonUrl: "https://www.facebook.com/share/g/14coiSJ6D68/?mibextid=wwXIfr",
   imageUrl: "",
   position: "bottom-right",
   showOncePerSession: false,
