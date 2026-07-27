@@ -5,10 +5,35 @@ document.addEventListener("DOMContentLoaded", async () => {
   const buttonEl = document.getElementById("floatingNoticeButton");
   const imageEl = document.getElementById("floatingNoticeImage");
   const closeBtn = document.getElementById("floatingNoticeClose");
+  const voucherGuideTitleEl = document.getElementById("voucherGuideTitle");
+  const voucherGuideTextEl = document.getElementById("voucherGuideText");
+  const voucherGuideImageEl = document.getElementById("voucherGuideImage");
 
   if (!noticeEl || !titleEl || !messageEl || !buttonEl || !closeBtn) return;
 
   let autoCloseTimer;
+
+  function updateVoucherGuide(config) {
+    if (voucherGuideTitleEl) {
+      voucherGuideTitleEl.textContent = config.guideTitle || "";
+      voucherGuideTitleEl.classList.toggle("hidden", !config.guideTitle);
+    }
+
+    if (voucherGuideTextEl) {
+      voucherGuideTextEl.textContent = config.guideText || "";
+      voucherGuideTextEl.classList.toggle("hidden", !config.guideText);
+    }
+
+    if (voucherGuideImageEl) {
+      if (config.guideImageUrl) {
+        voucherGuideImageEl.src = config.guideImageUrl;
+        voucherGuideImageEl.classList.remove("hidden");
+      } else {
+        voucherGuideImageEl.removeAttribute("src");
+        voucherGuideImageEl.classList.add("hidden");
+      }
+    }
+  }
 
   function lockPageScroll() {
     document.documentElement.classList.add("notice-open");
@@ -50,6 +75,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!response.ok) return;
 
     const config = await response.json();
+
+    if (isVoucherPage) {
+      updateVoucherGuide(config);
+    }
 
     if (!config.enabled) return;
 
