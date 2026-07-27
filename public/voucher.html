@@ -23,6 +23,54 @@
   <link rel="stylesheet" href="/style.css" />
 
   <style>
+    .hero-title {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-shopee-icon {
+      display: inline-flex;
+      width: 29px;
+      height: 29px;
+      flex-shrink: 0;
+    }
+
+    .hero-shopee-icon svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .product-link-label {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .product-link-icon {
+      display: inline-flex;
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9px;
+      background: #fff1ec;
+      color: #ee4d2d;
+      box-shadow: inset 0 0 0 1px rgba(238, 77, 45, 0.12);
+    }
+
+    .product-link-icon svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
     .voucher-result {
       margin-top: 14px;
       padding: 14px;
@@ -233,6 +281,15 @@
     }
 
     @media (min-width: 768px) {
+      .hero-title {
+        gap: 11px;
+      }
+
+      .hero-shopee-icon {
+        width: 40px;
+        height: 40px;
+      }
+
       .voucher-result {
         padding: 16px;
         border-radius: 24px;
@@ -349,12 +406,47 @@
 <body>
   <main class="page">
     <header class="hero">
-      <h1 class="hero-title">🔗 Tạo Link Shopee</h1>
+      <h1 class="hero-title">
+        <span class="hero-shopee-icon" aria-hidden="true">
+          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M15 21h34l-2.8 36H17.8L15 21Z"
+              fill="#ee4d2d"
+            />
+            <path
+              d="M22 23v-6C22 11.5 26.5 7 32 7s10 4.5 10 10v6"
+              fill="none"
+              stroke="#ee4d2d"
+              stroke-width="5"
+              stroke-linecap="round"
+            />
+            <text
+              x="32"
+              y="49"
+              fill="#ffffff"
+              font-family="Arial, sans-serif"
+              font-size="29"
+              font-weight="900"
+              text-anchor="middle"
+            >S</text>
+          </svg>
+        </span>
+        <span>Tạo Link Shopee</span>
+      </h1>
       <div class="hero-domain">Shopeevn.net/Voucher</div>
     </header>
 
     <section class="card">
-      <label class="label" for="productUrl">🔒 Link sản phẩm Shopee</label>
+      <label class="label product-link-label" for="productUrl">
+        <span class="product-link-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M8 12h8"></path>
+            <path d="M9 17H7A5 5 0 0 1 7 7h2"></path>
+            <path d="M15 7h2a5 5 0 1 1 0 10h-2"></path>
+          </svg>
+        </span>
+        <span>Link sản phẩm Shopee</span>
+      </label>
 
       <div class="input-wrap input-wrap-hint" id="inputWrap">
         <input
