@@ -794,6 +794,10 @@ const DEFAULT_VOUCHER_NOTICE = {
   position: "bottom-right",
   showOncePerSession: false,
   displaySeconds: 5,
+  guideTitle: "📌 Hướng dẫn nhận mã giảm giá",
+  guideText:
+    "Chỉ cần dán link Shopee, bấm Tạo Link Ngay rồi chọn Mã FB 22–25% hoặc Mã IG 22%.",
+  guideImageUrl: "",
   version: "voucher-default"
 };
 async function readNotice() {
@@ -865,6 +869,9 @@ async function saveVoucherNotice(data) {
     displaySeconds: Number.isFinite(displaySeconds)
       ? Math.max(0, Math.min(300, Math.round(displaySeconds)))
       : DEFAULT_VOUCHER_NOTICE.displaySeconds,
+    guideTitle: String(data.guideTitle || "").trim(),
+    guideText: String(data.guideText || "").trim(),
+    guideImageUrl: String(data.guideImageUrl || "").trim(),
     version: String(Date.now())
   };
 
@@ -913,11 +920,18 @@ app.get("/api/voucher/notice", async (_req, res) => {
 });
 
 app.post("/api/admin/voucher-notice", checkAdminPassword, async (req, res) => {
-  const notice = await saveVoucherNotice(req.body);
-  res.json({
-    success: true,
-    notice
-  });
+  try {
+    const notice = await saveVoucherNotice(req.body);
+    res.json({
+      success: true,
+      notice
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error?.message || "Không lưu được cấu hình Voucher."
+    });
+  }
 });
 
 app.get("/admin/notice", (_req, res) => {
