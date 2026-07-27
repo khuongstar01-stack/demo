@@ -110,92 +110,156 @@
       text-decoration: line-through;
     }
 
-    .buy-now-big {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      min-height: 72px;
-      margin-top: 14px;
-      border-radius: 22px;
-      background: linear-gradient(90deg, #2fd671, #27cb68);
-      color: #ffffff;
-      text-decoration: none;
-      font-size: 24px;
-      font-weight: 900;
-      box-shadow: 0 12px 24px rgba(39, 203, 104, 0.22);
-    }
-
-    .buy-now-big.disabled {
-      opacity: 0.55;
-      pointer-events: none;
-    }
-
     .affiliate-options {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
+      gap: 12px;
       margin-top: 14px;
     }
 
     .affiliate-option {
-      position: relative;
-      overflow: hidden;
-      padding: 10px;
-      border: 1px solid #e7e9ee;
-      border-radius: 14px;
-      background: #ffffff;
-      box-shadow: 0 8px 22px rgba(45, 51, 68, 0.07);
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      border: 2px solid transparent;
+      border-radius: 22px;
+      box-shadow: 0 8px 22px rgba(45, 51, 68, 0.06);
     }
 
-    .affiliate-option::before {
-      position: absolute;
-      top: 0;
-      left: 0;
+    .affiliate-option--ig {
+      border-color: #efd5df;
+      background: linear-gradient(105deg, #fff8fa, #fff2ed);
+    }
+
+    .affiliate-option--fb {
+      border-color: #cfe2f6;
+      background: linear-gradient(105deg, #f7fbff, #eef7ff);
+    }
+
+    .social-voucher-icon {
+      display: block;
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+    }
+
+    .social-voucher-icon svg {
+      display: block;
       width: 100%;
-      height: 4px;
-      content: "";
+      height: 100%;
     }
 
-    .affiliate-option--fb::before {
-      background: linear-gradient(90deg, #1877f2, #55a3ff);
-    }
-
-    .affiliate-option--ig::before {
-      background: linear-gradient(90deg, #833ab4, #e1306c, #f77737);
+    .affiliate-option-copy {
+      min-width: 0;
     }
 
     .affiliate-option-title {
       margin: 0;
-      color: #2d3344;
-      font-size: 15px;
+      color: #171717;
+      font-size: 16px;
       font-weight: 900;
-      line-height: 1.35;
-      text-align: center;
+      line-height: 1.25;
     }
 
-    .affiliate-option--fb .affiliate-option-title {
-      color: #1877f2;
+    .affiliate-option-subtitle {
+      margin: 2px 0 0;
+      color: #242424;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.25;
     }
 
-    .affiliate-option--ig .affiliate-option-title {
-      color: #c13584;
-    }
-
-    .affiliate-option .buy-now-big {
-      width: 100%;
-      min-height: 48px;
-      margin-top: 8px;
-      padding: 7px 6px;
+    .voucher-action {
+      display: inline-flex;
+      min-width: 108px;
+      min-height: 46px;
+      gap: 7px;
+      align-items: center;
+      justify-content: center;
+      padding: 0 12px;
       border-radius: 14px;
-      font-size: 15px;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1;
+      text-decoration: none;
       white-space: nowrap;
+      box-shadow: 0 8px 16px rgba(45, 51, 68, 0.15);
+    }
+
+    .voucher-action--ig {
+      background: linear-gradient(90deg, #f0442f, #ff720d);
+    }
+
+    .voucher-action--fb {
+      background: linear-gradient(90deg, #1877f2, #0875e8);
+    }
+
+    .voucher-action-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .voucher-action.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .voucher-guide-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 720px;
+      margin-top: 14px;
+      border-radius: 14px;
+      object-fit: contain;
+      background: #f4f5f7;
+    }
+
+    .voucher-guide-text {
+      white-space: pre-line;
     }
 
     @media (max-width: 360px) {
       .product-voucher-image-box {
         width: 135px;
         height: 35px;
+      }
+
+      .affiliate-option {
+        grid-template-columns: 40px minmax(0, 1fr) auto;
+        gap: 6px;
+        padding: 9px;
+        border-radius: 18px;
+      }
+
+      .social-voucher-icon {
+        width: 40px;
+        height: 40px;
+      }
+
+      .affiliate-option-title {
+        font-size: 13px;
+      }
+
+      .affiliate-option-subtitle {
+        font-size: 11px;
+      }
+
+      .voucher-action {
+        min-width: 91px;
+        min-height: 40px;
+        gap: 4px;
+        padding: 0 7px;
+        border-radius: 12px;
+        font-size: 12px;
+      }
+
+      .voucher-action-icon {
+        width: 17px;
+        height: 17px;
       }
     }
 
@@ -236,29 +300,42 @@
         font-size: 17px;
       }
 
-      .buy-now-big {
-        min-height: 82px;
-        border-radius: 24px;
-        font-size: 32px;
-      }
-
       .affiliate-options {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 14px;
       }
 
       .affiliate-option {
-        padding: 12px;
-        border-radius: 16px;
+        grid-template-columns: 68px minmax(0, 1fr) auto;
+        gap: 18px;
+        padding: 18px 22px;
+        border-radius: 28px;
+      }
+
+      .social-voucher-icon {
+        width: 68px;
+        height: 68px;
       }
 
       .affiliate-option-title {
-        font-size: 18px;
+        font-size: 25px;
       }
 
-      .affiliate-option .buy-now-big {
-        min-height: 54px;
-        font-size: 18px;
+      .affiliate-option-subtitle {
+        font-size: 21px;
+      }
+
+      .voucher-action {
+        min-width: 190px;
+        min-height: 64px;
+        gap: 10px;
+        padding: 0 22px;
+        border-radius: 20px;
+        font-size: 22px;
+      }
+
+      .voucher-action-icon {
+        width: 28px;
+        height: 28px;
       }
     }
   </style>
@@ -412,32 +489,69 @@
           </div>
         </div>
 
-        <div class="affiliate-options" aria-label="Chọn mã giảm giá">
-          <article class="affiliate-option affiliate-option--fb">
-            <h3 class="affiliate-option-title">Mã FB 22–25%</h3>
+        <div class="affiliate-options" aria-label="Chọn voucher giảm giá">
+          <article class="affiliate-option affiliate-option--ig">
+            <span class="social-voucher-icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="voucherInstagramGradient" x1="8" y1="58" x2="58" y2="4" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#ffb000" />
+                    <stop offset="0.35" stop-color="#f7405f" />
+                    <stop offset="0.7" stop-color="#c32aa3" />
+                    <stop offset="1" stop-color="#6a3de8" />
+                  </linearGradient>
+                </defs>
+                <rect x="4" y="4" width="56" height="56" rx="17" fill="url(#voucherInstagramGradient)" />
+                <rect x="16" y="16" width="32" height="32" rx="11" fill="none" stroke="#fff" stroke-width="4" />
+                <circle cx="32" cy="32" r="8" fill="none" stroke="#fff" stroke-width="4" />
+                <circle cx="44" cy="20" r="3" fill="#fff" />
+              </svg>
+            </span>
+            <div class="affiliate-option-copy">
+              <h3 class="affiliate-option-title">Voucher Instagram 22%</h3>
+              <p class="affiliate-option-subtitle">(Giảm tối đa 300k)</p>
+            </div>
             <a
-              id="buyNowBtn1"
-              class="buy-now-big buy-cart-button disabled"
+              id="buyNowBtn2"
+              class="voucher-action voucher-action--ig disabled"
               href="#"
               target="_blank"
               rel="noopener noreferrer"
               aria-disabled="true"
             >
-              🛒 Mua Ngay
+              <svg class="voucher-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M3 4h2.1l2.1 10.1a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L20.5 8H6.1" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="9.5" cy="20" r="1.4" fill="currentColor" />
+                <circle cx="17.5" cy="20" r="1.4" fill="currentColor" />
+              </svg>
+              <span>MUA NGAY</span>
             </a>
           </article>
 
-          <article class="affiliate-option affiliate-option--ig">
-            <h3 class="affiliate-option-title">Mã IG 22%</h3>
+          <article class="affiliate-option affiliate-option--fb">
+            <span class="social-voucher-icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="32" r="29" fill="#1877f2" />
+                <path d="M37.5 57V34.2h7.7l1.2-8.9h-8.9v-5.7c0-2.6.7-4.3 4.4-4.3h4.8V7.4c-.8-.1-3.7-.4-7-.4-6.9 0-11.7 4.2-11.7 12v6.3h-7.8v8.9H28V57h9.5Z" fill="#fff" />
+              </svg>
+            </span>
+            <div class="affiliate-option-copy">
+              <h3 class="affiliate-option-title">Voucher FB 22%+25%</h3>
+            </div>
             <a
-              id="buyNowBtn2"
-              class="buy-now-big buy-cart-button disabled"
+              id="buyNowBtn1"
+              class="voucher-action voucher-action--fb disabled"
               href="#"
               target="_blank"
               rel="noopener noreferrer"
               aria-disabled="true"
             >
-              🛒 Mua Ngay
+              <svg class="voucher-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M3 4h2.1l2.1 10.1a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L20.5 8H6.1" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="9.5" cy="20" r="1.4" fill="currentColor" />
+                <circle cx="17.5" cy="20" r="1.4" fill="currentColor" />
+              </svg>
+              <span>MUA NGAY</span>
             </a>
           </article>
         </div>
@@ -468,11 +582,19 @@
         </div>
 
         <div class="voucher-guide-body">
-          <div class="voucher-guide-title">📌 Hướng dẫn nhận mã giảm giá</div>
-          <div class="voucher-guide-text">
+          <div id="voucherGuideTitle" class="voucher-guide-title">📌 Hướng dẫn nhận mã giảm giá</div>
+          <div id="voucherGuideText" class="voucher-guide-text">
             Chỉ cần dán link Shopee, bấm <strong>Tạo Link Ngay</strong> rồi chọn
             <strong>Mã FB 22–25%</strong> hoặc <strong>Mã IG 22%</strong>.
           </div>
+          <img
+            id="voucherGuideImage"
+            class="voucher-guide-image hidden"
+            src=""
+            alt="Ảnh hướng dẫn nhận mã giảm giá"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
       </div>
     </section>
@@ -572,7 +694,7 @@
     })();
   </script>
 
-  <script src="/notice.js"></script>
+  <script src="/notice.js?v=20260727-1"></script>
   <script src="/voucher.js?v=20260725-2"></script>
 </body>
 </html>
