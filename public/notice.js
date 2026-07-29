@@ -8,12 +8,42 @@ document.addEventListener("DOMContentLoaded", async () => {
   const voucherGuideTitleEl = document.getElementById("voucherGuideTitle");
   const voucherGuideTextEl = document.getElementById("voucherGuideText");
   const voucherGuideImageEl = document.getElementById("voucherGuideImage");
+  const voucherOptionsEl = document.getElementById("voucherOptions");
+  const voucherOptionFb25El = document.getElementById("voucherOptionFb25");
+  const voucherOptionIg22El = document.getElementById("voucherOptionIg22");
+  const voucherOptionFb22El = document.getElementById("voucherOptionFb22");
 
   if (!noticeEl || !titleEl || !messageEl || !buttonEl || !closeBtn) return;
 
   let autoCloseTimer;
 
   function updateVoucherGuide(config) {
+    const voucherOptions = [
+      {
+        element: voucherOptionFb25El,
+        visible: config.showVoucherFb25 !== false
+      },
+      {
+        element: voucherOptionIg22El,
+        visible: config.showVoucherIg22 !== false
+      },
+      {
+        element: voucherOptionFb22El,
+        visible: config.showVoucherFb22 !== false
+      }
+    ];
+
+    voucherOptions.forEach(({ element, visible }) => {
+      element?.classList.toggle("hidden", !visible);
+    });
+
+    if (voucherOptionsEl) {
+      const hasVisibleOption = voucherOptions.some(
+        ({ element, visible }) => Boolean(element) && visible
+      );
+      voucherOptionsEl.classList.toggle("hidden", !hasVisibleOption);
+    }
+
     if (voucherGuideTitleEl) {
       voucherGuideTitleEl.textContent = config.guideTitle || "";
       voucherGuideTitleEl.classList.toggle("hidden", !config.guideTitle);
