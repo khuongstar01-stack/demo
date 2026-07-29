@@ -810,9 +810,12 @@ const DEFAULT_VOUCHER_NOTICE = {
   position: "bottom-right",
   showOncePerSession: false,
   displaySeconds: 5,
+  showVoucherFb25: true,
+  showVoucherIg22: true,
+  showVoucherFb22: true,
   guideTitle: "📌 Hướng dẫn nhận mã giảm giá",
   guideText:
-    "Chỉ cần dán link Shopee, bấm Tạo Link Ngay rồi chọn Mã FB 22–25% hoặc Mã IG 22%.",
+    "Chỉ cần dán link Shopee, bấm Tạo Link Ngay rồi chọn Mã FB 25%, Mã IG 22% hoặc Mã FB 22%.",
   guideImageUrl: "",
   version: "voucher-default"
 };
@@ -885,6 +888,9 @@ async function saveVoucherNotice(data) {
     displaySeconds: Number.isFinite(displaySeconds)
       ? Math.max(0, Math.min(300, Math.round(displaySeconds)))
       : DEFAULT_VOUCHER_NOTICE.displaySeconds,
+    showVoucherFb25: data.showVoucherFb25 !== false,
+    showVoucherIg22: data.showVoucherIg22 !== false,
+    showVoucherFb22: data.showVoucherFb22 !== false,
     guideTitle: String(data.guideTitle || "").trim(),
     guideText: String(data.guideText || "").trim(),
     guideImageUrl: String(data.guideImageUrl || "").trim(),
