@@ -298,6 +298,25 @@
         </p>
 
         <div class="field">
+          <label>Hiển thị các thẻ Voucher</label>
+
+          <div class="checkbox-field">
+            <input id="showVoucherFb25" type="checkbox" />
+            <span>Hiện Voucher FB 25%</span>
+          </div>
+
+          <div class="checkbox-field">
+            <input id="showVoucherIg22" type="checkbox" />
+            <span>Hiện Voucher Instagram 22%</span>
+          </div>
+
+          <div class="checkbox-field">
+            <input id="showVoucherFb22" type="checkbox" />
+            <span>Hiện Voucher FB 22%</span>
+          </div>
+        </div>
+
+        <div class="field">
           <label for="guideTitle">Tiêu đề hướng dẫn</label>
           <input
             id="guideTitle"
@@ -381,6 +400,9 @@
       position: document.getElementById("position"),
       displaySeconds: document.getElementById("displaySeconds"),
       showOncePerSession: document.getElementById("showOncePerSession"),
+      showVoucherFb25: document.getElementById("showVoucherFb25"),
+      showVoucherIg22: document.getElementById("showVoucherIg22"),
+      showVoucherFb22: document.getElementById("showVoucherFb22"),
       guideTitle: document.getElementById("guideTitle"),
       guideText: document.getElementById("guideText"),
       guideImageUrl: document.getElementById("guideImageUrl")
@@ -414,6 +436,9 @@
       fields.position.value = data.position || "bottom-right";
       fields.displaySeconds.value = Number(data.displaySeconds ?? 5);
       fields.showOncePerSession.checked = Boolean(data.showOncePerSession);
+      fields.showVoucherFb25.checked = data.showVoucherFb25 !== false;
+      fields.showVoucherIg22.checked = data.showVoucherIg22 !== false;
+      fields.showVoucherFb22.checked = data.showVoucherFb22 !== false;
       fields.guideTitle.value = data.guideTitle || "";
       fields.guideText.value = data.guideText || "";
       fields.guideImageUrl.value = data.guideImageUrl || "";
@@ -430,6 +455,9 @@
         position: fields.position.value,
         displaySeconds: Number(fields.displaySeconds.value || 0),
         showOncePerSession: fields.showOncePerSession.checked,
+        showVoucherFb25: fields.showVoucherFb25.checked,
+        showVoucherIg22: fields.showVoucherIg22.checked,
+        showVoucherFb22: fields.showVoucherFb22.checked,
         guideTitle: fields.guideTitle.value,
         guideText: fields.guideText.value,
         guideImageUrl: fields.guideImageUrl.value
