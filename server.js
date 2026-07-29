@@ -33,6 +33,10 @@ if (!AFFILIATE_ID) {
   process.exit(1);
 }
 
+app.get("/", (_req, res) => {
+  res.redirect(301, "/voucher");
+});
+
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 
