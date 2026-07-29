@@ -15,6 +15,7 @@ const resultSection = document.getElementById("resultSection");
 const resultBox = document.getElementById("resultBox");
 const buyNowBtn1 = document.getElementById("buyNowBtn1");
 const buyNowBtn2 = document.getElementById("buyNowBtn2");
+const buyNowBtn3 = document.getElementById("buyNowBtn3");
 const shareBtn = document.getElementById("shareBtn");
 const copyBtn = null;
 const alertBox = document.getElementById("alertBox");
@@ -218,6 +219,10 @@ function resetResult() {
     link: "",
     buyButton: buyNowBtn2
   });
+  setAffiliateOption({
+    link: "",
+    buyButton: buyNowBtn3
+  });
 
   if (resultSection) {
     resultSection.classList.add("hidden");
@@ -326,9 +331,10 @@ async function createLink() {
 
     const affiliateLink1 = data?.affiliateLinks?.[0]?.affiliate_link || "";
     const affiliateLink2 = data?.affiliateLinks?.[1]?.affiliate_link || "";
+    const affiliateLink3 = data?.affiliateLinks?.[2]?.affiliate_link || "";
 
-    if (!affiliateLink1) {
-      throw new Error("Không nhận được affiliate link.");
+    if (!affiliateLink1 || !affiliateLink2 || !affiliateLink3) {
+      throw new Error("Không nhận đủ ba affiliate link.");
     }
 
     currentAffiliateLink = affiliateLink1;
@@ -341,6 +347,10 @@ async function createLink() {
     setAffiliateOption({
       link: affiliateLink2,
       buyButton: buyNowBtn2
+    });
+    setAffiliateOption({
+      link: affiliateLink3,
+      buyButton: buyNowBtn3
     });
 
     unlockShareBtn();
@@ -577,3 +587,4 @@ function bindBuyButtonAnimation(button) {
 
 bindBuyButtonAnimation(buyNowBtn1);
 bindBuyButtonAnimation(buyNowBtn2);
+bindBuyButtonAnimation(buyNowBtn3);
