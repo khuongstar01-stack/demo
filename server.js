@@ -20,6 +20,7 @@ const AFFIPAD_TOOL_ID_1 = String(
   process.env.AFFIPAD_TOOL_ID_1 || process.env.AFFIPAD_TOOL_ID || ""
 ).trim();
 const AFFIPAD_TOOL_ID_2 = String(process.env.AFFIPAD_TOOL_ID_2 || "").trim();
+const AFFIPAD_TOOL_ID_3 = String(process.env.AFFIPAD_TOOL_ID_3 || "").trim();
 
 const NOTICE_FILE =
   process.env.NOTICE_FILE || path.join(__dirname, "notice.json");
@@ -689,11 +690,16 @@ app.post("/api/voucher/convert", async (req, res) => {
       });
     }
 
-    if (!AFFIPAD_API_KEY || !AFFIPAD_TOOL_ID_1 || !AFFIPAD_TOOL_ID_2) {
+    if (
+      !AFFIPAD_API_KEY ||
+      !AFFIPAD_TOOL_ID_1 ||
+      !AFFIPAD_TOOL_ID_2 ||
+      !AFFIPAD_TOOL_ID_3
+    ) {
       return res.status(500).json({
         success: false,
         message:
-          "Chưa cấu hình AFFIPAD_API_KEY, AFFIPAD_TOOL_ID_1 hoặc AFFIPAD_TOOL_ID_2."
+          "Chưa cấu hình AFFIPAD_API_KEY, AFFIPAD_TOOL_ID_1, AFFIPAD_TOOL_ID_2 hoặc AFFIPAD_TOOL_ID_3."
       });
     }
 
@@ -710,14 +716,19 @@ app.post("/api/voucher/convert", async (req, res) => {
 
     const toolConfigs = [
       {
-        channel: "fb",
-        label: "Mã FB 22–25%",
+        channel: "fb25",
+        label: "Mã FB 25%",
         toolId: AFFIPAD_TOOL_ID_1
       },
       {
-        channel: "ig",
+        channel: "ig22",
         label: "Mã IG 22%",
         toolId: AFFIPAD_TOOL_ID_2
+      },
+      {
+        channel: "fb22",
+        label: "Mã FB 22%",
+        toolId: AFFIPAD_TOOL_ID_3
       }
     ];
 
@@ -734,13 +745,14 @@ app.post("/api/voucher/convert", async (req, res) => {
     if (results.some((item) => !item)) {
       return res.status(502).json({
         success: false,
-        message: "AffiPad không trả về đủ hai link FB và IG."
+        message: "AffiPad không trả về đủ ba link FB 25%, IG 22% và FB 22%."
       });
     }
 
     const productInfo =
       normalizeAffipadProductInfo(affipadDataList[0]?.productInfo) ||
       normalizeAffipadProductInfo(affipadDataList[1]?.productInfo) ||
+      normalizeAffipadProductInfo(affipadDataList[2]?.productInfo) ||
       (await fetchAffipadProductInfo(originUrl)) ||
       (await fetchShopeeProductInfo(originUrl)) ||
       (await fetchShopeePageProductInfo(resolvedUrl)) ||
