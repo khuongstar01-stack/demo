@@ -6,6 +6,7 @@ require("dotenv").config();
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
+
 const AFFILIATE_ID = String(process.env.AFFILIATE_ID || "").trim();
 const SHARE_CHANNEL_CODE = String(process.env.SHARE_CHANNEL_CODE ?? "").trim();
 const DEFAULT_SUB1 = String(process.env.DEFAULT_SUB1 || "addlivetag").trim();
@@ -36,6 +37,7 @@ if (!AFFILIATE_ID) {
 app.get("/", (_req, res) => {
   res.redirect(301, "/voucher");
 });
+
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 
@@ -964,7 +966,4 @@ app.get("*", (_req, res) => {
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server đang chạy tại port ${PORT}`);
-});
-
-  next();
 });
