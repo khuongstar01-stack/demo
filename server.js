@@ -6,18 +6,6 @@ require("dotenv").config();
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
-app.use((req, res, next) => {
-  if (
-    req.path.endsWith(".html") ||
-    req.path.startsWith("/api/") ||
-    req.path === "/voucher" ||
-    req.path.startsWith("/admin")
-  ) {
-    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
-  }
-
 const AFFILIATE_ID = String(process.env.AFFILIATE_ID || "").trim();
 const SHARE_CHANNEL_CODE = String(process.env.SHARE_CHANNEL_CODE ?? "").trim();
 const DEFAULT_SUB1 = String(process.env.DEFAULT_SUB1 || "addlivetag").trim();
