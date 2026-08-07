@@ -967,3 +967,17 @@ app.get("*", (_req, res) => {
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server đang chạy tại port ${PORT}`);
 });
+app.use((req, res, next) => {
+  if (
+    req.path.endsWith(".html") ||
+    req.path.startsWith("/api/") ||
+    req.path === "/voucher" ||
+    req.path.startsWith("/admin")
+  ) {
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+  }
+
+  next();
+});
