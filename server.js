@@ -802,10 +802,10 @@ const DEFAULT_NOTICE = {
 };
 const DEFAULT_VOUCHER_NOTICE = {
   enabled: true,
-  title: "THÔNG BÁO",
-  message: "",
+  title: "0H 3H 9H 12H 15H 20H ➡️ CÓ MÃ 22%",
+  message: "MÃ 20% CÓ SẴN",
   buttonText: "Group FB",
-  buttonUrl: "https://www.facebook.com/share/g/14coiSJ6D68/?mibextid=wwXIfr",
+  buttonUrl: "https://www.facebook.com/",
   imageUrl: "",
   position: "bottom-right",
   showOncePerSession: false,
@@ -815,7 +815,7 @@ const DEFAULT_VOUCHER_NOTICE = {
   showVoucherFb22: true,
   guideTitle: "📌 Hướng dẫn nhận mã giảm giá",
   guideText:
-    "Chỉ cần dán link Shopee, bấm Tạo Link Ngay rồi chọn Mã FB 25%, Mã IG 22% hoặc Mã FB 22%.",
+    "Chỉ cần dán link Shopee ➡️ Tạo Link ",
   guideImageUrl: "",
   version: "voucher-default"
 };
