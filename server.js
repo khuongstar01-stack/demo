@@ -1033,12 +1033,8 @@ app.get("*", (req, res) => {
     return res.status(404).type("text/plain").send("Not found");
   }
 
-  res.setHeader(
-    "Cache-Control",
-    "no-store, no-cache, must-revalidate, proxy-revalidate"
-  );
-
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  // Mọi đường dẫn trang không tồn tại đều quay về trang Voucher mới.
+  res.redirect(302, "/voucher");
 });
 
 app.listen(PORT, "0.0.0.0", () => {
