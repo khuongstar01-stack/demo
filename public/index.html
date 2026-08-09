@@ -20,7 +20,7 @@
   <link rel="icon" type="image/png" href="/images/favicon.png?v=3" />
 <link rel="shortcut icon" type="image/png" href="/images/favicon.png?v=3" />
 <link rel="apple-touch-icon" href="/images/favicon.png?v=3" />
-  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/style.css?v=20260809-1" />
 
   <!-- Open Graph -->
   <meta property="og:locale" content="vi_VN" />
@@ -439,7 +439,47 @@
   })();
 </script>
 
-<script src="/notice.js?v=20260807-1"></script>
-<script src="/app.js?v=20260807-2"></script>
+<script src="/notice.js?v=20260809-1"></script>
+<script src="/app.js?v=20260809-1"></script>
+<script>
+  (async function cleanupOldWebsiteCache() {
+    const cleanupVersion = "cleanup-20260809-1";
+
+    if (sessionStorage.getItem(cleanupVersion)) {
+      return;
+    }
+
+    let cleaned = false;
+
+    try {
+      if ("serviceWorker" in navigator) {
+        const registrations =
+          await navigator.serviceWorker.getRegistrations();
+
+        for (const registration of registrations) {
+          await registration.unregister();
+          cleaned = true;
+        }
+      }
+
+      if ("caches" in window) {
+        const cacheNames = await caches.keys();
+
+        for (const cacheName of cacheNames) {
+          await caches.delete(cacheName);
+          cleaned = true;
+        }
+      }
+
+      sessionStorage.setItem(cleanupVersion, "done");
+
+      if (cleaned) {
+        window.location.reload();
+      }
+    } catch (error) {
+      console.warn("Không thể dọn cache cũ:", error);
+    }
+  })();
+</script>
 </body>
 </html>
