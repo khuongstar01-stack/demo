@@ -38,8 +38,71 @@ app.get("/", (_req, res) => {
   res.redirect(301, "/voucher");
 });
 
-app.use(express.static(path.join(__dirname, "public")));
-app.use(express.json());
+// Vô hiệu hóa các service worker cũ từng được website sử dụng.
+const legacyServiceWorkerPaths = [
+  "/service-worker.js",
+  "/sw.js",
+  "/serviceWorker.js",
+  "/workbox.js"
+];
+
+app.get(legacyServiceWorkerPaths, (_req, res) => {
+  res.set({
+    "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+    "Clear-Site-Data": '"cache"',
+    "Service-Worker-Allowed": "/"
+  });
+
+  res.type("application/javascript");
+
+  res.send(`
+    self.addEventListener("install", () => {
+      self.skipWaiting();
+    });
+
+    self.addEventListener("activate", event => {
+      event.waitUntil(
+        (async () => {
+          const cacheNames = await caches.keys();
+
+          await Promise.all(
+            cacheNames.map(cacheName => caches.delete(cacheName))
+          );
+
+          await self.registration.unregister();
+
+          const clientList = await self.clients.matchAll({
+            type: "window",
+            includeUncontrolled: true
+          });
+
+          for (const client of clientList) {
+            await client.navigate(client.url);
+          }
+        })()
+      );
+    });
+  `);
+});
+app.use(
+  express.static(path.join(__dirname, "public"), {
+    setHeaders(res, filePath) {
+      const extension = path.extname(filePath).toLowerCase();
+
+      if (extension === ".html") {
+        res.setHeader(
+          "Cache-Control",
+          "no-store, no-cache, must-revalidate, proxy-revalidate"
+        );
+        return;
+      }
+
+      if ([".js", ".css", ".json"].includes(extension)) {
+        res.setHeader("Cache-Control", "no-cache, must-revalidate");
+      }
+    }
+  })
+);
 
 app.get(["/voucher", "/voucher/"], (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "voucher.html"));
@@ -960,7 +1023,19 @@ app.get("/admin/notice", (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "admin-notice.html"));
 });
 
-app.get("*", (_req, res) => {
+app.get("*", (req, res) => {
+  const extension = path.extname(req.path).toLowerCase();
+
+  // File tài nguyên không tồn tại phải trả 404.
+  if (extension) {
+    return res.status(404).type("text/plain").send("Not found");
+  }
+
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate"
+  );
+
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
