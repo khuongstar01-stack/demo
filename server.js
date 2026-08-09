@@ -104,6 +104,8 @@ app.use(
   })
 );
 
+app.use(express.json());
+
 app.get(["/voucher", "/voucher/"], (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "voucher.html"));
 });
@@ -730,7 +732,7 @@ async function fetchShopeePageProductInfo(url) {
  */
 app.post("/api/voucher/convert", async (req, res) => {
   try {
-    const inputUrl = normalizeUrl(req.body.url);
+    const inputUrl = normalizeUrl(req.body?.url);
 
     if (!inputUrl) {
       return res.status(400).json({
