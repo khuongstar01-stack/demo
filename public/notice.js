@@ -12,10 +12,39 @@ document.addEventListener("DOMContentLoaded", async () => {
   const voucherOptionFb25El = document.getElementById("voucherOptionFb25");
   const voucherOptionIg22El = document.getElementById("voucherOptionIg22");
   const voucherOptionFb22El = document.getElementById("voucherOptionFb22");
+  const voucherBadgeFb25El = document.getElementById("voucherBadgeFb25");
+  const voucherBadgeIg22El = document.getElementById("voucherBadgeIg22");
+  const voucherBadgeFb22El = document.getElementById("voucherBadgeFb22");
 
   if (!noticeEl || !titleEl || !messageEl || !buttonEl || !closeBtn) return;
 
   let autoCloseTimer;
+
+  function renderVoucherBadge(element, text) {
+    if (!element) return;
+
+    const badgeText = String(text || "").trim();
+    element.replaceChildren();
+    element.classList.toggle("hidden", !badgeText);
+
+    if (!badgeText) return;
+
+    const upperText = badgeText.toUpperCase();
+    const hasFullSchedule = ["0H", "3H", "9H", "12H", "15H", "20H"].every(
+      (time) => new RegExp(`(^|\\s)${time}(?=\\s|$)`).test(upperText)
+    );
+
+    const lines = hasFullSchedule
+      ? ["⚡ 0H·3H·9H", "12H·15H·20H CÓ MÃ"]
+      : [badgeText];
+
+    lines.forEach((line) => {
+      const lineElement = document.createElement("span");
+      lineElement.className = "voucher-badge-line";
+      lineElement.textContent = line;
+      element.appendChild(lineElement);
+    });
+  }
 
   function updateVoucherGuide(config) {
     const voucherOptions = [
@@ -35,6 +64,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     voucherOptions.forEach(({ element, visible }) => {
       element?.classList.toggle("hidden", !visible);
+    });
+
+    const voucherBadges = [
+      { element: voucherBadgeFb25El, text: config.voucherBadgeFb25 },
+      { element: voucherBadgeIg22El, text: config.voucherBadgeIg22 },
+      { element: voucherBadgeFb22El, text: config.voucherBadgeFb22 }
+    ];
+
+    voucherBadges.forEach(({ element, text }) => {
+      renderVoucherBadge(element, text);
     });
 
     if (voucherOptionsEl) {
