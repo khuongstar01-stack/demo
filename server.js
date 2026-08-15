@@ -35,7 +35,7 @@ if (!AFFILIATE_ID) {
 }
 
 app.get("/", (_req, res) => {
-  res.redirect(301, "/voucher");
+  res.redirect(302, "/voucher");
 });
 
 // Vô hiệu hóa các service worker cũ từng được website sử dụng.
@@ -878,6 +878,9 @@ const DEFAULT_VOUCHER_NOTICE = {
   showVoucherFb25: true,
   showVoucherIg22: true,
   showVoucherFb22: true,
+  voucherBadgeFb25: "⚡ 0H 3H 9H 12H 15H 20H CÓ MÃ",
+  voucherBadgeIg22: "⚡ 0H 3H 9H 12H 15H 20H CÓ MÃ",
+  voucherBadgeFb22: "⚡ CÓ MÃ",
   guideTitle: "📌 Hướng dẫn nhận mã giảm giá",
   guideText:
     "Chỉ cần dán link Shopee ➡️ Tạo Link ",
@@ -956,6 +959,9 @@ async function saveVoucherNotice(data) {
     showVoucherFb25: data.showVoucherFb25 !== false,
     showVoucherIg22: data.showVoucherIg22 !== false,
     showVoucherFb22: data.showVoucherFb22 !== false,
+    voucherBadgeFb25: String(data.voucherBadgeFb25 || "").trim(),
+    voucherBadgeIg22: String(data.voucherBadgeIg22 || "").trim(),
+    voucherBadgeFb22: String(data.voucherBadgeFb22 || "").trim(),
     guideTitle: String(data.guideTitle || "").trim(),
     guideText: String(data.guideText || "").trim(),
     guideImageUrl: String(data.guideImageUrl || "").trim(),
