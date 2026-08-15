@@ -166,7 +166,7 @@
 
     .affiliate-option {
       display: grid;
-      grid-template-columns: 40px minmax(0, 1fr) auto;
+      grid-template-columns: 40px minmax(0, 1fr) auto auto;
       gap: 6px;
       align-items: center;
       padding: 9px;
@@ -220,7 +220,38 @@
       white-space: nowrap;
     }
 
+    .voucher-time-badge {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 8px;
+      border: 1px solid rgba(255, 122, 0, 0.28);
+      border-radius: 999px;
+      background: linear-gradient(135deg, #fff8d9, #ffe8c7);
+      color: #e65100;
+      font-size: 9px;
+      font-weight: 900;
+      max-width: 112px;
+      line-height: 1.2;
+      text-align: center;
+      white-space: normal;
+      box-shadow: 0 4px 12px rgba(255, 112, 0, 0.14);
+      animation: voucherBadgeGlow 2.2s ease-in-out infinite;
+    }
+
+    .voucher-badge-line {
+      display: block;
+      white-space: nowrap;
+    }
+
     .voucher-action {
+      --button-bg: #1877f2;
+      --button-bg-active: #0b8cff;
+      --button-outline: rgba(24, 119, 242, 0.28);
+      --button-glow: rgba(24, 119, 242, 0.42);
+      position: relative;
+      overflow: hidden;
       display: inline-flex;
       min-width: 91px;
       min-height: 40px;
@@ -235,26 +266,213 @@
       line-height: 1;
       text-decoration: none;
       white-space: nowrap;
-      box-shadow: 0 8px 16px rgba(45, 51, 68, 0.15);
+      outline: 0 solid transparent;
+      background: var(--button-bg);
+      box-shadow: 0 6px 16px var(--button-glow);
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      animation:
+        voucherButtonRipple 1.25s linear infinite,
+        voucherButtonColorize 1.8s ease-in-out infinite,
+        voucherButtonBreathe 1.25s ease-in-out infinite;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .voucher-action::after {
+      position: absolute;
+      top: -45%;
+      left: -55%;
+      width: 34%;
+      height: 190%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+      content: "";
+      transform: rotate(18deg);
+      animation: voucherButtonShine 2.8s ease-in-out infinite;
+    }
+
+    .voucher-action:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 9px 22px var(--button-glow);
+    }
+
+    .voucher-action:active {
+      animation-play-state: paused;
+      transform: scale(0.95);
+    }
+
+    .voucher-action > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes voucherBadgeGlow {
+      0%, 100% { transform: scale(1); box-shadow: 0 4px 12px rgba(255, 112, 0, 0.14); }
+      50% { transform: scale(1.04); box-shadow: 0 5px 16px rgba(255, 112, 0, 0.28); }
+    }
+
+    @keyframes voucherButtonRipple {
+      0% {
+        outline: 0 solid transparent;
+        outline-offset: -2px;
+        box-shadow: 0 5px 13px var(--button-glow);
+      }
+      50% {
+        outline: 3px solid var(--button-outline);
+        outline-offset: 2px;
+        box-shadow: 0 7px 21px var(--button-glow);
+      }
+      100% {
+        outline: 6px solid transparent;
+        outline-offset: 6px;
+        box-shadow: 0 5px 13px var(--button-glow);
+      }
+    }
+
+    @keyframes voucherButtonColorize {
+      0%, 100% { background: var(--button-bg); }
+      50% { background: var(--button-bg-active); }
+    }
+
+    @keyframes voucherButtonBreathe {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.045); filter: brightness(1.14); }
+    }
+
+    @keyframes voucherButtonShine {
+      0%, 58% { left: -55%; }
+      85%, 100% { left: 125%; }
     }
 
     .voucher-action--ig {
-      background: linear-gradient(90deg, #f0442f, #ff720d);
+      --button-bg: #f0442f;
+      --button-bg-active: #ff8500;
+      --button-outline: rgba(255, 92, 26, 0.3);
+      --button-glow: rgba(255, 92, 26, 0.42);
     }
 
     .voucher-action--fb {
-      background: linear-gradient(90deg, #1877f2, #0875e8);
+      --button-bg: #1877f2;
+      --button-bg-active: #005bd8;
+      --button-outline: rgba(24, 119, 242, 0.28);
+      --button-glow: rgba(24, 119, 242, 0.42);
     }
 
     .voucher-action-icon {
       width: 17px;
       height: 17px;
       flex-shrink: 0;
+      filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
+      animation: voucherIconNudge 0.9s ease-in-out infinite;
+    }
+
+    @keyframes voucherIconNudge {
+      0%, 100% { transform: translateX(0) rotate(0); }
+      50% { transform: translateX(3px) rotate(-7deg); }
     }
 
     .voucher-action.disabled {
       opacity: 0.5;
       pointer-events: none;
+      animation: none;
+    }
+
+    .voucher-action.disabled::after,
+    .voucher-action.disabled .voucher-action-icon {
+      animation: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .voucher-time-badge {
+        animation: none;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .affiliate-option {
+        grid-template-columns: 38px minmax(82px, 1fr) 82px 104px;
+        gap: 4px;
+        padding: 8px 7px;
+      }
+
+      .social-voucher-icon {
+        width: 38px;
+        height: 38px;
+        justify-self: center;
+      }
+
+      .affiliate-option-title {
+        overflow: hidden;
+        font-size: 11.5px;
+        text-overflow: ellipsis;
+      }
+
+      .affiliate-option-subtitle {
+        overflow: hidden;
+        font-size: 9.5px;
+        text-overflow: ellipsis;
+      }
+
+      .voucher-time-badge {
+        width: 82px;
+        max-width: 82px;
+        padding: 5px 3px;
+        font-size: 7px;
+        line-height: 1.25;
+      }
+
+      .voucher-action {
+        width: 104px;
+        min-width: 104px;
+        min-height: 42px;
+        padding: 0 7px;
+        font-size: 12.5px;
+      }
+
+      .voucher-action-icon {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    @media (max-width: 340px) {
+      .affiliate-option {
+        grid-template-columns: 32px minmax(70px, 1fr) 70px 88px;
+        gap: 3px;
+        padding: 7px 5px;
+      }
+
+      .social-voucher-icon {
+        width: 32px;
+        height: 32px;
+      }
+
+      .affiliate-option-title {
+        font-size: 11px;
+      }
+
+      .affiliate-option-subtitle {
+        font-size: 9px;
+      }
+
+      .voucher-time-badge {
+        width: 70px;
+        max-width: 70px;
+        padding: 4px 2px;
+        font-size: 6px;
+      }
+
+      .voucher-action {
+        width: 88px;
+        min-width: 88px;
+        min-height: 38px;
+        padding: 0 5px;
+        font-size: 10.5px;
+      }
+
+      .voucher-action-icon {
+        width: 15px;
+        height: 15px;
+      }
     }
 
     .facebook-group-link {
@@ -392,7 +610,7 @@
       }
 
       .affiliate-option {
-        grid-template-columns: 54px minmax(0, 1fr) auto;
+        grid-template-columns: 54px minmax(0, 1fr) auto auto;
         gap: 12px;
         padding: 13px 16px;
         border-radius: 22px;
@@ -409,6 +627,11 @@
 
       .affiliate-option-subtitle {
         font-size: 17px;
+      }
+
+      .voucher-time-badge {
+        padding: 8px 11px;
+        font-size: 12px;
       }
 
       .voucher-action {
@@ -643,6 +866,7 @@
               <h3 class="affiliate-option-title">Voucher FB 22%</h3>
               <p class="affiliate-option-subtitle">(Giảm tối đa 500k)</p>
             </div>
+            <span id="voucherBadgeFb25" class="voucher-time-badge">⚡ 0H 3H 9H 12H 15H 20H CÓ MÃ</span>
             <a
               id="buyNowBtn1"
               class="voucher-action voucher-action--fb disabled"
@@ -678,9 +902,10 @@
               </svg>
             </span>
             <div class="affiliate-option-copy">
-              <h3 class="affiliate-option-title">Voucher Instagram 22%</h3>
+              <h3 class="affiliate-option-title">Voucher IG 22%</h3>
               <p class="affiliate-option-subtitle">(Giảm tối đa 300k)</p>
             </div>
+            <span id="voucherBadgeIg22" class="voucher-time-badge">⚡ 0H 3H 9H 12H 15H 20H CÓ MÃ</span>
             <a
               id="buyNowBtn2"
               class="voucher-action voucher-action--ig disabled"
@@ -709,6 +934,7 @@
               <h3 class="affiliate-option-title">Voucher FB 20%</h3>
               <p class="affiliate-option-subtitle">(Giảm tối đa 300k)</p>
             </div>
+            <span id="voucherBadgeFb22" class="voucher-time-badge">⚡ CÓ MÃ</span>
             <a
               id="buyNowBtn3"
               class="voucher-action voucher-action--fb disabled"
@@ -888,7 +1114,7 @@
     })();
   </script>
 
-  <script src="/notice.js?v=20260809-1"></script>
+  <script src="/notice.js?v=20260815-1"></script>
 <script src="/voucher.js?v=20260809-1"></script>
 <script>
   (async function cleanupOldWebsiteCache() {
