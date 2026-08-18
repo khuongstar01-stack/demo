@@ -12,6 +12,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const voucherOptionFb25El = document.getElementById("voucherOptionFb25");
   const voucherOptionIg22El = document.getElementById("voucherOptionIg22");
   const voucherOptionFb22El = document.getElementById("voucherOptionFb22");
+  const voucherName1El = document.getElementById("voucherName1");
+  const voucherName2El = document.getElementById("voucherName2");
+  const voucherName3El = document.getElementById("voucherName3");
+  const voucherName4El = document.getElementById("voucherName4");
   const voucherBadgeFb25El = document.getElementById("voucherBadgeFb25");
   const voucherBadgeIg22El = document.getElementById("voucherBadgeIg22");
   const voucherBadgeFb22El = document.getElementById("voucherBadgeFb22");
@@ -47,6 +51,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function updateVoucherGuide(config) {
+    const voucherNames = [
+      { element: voucherName1El, text: config.voucherName1 },
+      { element: voucherName2El, text: config.voucherName2 },
+      { element: voucherName3El, text: config.voucherName3 },
+      { element: voucherName4El, text: config.voucherName4 }
+    ];
+
+    voucherNames.forEach(({ element, text }) => {
+      const name = String(text || "").trim();
+      if (element && name) element.textContent = name;
+    });
+
     const voucherOptions = [
       {
         element: voucherOptionFb25El,
