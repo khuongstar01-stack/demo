@@ -21,6 +21,7 @@ const AFFIPAD_TOOL_ID_1 = String(
 ).trim();
 const AFFIPAD_TOOL_ID_2 = String(process.env.AFFIPAD_TOOL_ID_2 || "").trim();
 const AFFIPAD_TOOL_ID_3 = String(process.env.AFFIPAD_TOOL_ID_3 || "").trim();
+const AFFIPAD_TOOL_ID_4 = String(process.env.AFFIPAD_TOOL_ID_4 || "").trim();
 
 const NOTICE_FILE =
   process.env.NOTICE_FILE || path.join(__dirname, "notice.json");
@@ -768,6 +769,13 @@ app.post("/api/voucher/convert", async (req, res) => {
       });
     }
 
+    if (!AFFIPAD_TOOL_ID_4) {
+      return res.status(500).json({
+        success: false,
+        message: "Chưa cấu hình AFFIPAD_TOOL_ID_4 cho Voucher Zalo 25%."
+      });
+    }
+
     const resolvedUrl = await resolveOriginUrl(inputUrl);
 
     if (!isDirectShopeeProductUrl(resolvedUrl)) {
@@ -797,6 +805,12 @@ app.post("/api/voucher/convert", async (req, res) => {
       }
     ];
 
+    toolConfigs.push({
+      channel: "zalo25",
+      label: "Mã Zalo 25%",
+      toolId: AFFIPAD_TOOL_ID_4
+    });
+
     const affipadDataList = await Promise.all(
       toolConfigs.map(({ toolId }) =>
         convertVoucherWithAffipad(originUrl, toolId)
@@ -806,6 +820,13 @@ app.post("/api/voucher/convert", async (req, res) => {
     const results = affipadDataList.map((data) =>
       Array.isArray(data.results) ? data.results[0] : null
     );
+
+    if (!results[3]) {
+      return res.status(502).json({
+        success: false,
+        message: "AffiPad không trả về link Voucher Zalo 25%."
+      });
+    }
 
     if (results.some((item) => !item)) {
       return res.status(502).json({
@@ -875,6 +896,10 @@ const DEFAULT_VOUCHER_NOTICE = {
   position: "bottom-right",
   showOncePerSession: false,
   displaySeconds: 5,
+  voucherName1: "Voucher FB 22%",
+  voucherName2: "Voucher IG 22%",
+  voucherName3: "Voucher FB 20%",
+  voucherName4: "Voucher Zalo 25%",
   showVoucherFb25: true,
   showVoucherIg22: true,
   showVoucherFb22: true,
@@ -956,6 +981,14 @@ async function saveVoucherNotice(data) {
     displaySeconds: Number.isFinite(displaySeconds)
       ? Math.max(0, Math.min(300, Math.round(displaySeconds)))
       : DEFAULT_VOUCHER_NOTICE.displaySeconds,
+    voucherName1:
+      String(data.voucherName1 || "").trim() || DEFAULT_VOUCHER_NOTICE.voucherName1,
+    voucherName2:
+      String(data.voucherName2 || "").trim() || DEFAULT_VOUCHER_NOTICE.voucherName2,
+    voucherName3:
+      String(data.voucherName3 || "").trim() || DEFAULT_VOUCHER_NOTICE.voucherName3,
+    voucherName4:
+      String(data.voucherName4 || "").trim() || DEFAULT_VOUCHER_NOTICE.voucherName4,
     showVoucherFb25: data.showVoucherFb25 !== false,
     showVoucherIg22: data.showVoucherIg22 !== false,
     showVoucherFb22: data.showVoucherFb22 !== false,
