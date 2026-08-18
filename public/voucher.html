@@ -185,6 +185,11 @@
       background: linear-gradient(105deg, #f7fbff, #eef7ff);
     }
 
+    .affiliate-option--zalo {
+      border-color: #c9ddff;
+      background: linear-gradient(105deg, #f7fbff, #eef5ff);
+    }
+
     .social-voucher-icon {
       display: block;
       width: 40px;
@@ -355,6 +360,13 @@
       --button-bg-active: #005bd8;
       --button-outline: rgba(24, 119, 242, 0.28);
       --button-glow: rgba(24, 119, 242, 0.42);
+    }
+
+    .voucher-action--zalo {
+      --button-bg: #0068ff;
+      --button-bg-active: #0054d6;
+      --button-outline: rgba(0, 104, 255, 0.28);
+      --button-glow: rgba(0, 104, 255, 0.42);
     }
 
     .voucher-action-icon {
@@ -863,7 +875,7 @@
               </svg>
             </span>
             <div class="affiliate-option-copy">
-              <h3 class="affiliate-option-title">Voucher FB 22%</h3>
+              <h3 id="voucherName1" class="affiliate-option-title">Voucher FB 22%</h3>
               <p class="affiliate-option-subtitle">(Giảm tối đa 500k)</p>
             </div>
             <span id="voucherBadgeFb25" class="voucher-time-badge">⚡ 0H 3H 9H 12H 15H 20H CÓ MÃ</span>
@@ -902,7 +914,7 @@
               </svg>
             </span>
             <div class="affiliate-option-copy">
-              <h3 class="affiliate-option-title">Voucher IG 22%</h3>
+              <h3 id="voucherName2" class="affiliate-option-title">Voucher IG 22%</h3>
               <p class="affiliate-option-subtitle">(Giảm tối đa 300k)</p>
             </div>
             <span id="voucherBadgeIg22" class="voucher-time-badge">⚡ 0H 3H 9H 12H 15H 20H CÓ MÃ</span>
@@ -931,13 +943,42 @@
               </svg>
             </span>
             <div class="affiliate-option-copy">
-              <h3 class="affiliate-option-title">Voucher FB 20%</h3>
+              <h3 id="voucherName3" class="affiliate-option-title">Voucher FB 20%</h3>
               <p class="affiliate-option-subtitle">(Giảm tối đa 300k)</p>
             </div>
             <span id="voucherBadgeFb22" class="voucher-time-badge">⚡ CÓ MÃ</span>
             <a
               id="buyNowBtn3"
               class="voucher-action voucher-action--fb disabled"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-disabled="true"
+            >
+              <svg class="voucher-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M3 4h2.1l2.1 10.1a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L20.5 8H6.1" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="9.5" cy="20" r="1.4" fill="currentColor" />
+                <circle cx="17.5" cy="20" r="1.4" fill="currentColor" />
+              </svg>
+              <span>MUA NGAY</span>
+            </a>
+          </article>
+
+          <article id="voucherOptionZalo25" class="affiliate-option affiliate-option--zalo">
+            <span class="social-voucher-icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="4" width="56" height="56" rx="16" fill="#0068ff" />
+                <path d="M15 20h34v24H15z" fill="#ffffff" opacity="0.14" />
+                <text x="32" y="39" fill="#ffffff" font-family="Arial, sans-serif" font-size="17" font-weight="900" text-anchor="middle">Zalo</text>
+              </svg>
+            </span>
+            <div class="affiliate-option-copy">
+              <h3 id="voucherName4" class="affiliate-option-title">Voucher Zalo 25%</h3>
+            </div>
+            <span id="voucherBadgeZalo25" class="voucher-time-badge">Đơn tối thiểu 200k</span>
+            <a
+              id="buyNowBtn4"
+              class="voucher-action voucher-action--zalo disabled"
               href="#"
               target="_blank"
               rel="noopener noreferrer"
@@ -1114,11 +1155,11 @@
     })();
   </script>
 
-  <script src="/notice.js?v=20260815-1"></script>
-<script src="/voucher.js?v=20260809-1"></script>
+  <script src="/notice.js?v=20260818-2"></script>
+<script src="/voucher.js?v=20260818-2"></script>
 <script>
   (async function cleanupOldWebsiteCache() {
-    const cleanupVersion = "cleanup-20260809-1";
+    const cleanupVersion = "cleanup-20260818-2";
 
     if (sessionStorage.getItem(cleanupVersion)) {
       return;
