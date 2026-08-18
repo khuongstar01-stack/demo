@@ -298,11 +298,40 @@
         </p>
 
         <div class="field">
+          <label>Tên hiển thị Voucher</label>
+          <p class="section-note">Chỉ thay đổi tên hiển thị. Tool ID và link voucher không bị thay đổi.</p>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="voucherName1">Voucher 1</label>
+            <input id="voucherName1" type="text" maxlength="80" placeholder="Voucher FB 22%" />
+          </div>
+
+          <div class="field">
+            <label for="voucherName2">Voucher 2</label>
+            <input id="voucherName2" type="text" maxlength="80" placeholder="Voucher IG 22%" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="voucherName3">Voucher 3</label>
+            <input id="voucherName3" type="text" maxlength="80" placeholder="Voucher FB 20%" />
+          </div>
+
+          <div class="field">
+            <label for="voucherName4">Voucher 4</label>
+            <input id="voucherName4" type="text" maxlength="80" placeholder="Voucher Zalo 25%" />
+          </div>
+        </div>
+
+        <div class="field">
           <label>Hiển thị các thẻ Voucher</label>
 
           <div class="checkbox-field">
             <input id="showVoucherFb25" type="checkbox" />
-            <span>Hiện Voucher FB 25%</span>
+            <span>Hiện Voucher FB 22%</span>
           </div>
 
           <div class="checkbox-field">
@@ -416,6 +445,10 @@
       position: document.getElementById("position"),
       displaySeconds: document.getElementById("displaySeconds"),
       showOncePerSession: document.getElementById("showOncePerSession"),
+      voucherName1: document.getElementById("voucherName1"),
+      voucherName2: document.getElementById("voucherName2"),
+      voucherName3: document.getElementById("voucherName3"),
+      voucherName4: document.getElementById("voucherName4"),
       showVoucherFb25: document.getElementById("showVoucherFb25"),
       showVoucherIg22: document.getElementById("showVoucherIg22"),
       showVoucherFb22: document.getElementById("showVoucherFb22"),
@@ -455,6 +488,10 @@
       fields.position.value = data.position || "bottom-right";
       fields.displaySeconds.value = Number(data.displaySeconds ?? 5);
       fields.showOncePerSession.checked = Boolean(data.showOncePerSession);
+      fields.voucherName1.value = data.voucherName1 || "Voucher FB 22%";
+      fields.voucherName2.value = data.voucherName2 || "Voucher IG 22%";
+      fields.voucherName3.value = data.voucherName3 || "Voucher FB 20%";
+      fields.voucherName4.value = data.voucherName4 || "Voucher Zalo 25%";
       fields.showVoucherFb25.checked = data.showVoucherFb25 !== false;
       fields.showVoucherIg22.checked = data.showVoucherIg22 !== false;
       fields.showVoucherFb22.checked = data.showVoucherFb22 !== false;
@@ -477,6 +514,10 @@
         position: fields.position.value,
         displaySeconds: Number(fields.displaySeconds.value || 0),
         showOncePerSession: fields.showOncePerSession.checked,
+        voucherName1: fields.voucherName1.value,
+        voucherName2: fields.voucherName2.value,
+        voucherName3: fields.voucherName3.value,
+        voucherName4: fields.voucherName4.value,
         showVoucherFb25: fields.showVoucherFb25.checked,
         showVoucherIg22: fields.showVoucherIg22.checked,
         showVoucherFb22: fields.showVoucherFb22.checked,
