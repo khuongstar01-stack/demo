@@ -331,7 +331,7 @@
 
           <div class="checkbox-field">
             <input id="showVoucherFb25" type="checkbox" />
-            <span>Hiện Voucher FB 22%</span>
+            <span>Hiện Voucher FB 25%</span>
           </div>
 
           <div class="checkbox-field">
@@ -342,6 +342,11 @@
           <div class="checkbox-field">
             <input id="showVoucherFb22" type="checkbox" />
             <span>Hiện Voucher FB 22%</span>
+          </div>
+
+          <div class="checkbox-field">
+            <input id="showVoucherZalo25" type="checkbox" />
+            <span>Hiện Voucher Zalo 25%</span>
           </div>
         </div>
 
@@ -359,6 +364,12 @@
           <label for="voucherBadgeFb22">Dòng nổi — Voucher FB cuối</label>
           <input id="voucherBadgeFb22" type="text" maxlength="40" placeholder="Ví dụ: ⚡ CÓ MÃ" />
           <p class="section-note">Để trống nếu muốn ẩn dòng nổi của mã đó.</p>
+        </div>
+
+        <div class="field">
+          <label for="voucherBadgeZalo25">Dòng nổi — Voucher Zalo 25%</label>
+          <input id="voucherBadgeZalo25" type="text" maxlength="60" placeholder="Ví dụ: Đơn tối thiểu 200k" />
+          <p class="section-note">Để trống nếu muốn ẩn dòng nổi của mã Zalo.</p>
         </div>
 
         <div class="field">
@@ -452,9 +463,11 @@
       showVoucherFb25: document.getElementById("showVoucherFb25"),
       showVoucherIg22: document.getElementById("showVoucherIg22"),
       showVoucherFb22: document.getElementById("showVoucherFb22"),
+      showVoucherZalo25: document.getElementById("showVoucherZalo25"),
       voucherBadgeFb25: document.getElementById("voucherBadgeFb25"),
       voucherBadgeIg22: document.getElementById("voucherBadgeIg22"),
       voucherBadgeFb22: document.getElementById("voucherBadgeFb22"),
+      voucherBadgeZalo25: document.getElementById("voucherBadgeZalo25"),
       guideTitle: document.getElementById("guideTitle"),
       guideText: document.getElementById("guideText"),
       guideImageUrl: document.getElementById("guideImageUrl")
@@ -495,9 +508,11 @@
       fields.showVoucherFb25.checked = data.showVoucherFb25 !== false;
       fields.showVoucherIg22.checked = data.showVoucherIg22 !== false;
       fields.showVoucherFb22.checked = data.showVoucherFb22 !== false;
+      fields.showVoucherZalo25.checked = data.showVoucherZalo25 !== false;
       fields.voucherBadgeFb25.value = data.voucherBadgeFb25 || "";
       fields.voucherBadgeIg22.value = data.voucherBadgeIg22 || "";
       fields.voucherBadgeFb22.value = data.voucherBadgeFb22 || "";
+      fields.voucherBadgeZalo25.value = data.voucherBadgeZalo25 ?? "Đơn tối thiểu 200k";
       fields.guideTitle.value = data.guideTitle || "";
       fields.guideText.value = data.guideText || "";
       fields.guideImageUrl.value = data.guideImageUrl || "";
@@ -521,9 +536,11 @@
         showVoucherFb25: fields.showVoucherFb25.checked,
         showVoucherIg22: fields.showVoucherIg22.checked,
         showVoucherFb22: fields.showVoucherFb22.checked,
+        showVoucherZalo25: fields.showVoucherZalo25.checked,
         voucherBadgeFb25: fields.voucherBadgeFb25.value,
         voucherBadgeIg22: fields.voucherBadgeIg22.value,
         voucherBadgeFb22: fields.voucherBadgeFb22.value,
+        voucherBadgeZalo25: fields.voucherBadgeZalo25.value,
         guideTitle: fields.guideTitle.value,
         guideText: fields.guideText.value,
         guideImageUrl: fields.guideImageUrl.value
