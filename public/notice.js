@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const voucherOptionFb25El = document.getElementById("voucherOptionFb25");
   const voucherOptionIg22El = document.getElementById("voucherOptionIg22");
   const voucherOptionFb22El = document.getElementById("voucherOptionFb22");
+  const voucherOptionZalo25El = document.getElementById("voucherOptionZalo25");
   const voucherName1El = document.getElementById("voucherName1");
   const voucherName2El = document.getElementById("voucherName2");
   const voucherName3El = document.getElementById("voucherName3");
@@ -19,6 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const voucherBadgeFb25El = document.getElementById("voucherBadgeFb25");
   const voucherBadgeIg22El = document.getElementById("voucherBadgeIg22");
   const voucherBadgeFb22El = document.getElementById("voucherBadgeFb22");
+  const voucherBadgeZalo25El = document.getElementById("voucherBadgeZalo25");
 
   if (!noticeEl || !titleEl || !messageEl || !buttonEl || !closeBtn) return;
 
@@ -75,6 +77,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       {
         element: voucherOptionFb22El,
         visible: config.showVoucherFb22 !== false
+      },
+      {
+        element: voucherOptionZalo25El,
+        visible: config.showVoucherZalo25 !== false
       }
     ];
 
@@ -85,7 +91,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const voucherBadges = [
       { element: voucherBadgeFb25El, text: config.voucherBadgeFb25 },
       { element: voucherBadgeIg22El, text: config.voucherBadgeIg22 },
-      { element: voucherBadgeFb22El, text: config.voucherBadgeFb22 }
+      { element: voucherBadgeFb22El, text: config.voucherBadgeFb22 },
+      { element: voucherBadgeZalo25El, text: config.voucherBadgeZalo25 }
     ];
 
     voucherBadges.forEach(({ element, text }) => {
