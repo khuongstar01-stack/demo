@@ -16,6 +16,12 @@ function readDurationSetting(name, fallback, min = 100, max = 60000) {
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
+const APP_VERSION = String(
+  process.env.RAILWAY_DEPLOYMENT_ID ||
+    process.env.RAILWAY_GIT_COMMIT_SHA ||
+    process.env.APP_VERSION ||
+    "local-development"
+).trim();
 const MAX_INPUT_URL_LENGTH = 4096;
 const EXTERNAL_REQUEST_TIMEOUT_MS = readDurationSetting(
   "EXTERNAL_REQUEST_TIMEOUT_MS",
@@ -106,12 +112,26 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/", (_req, res) => {
+function sendVoucherPage(_req, res) {
   res.setHeader(
     "Cache-Control",
     "no-store, no-cache, must-revalidate, proxy-revalidate"
   );
   res.sendFile(path.join(__dirname, "public", "voucher.html"));
+}
+
+app.get(["/", "/voucher", "/voucher/"], sendVoucherPage);
+
+app.get("/api/version", (_req, res) => {
+  res.set({
+    "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+    Expires: "0",
+    Pragma: "no-cache"
+  });
+  res.json({
+    success: true,
+    version: APP_VERSION
+  });
 });
 
 // Vô hiệu hóa các service worker cũ từng được website sử dụng.
@@ -179,10 +199,6 @@ app.use(
 );
 
 app.use(express.json({ limit: "16kb", strict: true }));
-
-app.get(["/voucher", "/voucher/"], (_req, res) => {
-  res.redirect(301, "/");
-});
 
 function normalizeUrl(rawUrl) {
   if (!rawUrl) return "";

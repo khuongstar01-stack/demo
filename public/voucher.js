@@ -131,6 +131,9 @@ const toastMessage = document.getElementById("toastMessage");
 const toastCheckMark = document.getElementById("toastCheckMark");
 const pageLoader = document.getElementById("pageLoader");
 const inputWrap = document.getElementById("inputWrap");
+const UPDATE_INPUT_STORAGE_KEY = "voucher_url_before_app_update";
+const VERSION_CHECK_INTERVAL_MS = 5 * 60 * 1000;
+const VERSION_CHECK_THROTTLE_MS = 15 * 1000;
 const voucherBuyButtons = new Map(
   voucherConfig.map((voucher) => [
     voucher.channel,
@@ -143,7 +146,86 @@ let toastTimer;
 let toastHideTimer;
 let pasteTimer;
 let hasInputError = false;
+let loadedAppVersion = "";
+let lastVersionCheckAt = 0;
+let versionCheckPromise = null;
 const createBtnDefaultHtml = createBtn?.innerHTML || "Tạo Link Ngay";
+
+function saveInputBeforeAppUpdate() {
+  try {
+    const value = productUrlInput?.value || "";
+
+    if (value) sessionStorage.setItem(UPDATE_INPUT_STORAGE_KEY, value);
+    else sessionStorage.removeItem(UPDATE_INPUT_STORAGE_KEY);
+  } catch {
+    // Trình duyệt có thể chặn sessionStorage trong chế độ riêng tư nghiêm ngặt.
+  }
+}
+
+function restoreInputAfterAppUpdate() {
+  try {
+    const value = sessionStorage.getItem(UPDATE_INPUT_STORAGE_KEY) || "";
+
+    if (!value || !productUrlInput) return;
+
+    const restoreValue = () => {
+      if (!productUrlInput.value) productUrlInput.value = value;
+      sessionStorage.removeItem(UPDATE_INPUT_STORAGE_KEY);
+    };
+
+    restoreValue();
+    setTimeout(restoreValue, 0);
+  } catch {
+    // Không ảnh hưởng chức năng chính nếu sessionStorage không khả dụng.
+  }
+}
+
+async function checkForAppUpdate({ force = false } = {}) {
+  if (creating || (!force && document.hidden)) return;
+
+  const now = Date.now();
+
+  if (!force && now - lastVersionCheckAt < VERSION_CHECK_THROTTLE_MS) return;
+  if (versionCheckPromise) return versionCheckPromise;
+
+  lastVersionCheckAt = now;
+  versionCheckPromise = (async () => {
+    try {
+      const response = await fetch(`/api/version?t=${now}`, {
+        cache: "no-store",
+        headers: {
+          Accept: "application/json"
+        }
+      });
+
+      if (!response.ok) return;
+
+      const data = await response.json();
+      const latestVersion = String(data?.version || "").trim();
+
+      if (!latestVersion) return;
+
+      if (!loadedAppVersion) {
+        loadedAppVersion = latestVersion;
+        return;
+      }
+
+      if (latestVersion === loadedAppVersion) return;
+
+      saveInputBeforeAppUpdate();
+
+      const refreshUrl = new URL(window.location.href);
+      refreshUrl.searchParams.set("app-version", latestVersion.slice(0, 64));
+      window.location.replace(refreshUrl.href);
+    } catch {
+      // Mất mạng tạm thời không được làm gián đoạn việc tạo link.
+    } finally {
+      versionCheckPromise = null;
+    }
+  })();
+
+  return versionCheckPromise;
+}
 
 function setAlert(type, message, { inputError = false } = {}) {
   if (!alertBox || !alertMessage) return;
@@ -463,7 +545,25 @@ productUrlInput?.addEventListener("input", () => {
 productUrlInput?.addEventListener("click", stopInputHint);
 
 window.addEventListener("load", () => {
+  restoreInputAfterAppUpdate();
   setTimeout(startInputHint, 500);
+  void checkForAppUpdate({ force: true });
 });
+
+window.addEventListener("focus", () => {
+  void checkForAppUpdate();
+});
+
+window.addEventListener("pageshow", (event) => {
+  void checkForAppUpdate({ force: event.persisted });
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) void checkForAppUpdate();
+});
+
+setInterval(() => {
+  if (!document.hidden) void checkForAppUpdate();
+}, VERSION_CHECK_INTERVAL_MS);
 
 resetResult();
