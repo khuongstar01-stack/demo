@@ -1,541 +1,273 @@
+const voucherConfig = Array.isArray(window.VOUCHER_CONFIG)
+  ? window.VOUCHER_CONFIG
+  : [];
+
+const voucherIconSvg = {
+  fb: () => `
+    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="32" cy="32" r="29" fill="#1877f2"></circle>
+      <path d="M37.5 57V34.2h7.7l1.2-8.9h-8.9v-5.7c0-2.6.7-4.3 4.4-4.3h4.8V7.4c-.8-.1-3.7-.4-7-.4-6.9 0-11.7 4.2-11.7 12v6.3h-7.8v8.9H28V57h9.5Z" fill="#fff"></path>
+    </svg>`,
+  ig: (slot) => `
+    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="voucherGradient${slot}" x1="8" y1="58" x2="58" y2="4" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#ffb000"></stop>
+          <stop offset="0.35" stop-color="#f7405f"></stop>
+          <stop offset="0.7" stop-color="#c32aa3"></stop>
+          <stop offset="1" stop-color="#6a3de8"></stop>
+        </linearGradient>
+      </defs>
+      <rect x="4" y="4" width="56" height="56" rx="17" fill="url(#voucherGradient${slot})"></rect>
+      <rect x="16" y="16" width="32" height="32" rx="11" fill="none" stroke="#fff" stroke-width="4"></rect>
+      <circle cx="32" cy="32" r="8" fill="none" stroke="#fff" stroke-width="4"></circle>
+      <circle cx="44" cy="20" r="3" fill="#fff"></circle>
+    </svg>`,
+  zalo: () => `
+    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="4" width="56" height="56" rx="16" fill="#0068ff"></rect>
+      <path d="M15 20h34v24H15z" fill="#ffffff" opacity="0.14"></path>
+      <text x="32" y="39" fill="#ffffff" font-family="Arial, sans-serif" font-size="17" font-weight="900" text-anchor="middle">Zalo</text>
+    </svg>`
+};
+
+function renderVoucherBadge(element, text) {
+  if (!element) return;
+
+  const badgeText = String(text || "").trim().replace(/\s+/g, " ");
+  element.replaceChildren();
+  element.classList.remove("voucher-badge--schedule");
+  element.classList.toggle("hidden", !badgeText);
+
+  if (!badgeText) return;
+
+  const statusMatch = badgeText.match(/(?:^|\s)(CÓ MÃ)$/i);
+  const scheduleText = statusMatch
+    ? badgeText.slice(0, statusMatch.index).replace(/⚡/g, "").trim()
+    : "";
+  const hasSchedule = (scheduleText.match(/\b\d{1,2}H\b/gi) || []).length >= 2;
+  const lines = hasSchedule
+    ? [scheduleText.replace(/\s+/g, "·"), statusMatch[1]]
+    : [badgeText];
+
+  element.classList.toggle("voucher-badge--schedule", hasSchedule);
+
+  lines.forEach((line, index) => {
+    const lineElement = document.createElement("span");
+    lineElement.className = "voucher-badge-line";
+    lineElement.classList.toggle("voucher-badge-schedule", hasSchedule && index === 0);
+    lineElement.classList.toggle("voucher-badge-status", hasSchedule && index === 1);
+    lineElement.textContent = line;
+    element.appendChild(lineElement);
+  });
+}
+
+window.renderVoucherBadge = renderVoucherBadge;
+
+function renderVoucherOptions() {
+  const container = document.getElementById("voucherOptions");
+  const cardTemplate = document.getElementById("voucherOptionTemplate");
+
+  if (!container || !cardTemplate) return;
+
+  const cards = document.createDocumentFragment();
+
+  voucherConfig.forEach((voucher) => {
+    const cardFragment = cardTemplate.content.cloneNode(true);
+    const option = cardFragment.querySelector(".affiliate-option");
+    const iconContainer = cardFragment.querySelector(".affiliate-icon");
+    const name = cardFragment.querySelector(".affiliate-title");
+    const subtitle = cardFragment.querySelector(".affiliate-subtitle");
+    const badge = cardFragment.querySelector(".voucher-badge");
+    const buyButton = cardFragment.querySelector(".voucher-action");
+
+    if (!option || !iconContainer || !name || !subtitle || !badge || !buyButton) {
+      return;
+    }
+
+    option.id = `voucherOption${voucher.slot}`;
+    option.dataset.voucherSlot = String(voucher.slot);
+    option.dataset.voucherChannel = voucher.channel;
+    option.classList.add(`affiliate-option--${voucher.theme}`);
+
+    name.id = `voucherName${voucher.slot}`;
+    name.textContent = voucher.defaultName;
+    option.setAttribute("aria-labelledby", name.id);
+
+    subtitle.textContent = voucher.subtitle;
+    subtitle.classList.toggle("hidden", !voucher.subtitle);
+
+    badge.id = `voucherBadge${voucher.slot}`;
+    renderVoucherBadge(badge, voucher.defaultBadge);
+
+    buyButton.id = `buyNowBtn${voucher.slot}`;
+    buyButton.classList.add(`voucher-action--${voucher.theme}`);
+    buyButton.setAttribute("aria-label", `Mua ngay với ${voucher.defaultName}`);
+
+    iconContainer.innerHTML = voucherIconSvg[voucher.theme]?.(voucher.slot) || "";
+
+    cards.appendChild(cardFragment);
+  });
+
+  container.replaceChildren(cards);
+}
+
+renderVoucherOptions();
+
 const productCard = document.getElementById("productCard");
 const productImage = document.getElementById("productImage");
 const productName = document.getElementById("productName");
 const productPrice = document.getElementById("productPrice");
 const productOldPrice = document.getElementById("productOldPrice");
-const copyArrow = document.getElementById("copyArrow");
-const copyGuideText = document.getElementById("copyGuideText");
-const COPY_GUIDE_DEFAULT = "📋 Copy link trước, rồi bấm chia sẻ để lấy mã";
-const toastCard = document.querySelector("#toastPopup .toast-card");
-const toastIcon = document.querySelector("#toastPopup .toast-icon");
 const productUrlInput = document.getElementById("productUrl");
 const pasteBtn = document.getElementById("pasteBtn");
 const createBtn = document.getElementById("createBtn");
 const resultSection = document.getElementById("resultSection");
-const resultBox = document.getElementById("resultBox");
-const buyNowBtn1 = document.getElementById("buyNowBtn1");
-const buyNowBtn2 = document.getElementById("buyNowBtn2");
-const buyNowBtn3 = document.getElementById("buyNowBtn3");
-const buyNowBtn4 = document.getElementById("buyNowBtn4");
-const shareBtn = document.getElementById("shareBtn");
-const copyBtn = null;
 const alertBox = document.getElementById("alertBox");
-const facebookPostBtn = document.getElementById("facebookPostBtn");
-const facebookPostQuickBtn = document.getElementById("facebookPostQuickBtn");
-const siteDomainText = document.getElementById("siteDomainText");
+const alertMessage = document.getElementById("alertMessage");
+const alertClose = document.getElementById("alertClose");
 const toastPopup = document.getElementById("toastPopup");
 const toastMessage = document.getElementById("toastMessage");
+const toastCheckMark = document.getElementById("toastCheckMark");
 const pageLoader = document.getElementById("pageLoader");
-const inputWrap = document.querySelector(".input-wrap");
-const copyHint = document.getElementById("copyHint");
-const voucherImages = document.querySelectorAll("[data-voucher-image]");
+const inputWrap = document.getElementById("inputWrap");
+const voucherBuyButtons = new Map(
+  voucherConfig.map((voucher) => [
+    voucher.channel,
+    document.getElementById(`buyNowBtn${voucher.slot}`)
+  ])
+);
 
-let currentAffiliateLink = "";
-let facebookPostUrl = "";
 let creating = false;
 let toastTimer;
+let toastHideTimer;
 let pasteTimer;
-let createBtnDefaultHtml = createBtn ? createBtn.innerHTML : "✏️ Tạo Link Ngay";
+let hasInputError = false;
+const createBtnDefaultHtml = createBtn?.innerHTML || "Tạo Link Ngay";
 
-function setAlert(type, message) {
-  if (!alertBox) return;
+function setAlert(type, message, { inputError = false } = {}) {
+  if (!alertBox || !alertMessage) return;
+
   alertBox.className = `alert ${type}`;
-  alertBox.textContent = message;
+  alertMessage.textContent = message;
+  hasInputError = inputError;
+  productUrlInput?.setAttribute("aria-invalid", String(inputError));
 }
 
 function clearAlert() {
-  if (!alertBox) return;
+  if (!alertBox || !alertMessage) return;
+
   alertBox.className = "alert hidden";
-  alertBox.textContent = "";
+  alertMessage.textContent = "";
+  hasInputError = false;
+  productUrlInput?.setAttribute("aria-invalid", "false");
 }
 
-function showToast(message, type = "success") {
+function setInputError(message) {
+  setAlert("error", message, { inputError: true });
+  productUrlInput?.focus();
+}
+
+function hideToast() {
+  if (!toastPopup) return;
+
+  toastPopup.classList.add("is-hiding");
+  clearTimeout(toastHideTimer);
+  toastHideTimer = setTimeout(() => {
+    toastPopup.classList.add("hidden");
+    toastPopup.classList.remove("is-hiding");
+  }, 350);
+}
+
+function showToast(message, type = "success", durationMs) {
   if (!toastPopup || !toastMessage) return;
 
   const isError = type === "error";
-  const toastCheckMark = document.getElementById("toastCheckMark");
+  const visibleDuration = durationMs ?? (isError ? 5000 : 2000);
 
+  toastPopup.setAttribute("role", isError ? "alert" : "status");
+  toastPopup.setAttribute("aria-live", isError ? "assertive" : "polite");
+  toastPopup.style.setProperty("--toast-duration", `${visibleDuration}ms`);
   toastMessage.textContent = message;
 
-  if (toastCard) {
-    toastCard.classList.remove("success", "error");
-    toastCard.classList.add(isError ? "error" : "success");
-  }
-
-  if (toastIcon) {
-    toastIcon.classList.remove("success", "error");
-    toastIcon.classList.add(isError ? "error" : "success");
-  }
-
-  if (toastCheckMark) {
-    toastCheckMark.setAttribute(
-      "d",
-      isError ? "M17 17 L35 35 M35 17 L17 35" : "M14 27 L22 35 L38 18"
-    );
-  }
-
-  toastPopup.classList.remove("hidden", "is-hiding");
-
-  const animatedItems = toastPopup.querySelectorAll(
-    ".toast-card, .toast-wave, .toast-check-icon, .toast-check-circle, .toast-check-mark, .toast-progress"
+  toastPopup.classList.toggle("toast-error", isError);
+  toastPopup.classList.toggle("toast-success", !isError);
+  toastCheckMark?.setAttribute(
+    "d",
+    isError ? "M17 17 L35 35 M35 17 L17 35" : "M14 27 L22 35 L38 18"
   );
 
-  animatedItems.forEach((item) => {
-    item.style.animation = "none";
-    void item.offsetWidth;
-    item.style.animation = "";
-  });
+  toastPopup.classList.remove("hidden", "is-hiding");
+  const toastProgress = toastPopup.querySelector(".toast-progress");
+  if (toastProgress) {
+    toastProgress.style.animation = "none";
+    void toastProgress.offsetWidth;
+    toastProgress.style.animation = "";
+  }
 
   clearTimeout(toastTimer);
-
-  toastTimer = setTimeout(() => {
-    toastPopup.classList.add("is-hiding");
-
-    setTimeout(() => {
-      toastPopup.classList.add("hidden");
-      toastPopup.classList.remove("is-hiding");
-    }, 350);
-  }, 1500);
+  clearTimeout(toastHideTimer);
+  toastTimer = setTimeout(hideToast, visibleDuration);
 }
+
 function normalizeUrl(value) {
   const trimmed = String(value || "").trim();
+
   if (!trimmed) return "";
-  if (/^https?:\/\//i.test(trimmed)) return trimmed;
-  return `https://${trimmed}`;
+  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
 }
 
-function showPageLoader() {
+function setPageLoader(visible) {
   if (!pageLoader) return;
-  pageLoader.classList.remove("hidden");
-  pageLoader.setAttribute("aria-hidden", "false");
-}
 
-function hidePageLoader() {
-  if (!pageLoader) return;
-  pageLoader.classList.add("hidden");
-  pageLoader.setAttribute("aria-hidden", "true");
+  pageLoader.classList.toggle("hidden", !visible);
+  pageLoader.setAttribute("aria-hidden", String(!visible));
 }
 
 function stopInputHint() {
-  if (!inputWrap) return;
-  inputWrap.classList.remove("is-hinting");
-}
-
-function updateInputState() {
-  if (!inputWrap || !productUrlInput) return;
-  const hasValue = Boolean(productUrlInput.value.trim());
-  inputWrap.classList.toggle("is-filled", hasValue);
+  inputWrap?.classList.remove("is-hinting");
 }
 
 function startInputHint() {
-  if (!inputWrap || !productUrlInput) return;
-
-  const hasValue = Boolean(productUrlInput.value.trim());
-  if (hasValue) {
-    inputWrap.classList.add("is-filled");
-    inputWrap.classList.remove("is-hinting");
-    return;
-  }
-
-  inputWrap.classList.add("is-hinting");
+  const hasValue = Boolean(productUrlInput?.value.trim());
+  inputWrap?.classList.toggle("is-hinting", !hasValue);
 }
 
-function showCopyHintWaiting() {
-  if (!copyHint) return;
-  copyHint.textContent = "📋 Copy link trước, rồi bấm chia sẻ để lấy mã";
-  copyHint.classList.remove("is-copied");
-}
+function setAffiliateOption(link, buyButton) {
+  if (!buyButton) return;
 
-function resetCopyHint() {
-  if (!copyHint) return;
-  copyHint.textContent = "📋 Copy link trước, rồi bấm chia sẻ để lấy mã";
-  copyHint.classList.remove("is-copied");
-}
-
-function clearResultEffect() {
-  if (!resultBox) return;
-  resultBox.classList.remove("is-created", "result-focus");
-}
-function lockShareBtn() {
-  if (!shareBtn) return;
-
-  shareBtn.classList.add("disabled");
-  shareBtn.setAttribute("aria-disabled", "true");
-  shareBtn.setAttribute("tabindex", "-1");
-  shareBtn.href = "#";
-}
-
-function unlockShareBtn() {
-  if (!shareBtn) return;
-
-  if (!facebookPostUrl || !currentAffiliateLink) {
-    lockShareBtn();
-    return;
-  }
-
-  shareBtn.classList.remove("disabled");
-  shareBtn.setAttribute("aria-disabled", "false");
-  shareBtn.removeAttribute("tabindex");
-  shareBtn.href = facebookPostUrl;
-}
-
-function playCreatedResultEffect() {
-  if (!resultBox) return;
-
-  resultBox.classList.remove("is-created");
-  void resultBox.offsetWidth;
-  resultBox.classList.add("is-created");
-
-  showCopyHintWaiting();
-}
-function scrollToResultBox() {
-  if (!resultSection) return;
-
-  resultSection.classList.remove("hidden");
-
-  setTimeout(() => {
-    const target = resultBox || resultSection;
-    target.scrollIntoView({
-      behavior: "smooth",
-      block: "center"
-    });
-
-    if (resultBox) {
-      resultBox.classList.remove("result-focus");
-      void resultBox.offsetWidth;
-      resultBox.classList.add("result-focus");
-    }
-  }, 220);
+  const hasLink = Boolean(link);
+  buyButton.href = hasLink ? link : "#";
+  buyButton.classList.toggle("disabled", !hasLink);
+  buyButton.setAttribute("aria-disabled", String(!hasLink));
+  if (hasLink) buyButton.removeAttribute("tabindex");
+  else buyButton.setAttribute("tabindex", "-1");
 }
 
 function resetResult() {
-  currentAffiliateLink = "";
-  lockShareBtn();
+  voucherBuyButtons.forEach((buyButton) => setAffiliateOption("", buyButton));
+  resultSection?.classList.add("hidden");
+  productCard?.classList.add("hidden");
+  productImage?.removeAttribute("src");
 
-  setAffiliateOption({
-    link: "",
-    buyButton: buyNowBtn1
-  });
-  setAffiliateOption({
-    link: "",
-    buyButton: buyNowBtn2
-  });
-  setAffiliateOption({
-    link: "",
-    buyButton: buyNowBtn3
-  });
-  setAffiliateOption({
-    link: "",
-    buyButton: buyNowBtn4
-  });
-
-  if (resultSection) {
-    resultSection.classList.add("hidden");
-  }
-if (productCard) {
-  productCard.classList.add("hidden");
+  if (productName) productName.textContent = "";
+  if (productPrice) productPrice.textContent = "";
+  if (productOldPrice) productOldPrice.textContent = "";
 }
 
-if (productImage) {
-  productImage.removeAttribute("src");
-}
+function scrollToResult() {
+  if (!resultSection) return;
 
-if (productName) {
-  productName.textContent = "";
-}
-
-if (productPrice) {
-  productPrice.textContent = "";
-}
-
-if (productOldPrice) {
-  productOldPrice.textContent = "";
-}
-  resetCopyHint();
-  clearResultEffect();
-}
-async function loadConfig() {
-  try {
-    const res = await fetch("/api/config", {
-      headers: { Accept: "application/json" }
-    });
-
-    const data = await res.json();
-
-    if (!data?.success) return;
-
-    if (data.siteDomainText && siteDomainText) {
-      siteDomainText.textContent = data.siteDomainText;
-    }
-
-    if (data.facebookPostUrl) {
-      facebookPostUrl = data.facebookPostUrl;
-
-      if (facebookPostBtn) {
-        facebookPostBtn.href = data.facebookPostUrl;
-        facebookPostBtn.classList.remove("hidden");
-      }
-
-      if (facebookPostQuickBtn) {
-        facebookPostQuickBtn.href = data.facebookPostUrl;
-        facebookPostQuickBtn.classList.remove("hidden");
-      }
-
-      unlockShareBtn();
-    }
-
-    if (data.voucherImageUrl && voucherImages.length) {
-      voucherImages.forEach((img) => {
-        img.src = data.voucherImageUrl;
-      });
-    }
-  } catch {}
-}
-async function createLink() {
-  if (creating) return;
-
-  clearAlert();
-  resetResult();
-  stopInputHint();
-  updateInputState();
-
-  const inputUrl = normalizeUrl(productUrlInput?.value);
-
-  if (!inputUrl) {
-    setAlert("error", "Vui lòng nhập link Shopee.");
-    productUrlInput?.focus();
-    return;
-  }
-
-  creating = true;
-
-  if (createBtn) {
-    createBtn.disabled = true;
-    createBtn.innerHTML = "Đang tạo link...";
-  }
-
-  showPageLoader();
-
-    try {
-    const res = await fetch("/api/voucher/convert", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json"
-  },
-  body: JSON.stringify({
-    url: inputUrl
-  })
-});
-
-    const data = await res.json();
-
-    if (!res.ok || !data?.success) {
-      throw new Error(data?.message || "Không tạo được link.");
-    }
-
-    const affiliateLink1 = data?.affiliateLinks?.[0]?.affiliate_link || "";
-    const affiliateLink2 = data?.affiliateLinks?.[1]?.affiliate_link || "";
-    const affiliateLink3 = data?.affiliateLinks?.[2]?.affiliate_link || "";
-    const affiliateLink4 = data?.affiliateLinks?.[3]?.affiliate_link || "";
-
-    if (!affiliateLink1 || !affiliateLink2 || !affiliateLink3) {
-      throw new Error("Không nhận đủ ba affiliate link.");
-    }
-
-    if (!affiliateLink4) {
-      throw new Error("Không nhận được affiliate link Voucher Zalo 25%.");
-    }
-
-    currentAffiliateLink = affiliateLink1;
-    renderProductInfo(data.productInfo);
-
-    setAffiliateOption({
-      link: affiliateLink1,
-      buyButton: buyNowBtn1
-    });
-    setAffiliateOption({
-      link: affiliateLink2,
-      buyButton: buyNowBtn2
-    });
-    setAffiliateOption({
-      link: affiliateLink3,
-      buyButton: buyNowBtn3
-    });
-    setAffiliateOption({
-      link: affiliateLink4,
-      buyButton: buyNowBtn4
-    });
-
-    unlockShareBtn();
-
-    if (resultSection) {
-      resultSection.classList.remove("hidden");
-    }
-
-    playCreatedResultEffect();
-    showToast("Tạo link thành công!");
-
-    setTimeout(() => {
-      hidePageLoader();
-      scrollToResultBox();
-    }, 450);
-  } catch (error) {
-    hidePageLoader();
-    clearAlert();
-    showToast(error.message || "Tạo link không thành công!", "error");
-  } finally {
-    creating = false;
-
-    if (createBtn) {
-      createBtn.disabled = false;
-      createBtn.innerHTML = createBtnDefaultHtml;
-    }
-  }
-}
-function setAffiliateOption({ link, buyButton }) {
-  const hasLink = Boolean(link);
-
-  if (buyButton) {
-    buyButton.href = hasLink ? link : "#";
-    buyButton.classList.toggle("disabled", !hasLink);
-    buyButton.setAttribute("aria-disabled", String(!hasLink));
-  }
-}
-async function pasteAndCreate() {
-  clearAlert();
-  stopInputHint();
-
-  try {
-    const text = await navigator.clipboard.readText();
-
-    if (!text || !text.trim()) {
-      setAlert("error", "Clipboard đang trống.");
-      return;
-    }
-
-    if (productUrlInput) {
-      productUrlInput.value = text.trim();
-    }
-
-    updateInputState();
-    showToast("Đã dán link!");
-    await createLink();
-  } catch {
-    setAlert("error", "Trình duyệt không cho đọc clipboard. Hãy dán thủ công bằng Ctrl+V.");
-  }
-}
-
-if (createBtn) {
-  createBtn.addEventListener("click", () => {
-    stopInputHint();
-    createLink();
-  });
-}
-
-if (pasteBtn) {
-  pasteBtn.addEventListener("click", () => {
-    stopInputHint();
-    pasteAndCreate();
-  });
-}
-
-if (productUrlInput) {
-  productUrlInput.addEventListener("paste", () => {
-    clearTimeout(pasteTimer);
-    pasteTimer = setTimeout(() => {
-      stopInputHint();
-      updateInputState();
-      showToast("Đã dán link!");
-      createLink();
-    }, 120);
-  });
-
-  productUrlInput.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-      stopInputHint();
-      createLink();
-    }
-  });
-
-  productUrlInput.addEventListener("focus", () => {
-    if (inputWrap) inputWrap.classList.add("is-focused");
-    stopInputHint();
-  });
-
-  productUrlInput.addEventListener("blur", () => {
-    if (inputWrap) inputWrap.classList.remove("is-focused");
-    updateInputState();
-  });
-
-  productUrlInput.addEventListener("input", () => {
-    stopInputHint();
-    updateInputState();
-  });
-
-  productUrlInput.addEventListener("click", stopInputHint);
-}
-
-if (shareBtn) {
-  shareBtn.addEventListener("click", (event) => {
-    if (!currentAffiliateLink) {
-      event.preventDefault();
-      showToast("Bạn cần tạo link trước!", "error");
-      return;
-    }
-
-    if (!facebookPostUrl) {
-      event.preventDefault();
-      showToast("Chưa cấu hình link Facebook.", "error");
-      return;
-    }
-  });
-}
-
-window.addEventListener("load", () => {
+  resultSection.classList.remove("hidden");
   setTimeout(() => {
-    startInputHint();
-    updateInputState();
-  }, 500);
-});
-
-loadConfig();
-resetResult();
-updateInputState();
-
-function showCopyGuide() {
-  resultBox?.classList.remove("copy-popup-open");
-
-  copyArrow?.classList.remove("hidden");
-  copyGuideText?.classList.remove("hidden");
-  copyGuideText?.classList.remove("is-after-copy", "is-popup", "is-popup-overlay");
-
-  if (copyGuideText) {
-    copyGuideText.textContent = COPY_GUIDE_DEFAULT;
-  }
-
-  copyBtn?.classList.add("is-attention");
+    resultSection.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, 220);
 }
 
-function hideCopyGuide() {
-  resultBox?.classList.remove("copy-popup-open");
-
-  copyArrow?.classList.add("hidden");
-  copyGuideText?.classList.add("hidden");
-  copyGuideText?.classList.remove("is-after-copy", "is-popup", "is-popup-overlay");
-
-  if (copyGuideText) {
-    copyGuideText.textContent = COPY_GUIDE_DEFAULT;
-  }
-
-  copyBtn?.classList.remove("is-attention");
-}
 function formatVnd(value) {
   const number = Number(value || 0);
 
-  if (!Number.isFinite(number) || number <= 0) {
-    return "";
-  }
+  if (!Number.isFinite(number) || number <= 0) return "";
 
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -547,9 +279,12 @@ function renderProductInfo(productInfo) {
   if (!productCard) return;
 
   const info = productInfo || {};
+  const hasImage = Boolean(info.image);
+
+  productCard.classList.toggle("product-card--no-image", !hasImage);
 
   if (productImage) {
-    if (info.image) {
+    if (hasImage) {
       productImage.src = info.image;
       productImage.alt = info.name || "Sản phẩm Shopee";
       productImage.parentElement?.classList.remove("hidden");
@@ -562,44 +297,173 @@ function renderProductInfo(productInfo) {
 
   if (productName) {
     productName.textContent =
-      info.name ||
-      "Không lấy được thông tin sản phẩm, nhưng link mua đã tạo thành công.";
+      info.name || "Không lấy được thông tin sản phẩm, nhưng link mua đã tạo thành công.";
   }
 
-  if (productPrice) {
-    productPrice.textContent = formatVnd(info.price);
-  }
+  if (productPrice) productPrice.textContent = formatVnd(info.price);
 
   if (productOldPrice) {
     const oldPrice = Number(info.priceBeforeDiscount || 0);
     const price = Number(info.price || 0);
+    const hasDiscount = oldPrice > price && price > 0;
 
-    if (oldPrice > price && price > 0) {
-      productOldPrice.textContent = formatVnd(oldPrice);
-      productOldPrice.classList.remove("hidden");
-    } else {
-      productOldPrice.textContent = "";
-      productOldPrice.classList.add("hidden");
-    }
+    productOldPrice.textContent = hasDiscount ? formatVnd(oldPrice) : "";
+    productOldPrice.classList.toggle("hidden", !hasDiscount);
   }
 
   productCard.classList.remove("hidden");
 }
-function bindBuyButtonAnimation(button) {
-  if (!button) return;
 
-  button.addEventListener("click", () => {
-    button.classList.remove("is-buying");
-    void button.offsetWidth;
-    button.classList.add("is-buying");
+async function createLink() {
+  if (creating) return;
+
+  clearAlert();
+  resetResult();
+  stopInputHint();
+
+  const inputUrl = normalizeUrl(productUrlInput?.value);
+
+  if (!inputUrl) {
+    setInputError("Vui lòng nhập link Shopee.");
+    return;
+  }
+
+  creating = true;
+  setPageLoader(true);
+
+  if (createBtn) {
+    createBtn.disabled = true;
+    createBtn.textContent = "Đang tạo link...";
+  }
+
+  try {
+    const response = await fetch("/api/voucher/convert", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: JSON.stringify({ url: inputUrl })
+    });
+    const data = await response.json();
+
+    if (!response.ok || !data?.success) {
+      const requestError = new Error(data?.message || "Không tạo được link.");
+      requestError.status = response.status;
+      throw requestError;
+    }
+
+    const affiliateLinksByChannel = new Map(
+      (data.affiliateLinks || []).map((item) => [item.channel, item.affiliate_link || ""])
+    );
+    const activeChannels = new Set(
+      Array.isArray(data.activeChannels)
+        ? data.activeChannels
+        : voucherConfig.map((voucher) => voucher.channel)
+    );
+    const activeVouchers = voucherConfig.filter((voucher) =>
+      activeChannels.has(voucher.channel)
+    );
+    const missingVouchers = activeVouchers.filter(
+      (voucher) => !affiliateLinksByChannel.get(voucher.channel)
+    );
+
+    if (affiliateLinksByChannel.size === 0) {
+      throw new Error("Không nhận được link voucher nào.");
+    }
+
+    renderProductInfo(data.productInfo);
+    voucherConfig.forEach((voucher) => {
+      document
+        .getElementById(`voucherOption${voucher.slot}`)
+        ?.classList.toggle("hidden", !activeChannels.has(voucher.channel));
+      setAffiliateOption(
+        affiliateLinksByChannel.get(voucher.channel),
+        voucherBuyButtons.get(voucher.channel)
+      );
+    });
+
+    resultSection?.classList.remove("hidden");
+    showToast(
+      missingVouchers.length
+        ? `Đã tạo ${affiliateLinksByChannel.size}/${activeVouchers.length} link. ${missingVouchers
+            .map((voucher) => voucher.apiLabel)
+            .join(", ")} đang tạm lỗi.`
+        : "Tạo link thành công!"
+    );
 
     setTimeout(() => {
-      button.classList.remove("is-buying");
-    }, 1200);
-  });
+      setPageLoader(false);
+      scrollToResult();
+    }, 450);
+  } catch (error) {
+    setPageLoader(false);
+
+    if (error?.status === 400 || error?.status === 413) {
+      setInputError(error.message || "Link Shopee không hợp lệ.");
+    } else {
+      clearAlert();
+      showToast(error.message || "Tạo link không thành công!", "error");
+    }
+  } finally {
+    creating = false;
+
+    if (createBtn) {
+      createBtn.disabled = false;
+      createBtn.innerHTML = createBtnDefaultHtml;
+    }
+  }
 }
 
-bindBuyButtonAnimation(buyNowBtn1);
-bindBuyButtonAnimation(buyNowBtn2);
-bindBuyButtonAnimation(buyNowBtn3);
-bindBuyButtonAnimation(buyNowBtn4);
+async function pasteAndCreate() {
+  clearAlert();
+  stopInputHint();
+
+  try {
+    const text = await navigator.clipboard.readText();
+
+    if (!text?.trim()) {
+      showToast("Clipboard đang trống.", "error");
+      return;
+    }
+
+    if (productUrlInput) productUrlInput.value = text.trim();
+    showToast("Đã dán link!");
+    await createLink();
+  } catch {
+    showToast("Trình duyệt không cho đọc clipboard. Hãy dán thủ công bằng Ctrl+V.", "error");
+  }
+}
+
+createBtn?.addEventListener("click", createLink);
+pasteBtn?.addEventListener("click", pasteAndCreate);
+alertClose?.addEventListener("click", () => {
+  clearAlert();
+  productUrlInput?.focus();
+});
+
+productUrlInput?.addEventListener("paste", () => {
+  clearTimeout(pasteTimer);
+  pasteTimer = setTimeout(() => {
+    stopInputHint();
+    showToast("Đã dán link!");
+    createLink();
+  }, 120);
+});
+
+productUrlInput?.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") createLink();
+});
+
+productUrlInput?.addEventListener("focus", stopInputHint);
+productUrlInput?.addEventListener("input", () => {
+  if (hasInputError) clearAlert();
+  stopInputHint();
+});
+productUrlInput?.addEventListener("click", stopInputHint);
+
+window.addEventListener("load", () => {
+  setTimeout(startInputHint, 500);
+});
+
+resetResult();

@@ -16,676 +16,16 @@
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#ee4d2d" />
 
-  <link rel="canonical" href="https://shopeevn.net/voucher" />
+  <link rel="canonical" href="https://shopeevn.net/" />
   <link rel="icon" type="image/png" href="/images/favicon.png?v=3" />
   <link rel="shortcut icon" type="image/png" href="/images/favicon.png?v=3" />
   <link rel="apple-touch-icon" href="/images/favicon.png?v=3" />
-  <link rel="stylesheet" href="/style.css?v=20260809-1" />
-
-  <style>
-    .hero-title {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .hero-shopee-icon {
-      display: inline-flex;
-      width: 29px;
-      height: 29px;
-      flex-shrink: 0;
-    }
-
-    .hero-shopee-icon svg {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-
-    .product-link-label {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .product-link-icon {
-      display: inline-flex;
-      width: 28px;
-      height: 28px;
-      flex-shrink: 0;
-      align-items: center;
-      justify-content: center;
-      border-radius: 9px;
-      background: #fff1ec;
-      color: #ee4d2d;
-      box-shadow: inset 0 0 0 1px rgba(238, 77, 45, 0.12);
-    }
-
-    .product-link-icon svg {
-      width: 18px;
-      height: 18px;
-      stroke: currentColor;
-      stroke-width: 2.2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .voucher-result {
-      margin-top: 14px;
-      padding: 14px;
-      border-radius: 20px;
-      background: #f1f1f1;
-    }
-
-    .product-card {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      background: #ffffff;
-      border-radius: 18px;
-      padding: 12px;
-      border: 1px solid rgba(238, 77, 45, 0.16);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
-    }
-
-    .product-image-wrap {
-      width: 92px;
-      min-width: 92px;
-      height: 92px;
-      border-radius: 14px;
-      overflow: hidden;
-      background: #f6f6f6;
-    }
-
-    .product-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .product-info {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .product-voucher-image-box {
-      width: 150px;
-      height: 39px;
-      margin-bottom: 6px;
-      border-radius: 6px;
-      overflow: hidden;
-      background: #ffffff;
-      flex-shrink: 0;
-    }
-
-    .product-voucher-image {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
-      object-position: center;
-    }
-
-    .product-name {
-      color: #2d3344;
-      font-size: 15px;
-      font-weight: 800;
-      line-height: 1.35;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .product-price-row {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-      margin-top: 7px;
-      flex-wrap: wrap;
-    }
-
-    .product-price {
-      color: #ee4d2d;
-      font-size: 20px;
-      font-weight: 900;
-    }
-
-    .product-old-price {
-      color: #8a8f99;
-      font-size: 13px;
-      text-decoration: line-through;
-    }
-
-    .affiliate-options {
-      display: grid;
-      gap: 12px;
-      margin-top: 14px;
-    }
-
-    .affiliate-option {
-      display: grid;
-      grid-template-columns: 40px minmax(0, 1fr) auto auto;
-      gap: 6px;
-      align-items: center;
-      padding: 9px;
-      border: 2px solid transparent;
-      border-radius: 18px;
-      box-shadow: 0 8px 22px rgba(45, 51, 68, 0.06);
-    }
-
-    .affiliate-option--ig {
-      border-color: #efd5df;
-      background: linear-gradient(105deg, #fff8fa, #fff2ed);
-    }
-
-    .affiliate-option--fb {
-      border-color: #cfe2f6;
-      background: linear-gradient(105deg, #f7fbff, #eef7ff);
-    }
-
-    .affiliate-option--zalo {
-      border-color: #c9ddff;
-      background: linear-gradient(105deg, #f7fbff, #eef5ff);
-    }
-
-    .social-voucher-icon {
-      display: block;
-      width: 40px;
-      height: 40px;
-      flex-shrink: 0;
-    }
-
-    .social-voucher-icon svg {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-
-    .affiliate-option-copy {
-      min-width: 0;
-    }
-
-    .affiliate-option-title {
-      margin: 0;
-      color: #171717;
-      font-size: 13px;
-      font-weight: 900;
-      line-height: 1.25;
-      white-space: nowrap;
-    }
-
-    .affiliate-option-subtitle {
-      margin: 2px 0 0;
-      color: #242424;
-      font-size: 11px;
-      font-weight: 800;
-      line-height: 1.25;
-      white-space: nowrap;
-    }
-
-    .voucher-time-badge {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 6px 8px;
-      border: 1px solid rgba(255, 122, 0, 0.28);
-      border-radius: 999px;
-      background: linear-gradient(135deg, #fff8d9, #ffe8c7);
-      color: #e65100;
-      font-size: 9px;
-      font-weight: 900;
-      max-width: 112px;
-      line-height: 1.2;
-      text-align: center;
-      white-space: normal;
-      box-shadow: 0 4px 12px rgba(255, 112, 0, 0.14);
-      animation: voucherBadgeGlow 2.2s ease-in-out infinite;
-    }
-
-    .voucher-badge-line {
-      display: block;
-      white-space: nowrap;
-    }
-
-    .voucher-action {
-      --button-bg: #1877f2;
-      --button-bg-active: #0b8cff;
-      --button-outline: rgba(24, 119, 242, 0.28);
-      --button-glow: rgba(24, 119, 242, 0.42);
-      position: relative;
-      overflow: hidden;
-      display: inline-flex;
-      min-width: 91px;
-      min-height: 40px;
-      gap: 4px;
-      align-items: center;
-      justify-content: center;
-      padding: 0 7px;
-      border-radius: 12px;
-      color: #ffffff;
-      font-size: 12px;
-      font-weight: 900;
-      line-height: 1;
-      text-decoration: none;
-      white-space: nowrap;
-      outline: 0 solid transparent;
-      background: var(--button-bg);
-      box-shadow: 0 6px 16px var(--button-glow);
-      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-      cursor: pointer;
-      animation:
-        voucherButtonRipple 1.25s linear infinite,
-        voucherButtonColorize 1.8s ease-in-out infinite,
-        voucherButtonBreathe 1.25s ease-in-out infinite;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .voucher-action::after {
-      position: absolute;
-      top: -45%;
-      left: -55%;
-      width: 34%;
-      height: 190%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
-      content: "";
-      transform: rotate(18deg);
-      animation: voucherButtonShine 2.8s ease-in-out infinite;
-    }
-
-    .voucher-action:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 9px 22px var(--button-glow);
-    }
-
-    .voucher-action:active {
-      animation-play-state: paused;
-      transform: scale(0.95);
-    }
-
-    .voucher-action > * {
-      position: relative;
-      z-index: 1;
-    }
-
-    @keyframes voucherBadgeGlow {
-      0%, 100% { transform: scale(1); box-shadow: 0 4px 12px rgba(255, 112, 0, 0.14); }
-      50% { transform: scale(1.04); box-shadow: 0 5px 16px rgba(255, 112, 0, 0.28); }
-    }
-
-    @keyframes voucherButtonRipple {
-      0% {
-        outline: 0 solid transparent;
-        outline-offset: -2px;
-        box-shadow: 0 5px 13px var(--button-glow);
-      }
-      50% {
-        outline: 3px solid var(--button-outline);
-        outline-offset: 2px;
-        box-shadow: 0 7px 21px var(--button-glow);
-      }
-      100% {
-        outline: 6px solid transparent;
-        outline-offset: 6px;
-        box-shadow: 0 5px 13px var(--button-glow);
-      }
-    }
-
-    @keyframes voucherButtonColorize {
-      0%, 100% { background: var(--button-bg); }
-      50% { background: var(--button-bg-active); }
-    }
-
-    @keyframes voucherButtonBreathe {
-      0%, 100% { transform: scale(1); filter: brightness(1); }
-      50% { transform: scale(1.045); filter: brightness(1.14); }
-    }
-
-    @keyframes voucherButtonShine {
-      0%, 58% { left: -55%; }
-      85%, 100% { left: 125%; }
-    }
-
-    .voucher-action--ig {
-      --button-bg: #f0442f;
-      --button-bg-active: #ff8500;
-      --button-outline: rgba(255, 92, 26, 0.3);
-      --button-glow: rgba(255, 92, 26, 0.42);
-    }
-
-    .voucher-action--fb {
-      --button-bg: #1877f2;
-      --button-bg-active: #005bd8;
-      --button-outline: rgba(24, 119, 242, 0.28);
-      --button-glow: rgba(24, 119, 242, 0.42);
-    }
-
-    .voucher-action--zalo {
-      --button-bg: #0068ff;
-      --button-bg-active: #0054d6;
-      --button-outline: rgba(0, 104, 255, 0.28);
-      --button-glow: rgba(0, 104, 255, 0.42);
-    }
-
-    .voucher-action-icon {
-      width: 17px;
-      height: 17px;
-      flex-shrink: 0;
-      filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
-      animation: voucherIconNudge 0.9s ease-in-out infinite;
-    }
-
-    @keyframes voucherIconNudge {
-      0%, 100% { transform: translateX(0) rotate(0); }
-      50% { transform: translateX(3px) rotate(-7deg); }
-    }
-
-    .voucher-action.disabled {
-      opacity: 0.5;
-      pointer-events: none;
-      animation: none;
-    }
-
-    .voucher-action.disabled::after,
-    .voucher-action.disabled .voucher-action-icon {
-      animation: none;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .voucher-time-badge {
-        animation: none;
-      }
-    }
-
-    @media (max-width: 520px) {
-      .affiliate-option {
-        grid-template-columns: 38px minmax(82px, 1fr) 82px 104px;
-        gap: 4px;
-        padding: 8px 7px;
-      }
-
-      .social-voucher-icon {
-        width: 38px;
-        height: 38px;
-        justify-self: center;
-      }
-
-      .affiliate-option-title {
-        overflow: hidden;
-        font-size: 11.5px;
-        text-overflow: ellipsis;
-      }
-
-      .affiliate-option-subtitle {
-        overflow: hidden;
-        font-size: 9.5px;
-        text-overflow: ellipsis;
-      }
-
-      .voucher-time-badge {
-        width: 82px;
-        max-width: 82px;
-        padding: 5px 3px;
-        font-size: 7px;
-        line-height: 1.25;
-      }
-
-      .voucher-action {
-        width: 104px;
-        min-width: 104px;
-        min-height: 42px;
-        padding: 0 7px;
-        font-size: 12.5px;
-      }
-
-      .voucher-action-icon {
-        width: 16px;
-        height: 16px;
-      }
-    }
-
-    @media (max-width: 340px) {
-      .affiliate-option {
-        grid-template-columns: 32px minmax(70px, 1fr) 70px 88px;
-        gap: 3px;
-        padding: 7px 5px;
-      }
-
-      .social-voucher-icon {
-        width: 32px;
-        height: 32px;
-      }
-
-      .affiliate-option-title {
-        font-size: 11px;
-      }
-
-      .affiliate-option-subtitle {
-        font-size: 9px;
-      }
-
-      .voucher-time-badge {
-        width: 70px;
-        max-width: 70px;
-        padding: 4px 2px;
-        font-size: 6px;
-      }
-
-      .voucher-action {
-        width: 88px;
-        min-width: 88px;
-        min-height: 38px;
-        padding: 0 5px;
-        font-size: 10.5px;
-      }
-
-      .voucher-action-icon {
-        width: 15px;
-        height: 15px;
-      }
-    }
-
-    .facebook-group-link {
-      display: flex;
-      gap: 11px;
-      align-items: center;
-      margin: 16px 0 12px;
-      padding: 11px 13px;
-      border: 1px solid #cfe2f6;
-      border-radius: 16px;
-      background: linear-gradient(105deg, #f7fbff, #eaf4ff);
-      color: #145dbb;
-      text-decoration: none;
-      box-shadow: 0 8px 20px rgba(24, 119, 242, 0.1);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .facebook-group-link:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 11px 24px rgba(24, 119, 242, 0.16);
-    }
-
-    .facebook-group-icon {
-      display: block;
-      width: 38px;
-      height: 38px;
-      flex-shrink: 0;
-    }
-
-    .facebook-group-icon svg {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-
-    .facebook-group-text {
-      flex: 1;
-      font-size: 16px;
-      font-weight: 900;
-      line-height: 1.2;
-    }
-
-    .facebook-group-arrow {
-      display: inline-flex;
-      width: 30px;
-      height: 30px;
-      flex-shrink: 0;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      background: #1877f2;
-      color: #ffffff;
-    }
-
-    .facebook-group-arrow svg {
-      width: 17px;
-      height: 17px;
-      stroke: currentColor;
-      stroke-width: 2.2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .voucher-guide-image {
-      display: block;
-      width: 100%;
-      height: auto;
-      max-height: 720px;
-      margin-top: 14px;
-      border-radius: 14px;
-      object-fit: contain;
-      background: #f4f5f7;
-    }
-
-    .voucher-guide-text {
-      white-space: pre-line;
-    }
-
-    @media (max-width: 360px) {
-      .product-voucher-image-box {
-        width: 135px;
-        height: 35px;
-      }
-
-    }
-
-    @media (min-width: 768px) {
-      .hero-title {
-        gap: 11px;
-      }
-
-      .hero-shopee-icon {
-        width: 40px;
-        height: 40px;
-      }
-
-      .voucher-result {
-        padding: 16px;
-        border-radius: 24px;
-      }
-
-      .product-card {
-        gap: 16px;
-        padding: 16px;
-        border-radius: 22px;
-      }
-
-      .product-image-wrap {
-        width: 130px;
-        min-width: 130px;
-        height: 130px;
-        border-radius: 18px;
-      }
-
-      .product-voucher-image-box {
-        width: 220px;
-        height: 57px;
-        margin-bottom: 10px;
-      }
-
-      .product-name {
-        font-size: 22px;
-      }
-
-      .product-price {
-        font-size: 28px;
-      }
-
-      .product-old-price {
-        font-size: 17px;
-      }
-
-      .affiliate-options {
-        gap: 14px;
-      }
-
-      .affiliate-option {
-        grid-template-columns: 54px minmax(0, 1fr) auto auto;
-        gap: 12px;
-        padding: 13px 16px;
-        border-radius: 22px;
-      }
-
-      .social-voucher-icon {
-        width: 54px;
-        height: 54px;
-      }
-
-      .affiliate-option-title {
-        font-size: 20px;
-      }
-
-      .affiliate-option-subtitle {
-        font-size: 17px;
-      }
-
-      .voucher-time-badge {
-        padding: 8px 11px;
-        font-size: 12px;
-      }
-
-      .voucher-action {
-        min-width: 152px;
-        min-height: 52px;
-        gap: 8px;
-        padding: 0 16px;
-        border-radius: 17px;
-        font-size: 18px;
-      }
-
-      .voucher-action-icon {
-        width: 23px;
-        height: 23px;
-      }
-
-      .facebook-group-link {
-        gap: 14px;
-        padding: 14px 17px;
-        border-radius: 20px;
-      }
-
-      .facebook-group-icon {
-        width: 48px;
-        height: 48px;
-      }
-
-      .facebook-group-text {
-        font-size: 21px;
-      }
-
-      .facebook-group-arrow {
-        width: 38px;
-        height: 38px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="/voucher.css?v=20260907-p2-title-link-icon-1" />
 
   <meta property="og:locale" content="vi_VN" />
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Shopeevn.net/Voucher" />
-  <meta property="og:url" content="https://shopeevn.net/voucher" />
+  <meta property="og:site_name" content="Shopeevn.net" />
+  <meta property="og:url" content="https://shopeevn.net/" />
   <meta property="og:title" content="Shopee Việt Nam |Nhận Mã Giảm Giá" />
   <meta property="og:description" content="Hỗ trợ nhận mã giảm giá Shopee" />
   <meta property="og:image" content="https://shopeevn.net/images/preview-share-v2.jpg" />
@@ -696,7 +36,7 @@
   <meta property="og:image:height" content="630" />
   <meta
     property="og:image:alt"
-    content="Công cụ tạo link Shopee nhận mã giảm giá nhanh chóng tại Shopeevn.net/Voucher"
+    content="Công cụ tạo link Shopee nhận mã giảm giá nhanh chóng tại Shopeevn.net"
   />
 
   <meta name="twitter:card" content="summary_large_image" />
@@ -712,7 +52,7 @@
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "Shopeevn.net/Voucher",
-      "url": "https://shopeevn.net/voucher",
+      "url": "https://shopeevn.net/",
       "description": "Công cụ tạo link Shopee nhận mã giảm giá nhanh chóng, hỗ trợ dán link sản phẩm và tạo link mua ngay.",
       "inLanguage": "vi-VN"
     }
@@ -774,32 +114,13 @@
           spellcheck="false"
           autocapitalize="off"
           autocorrect="off"
+          inputmode="url"
+          aria-describedby="alertBox"
+          aria-invalid="false"
         />
 
         <button id="pasteBtn" class="paste-btn" type="button" title="Dán link" aria-label="Dán link">
           <div class="icon-conatiner">
-            <svg
-              width="19px"
-              height="21px"
-              viewBox="0 0 19 21"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-            >
-              <g fill="none" fill-rule="evenodd">
-                <path
-                  d="M3.4,4 L11.5,4 L11.5,4 L16,8.25 L16,17.6 C16,19.4777681 14.4777681,21 12.6,21 L3.4,21 C1.52223185,21 0,19.4777681 0,17.6 L0,7.4 C0,5.52223185 1.52223185,4 3.4,4 Z"
-                  fill="#C4FFE4"
-                ></path>
-                <path
-                  d="M6.4,0 L12,0 L12,0 L19,6.5 L19,14.6 C19,16.4777681 17.4777681,18 15.6,18 L6.4,18 C4.52223185,18 3,16.4777681 3,14.6 L3,3.4 C3,1.52223185 4.52223185,0 6.4,0 Z"
-                  fill="#85EBBC"
-                ></path>
-                <path
-                  d="M12,0 L12,5.5 C12,6.05228475 12.4477153,6.5 13,6.5 L19,6.5 L19,6.5 L12,0 Z"
-                  fill="#64B18D"
-                ></path>
-              </g>
-            </svg>
 
             <svg
               width="19px"
@@ -840,7 +161,10 @@
         </svg>
       </button>
 
-      <div id="alertBox" class="alert hidden"></div>
+      <div id="alertBox" class="alert hidden" role="alert" aria-live="assertive" aria-atomic="true">
+        <span id="alertMessage" class="alert-message"></span>
+        <button id="alertClose" class="alert-close" type="button" aria-label="Đóng thông báo lỗi">×</button>
+      </div>
 
       <div id="resultSection" class="result-section voucher-result hidden">
         <div id="productCard" class="product-card hidden">
@@ -859,151 +183,43 @@
           
             <div id="productName" class="product-name">Đang tải sản phẩm...</div>
 
-            <div class="product-price-row">
+            <div class="product-prices">
               <span id="productPrice" class="product-price"></span>
-              <span id="productOldPrice" class="product-old-price"></span>
+              <span id="productOldPrice" class="product-price-old"></span>
             </div>
           </div>
         </div>
 
-        <div id="voucherOptions" class="affiliate-options" aria-label="Chọn voucher giảm giá">
-          <article id="voucherOptionFb25" class="affiliate-option affiliate-option--fb">
-            <span class="social-voucher-icon" aria-hidden="true">
-              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="32" cy="32" r="29" fill="#1877f2" />
-                <path d="M37.5 57V34.2h7.7l1.2-8.9h-8.9v-5.7c0-2.6.7-4.3 4.4-4.3h4.8V7.4c-.8-.1-3.7-.4-7-.4-6.9 0-11.7 4.2-11.7 12v6.3h-7.8v8.9H28V57h9.5Z" fill="#fff" />
-              </svg>
-            </span>
-            <div class="affiliate-option-copy">
-              <h3 id="voucherName1" class="affiliate-option-title">Voucher FB 22%</h3>
-              <p class="affiliate-option-subtitle">(Giảm tối đa 500k)</p>
+        <div id="voucherOptions" class="affiliate-options" aria-label="Chọn voucher giảm giá"></div>
+
+        <template id="voucherOptionTemplate">
+          <article class="affiliate-option">
+            <span class="affiliate-icon" aria-hidden="true"></span>
+
+            <div class="affiliate-copy">
+              <h3 class="affiliate-title"></h3>
+              <p class="affiliate-subtitle"></p>
             </div>
-            <span id="voucherBadgeFb25" class="voucher-time-badge">⚡ 0H 3H 9H 12H 15H 20H CÓ MÃ</span>
+
+            <span class="voucher-badge"></span>
+
             <a
-              id="buyNowBtn1"
-              class="voucher-action voucher-action--fb disabled"
+              class="voucher-action disabled"
               href="#"
               target="_blank"
               rel="noopener noreferrer"
               aria-disabled="true"
+              tabindex="-1"
             >
-              <svg class="voucher-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M3 4h2.1l2.1 10.1a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L20.5 8H6.1" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
-                <circle cx="9.5" cy="20" r="1.4" fill="currentColor" />
-                <circle cx="17.5" cy="20" r="1.4" fill="currentColor" />
+              <svg class="voucher-cart-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M3 4h2.1l2.1 10.1a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L20.5 8H6.1" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+                <circle cx="9.5" cy="20" r="1.4" fill="currentColor"></circle>
+                <circle cx="17.5" cy="20" r="1.4" fill="currentColor"></circle>
               </svg>
               <span>MUA NGAY</span>
             </a>
           </article>
-
-          <article id="voucherOptionIg22" class="affiliate-option affiliate-option--ig">
-            <span class="social-voucher-icon" aria-hidden="true">
-              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <linearGradient id="voucherInstagramGradient" x1="8" y1="58" x2="58" y2="4" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#ffb000" />
-                    <stop offset="0.35" stop-color="#f7405f" />
-                    <stop offset="0.7" stop-color="#c32aa3" />
-                    <stop offset="1" stop-color="#6a3de8" />
-                  </linearGradient>
-                </defs>
-                <rect x="4" y="4" width="56" height="56" rx="17" fill="url(#voucherInstagramGradient)" />
-                <rect x="16" y="16" width="32" height="32" rx="11" fill="none" stroke="#fff" stroke-width="4" />
-                <circle cx="32" cy="32" r="8" fill="none" stroke="#fff" stroke-width="4" />
-                <circle cx="44" cy="20" r="3" fill="#fff" />
-              </svg>
-            </span>
-            <div class="affiliate-option-copy">
-              <h3 id="voucherName2" class="affiliate-option-title">Voucher IG 22%</h3>
-              <p class="affiliate-option-subtitle">(Giảm tối đa 300k)</p>
-            </div>
-            <span id="voucherBadgeIg22" class="voucher-time-badge">⚡ 0H 3H 9H 12H 15H 20H CÓ MÃ</span>
-            <a
-              id="buyNowBtn2"
-              class="voucher-action voucher-action--ig disabled"
-              href="#"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-disabled="true"
-            >
-              <svg class="voucher-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M3 4h2.1l2.1 10.1a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L20.5 8H6.1" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
-                <circle cx="9.5" cy="20" r="1.4" fill="currentColor" />
-                <circle cx="17.5" cy="20" r="1.4" fill="currentColor" />
-              </svg>
-              <span>MUA NGAY</span>
-            </a>
-          </article>
-
-          <article id="voucherOptionFb22" class="affiliate-option affiliate-option--fb">
-            <span class="social-voucher-icon" aria-hidden="true">
-              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="32" cy="32" r="29" fill="#1877f2" />
-                <path d="M37.5 57V34.2h7.7l1.2-8.9h-8.9v-5.7c0-2.6.7-4.3 4.4-4.3h4.8V7.4c-.8-.1-3.7-.4-7-.4-6.9 0-11.7 4.2-11.7 12v6.3h-7.8v8.9H28V57h9.5Z" fill="#fff" />
-              </svg>
-            </span>
-            <div class="affiliate-option-copy">
-              <h3 id="voucherName3" class="affiliate-option-title">Voucher FB 20%</h3>
-              <p class="affiliate-option-subtitle">(Giảm tối đa 300k)</p>
-            </div>
-            <span id="voucherBadgeFb22" class="voucher-time-badge">⚡ CÓ MÃ</span>
-            <a
-              id="buyNowBtn3"
-              class="voucher-action voucher-action--fb disabled"
-              href="#"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-disabled="true"
-            >
-              <svg class="voucher-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M3 4h2.1l2.1 10.1a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L20.5 8H6.1" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
-                <circle cx="9.5" cy="20" r="1.4" fill="currentColor" />
-                <circle cx="17.5" cy="20" r="1.4" fill="currentColor" />
-              </svg>
-              <span>MUA NGAY</span>
-            </a>
-          </article>
-
-          <article id="voucherOptionZalo25" class="affiliate-option affiliate-option--zalo">
-            <span class="social-voucher-icon" aria-hidden="true">
-              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                <rect x="4" y="4" width="56" height="56" rx="16" fill="#0068ff" />
-                <path d="M15 20h34v24H15z" fill="#ffffff" opacity="0.14" />
-                <text x="32" y="39" fill="#ffffff" font-family="Arial, sans-serif" font-size="17" font-weight="900" text-anchor="middle">Zalo</text>
-              </svg>
-            </span>
-            <div class="affiliate-option-copy">
-              <h3 id="voucherName4" class="affiliate-option-title">Voucher Zalo 25%</h3>
-            </div>
-            <span id="voucherBadgeZalo25" class="voucher-time-badge">Đơn tối thiểu 200k</span>
-            <a
-              id="buyNowBtn4"
-              class="voucher-action voucher-action--zalo disabled"
-              href="#"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-disabled="true"
-            >
-              <svg class="voucher-action-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M3 4h2.1l2.1 10.1a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L20.5 8H6.1" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
-                <circle cx="9.5" cy="20" r="1.4" fill="currentColor" />
-                <circle cx="17.5" cy="20" r="1.4" fill="currentColor" />
-              </svg>
-              <span>MUA NGAY</span>
-            </a>
-          </article>
-        </div>
-
-        <a
-          id="shareBtn"
-          class="hidden disabled"
-          href="#"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-disabled="true"
-          aria-hidden="true"
-          tabindex="-1"
-        ></a>
+        </template>
       </div>
 
       <a
@@ -1037,16 +253,14 @@
           </div>
 
           <div class="voucher-guide-search">
-            🔎 shopeevn.net/voucher
+            🔎 shopeevn.net
           </div>
         </div>
 
         <div class="voucher-guide-body">
           <div id="voucherGuideTitle" class="voucher-guide-title">📌 Hướng dẫn nhận mã giảm giá</div>
           <div id="voucherGuideText" class="voucher-guide-text">
-            Chỉ cần dán link Shopee, bấm <strong>Tạo Link Ngay</strong> rồi chọn
-            <strong>Mã FB 25%</strong>, <strong>Mã IG 22%</strong> hoặc
-            <strong>Mã FB 22%</strong>.
+            Chỉ cần dán link Shopee, bấm <strong>Tạo Link Ngay</strong> rồi chọn voucher phù hợp.
           </div>
           <img
             id="voucherGuideImage"
@@ -1061,8 +275,15 @@
     </section>
   </main>
 
-  <div id="floatingNotice" class="notice-modal hidden" role="dialog" aria-live="polite">
-    <div class="floating-notice-card">
+  <div
+    id="floatingNotice"
+    class="notice-modal hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="floatingNoticeTitle"
+    aria-describedby="floatingNoticeMessage"
+  >
+    <div class="floating-notice-card" tabindex="-1">
       <button id="floatingNoticeClose" class="floating-notice-close" type="button" aria-label="Đóng thông báo">
         ×
       </button>
@@ -1095,7 +316,7 @@
     </div>
   </div>
 
-  <div id="toastPopup" class="toast-popup hidden" role="status" aria-live="polite">
+  <div id="toastPopup" class="toast-popup hidden" role="status" aria-live="polite" aria-atomic="true">
     <div class="toast-card">
       <svg class="toast-wave" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
         <path
@@ -1120,12 +341,11 @@
 
   <div id="pageLoader" class="page-loader hidden" aria-hidden="true">
     <div class="page-loader-box">
-      <svg class="pl" width="240" height="240" viewBox="0 0 240 240">
-        <circle class="pl__ring pl__ring--a" cx="120" cy="120" r="105" fill="none" stroke-width="20" stroke-dasharray="0 660" stroke-dashoffset="-330" stroke-linecap="round"></circle>
-        <circle class="pl__ring pl__ring--b" cx="120" cy="120" r="35" fill="none" stroke-width="20" stroke-dasharray="0 220" stroke-dashoffset="-110" stroke-linecap="round"></circle>
-        <circle class="pl__ring pl__ring--c" cx="85" cy="120" r="70" fill="none" stroke-width="20" stroke-dasharray="0 440" stroke-linecap="round"></circle>
-        <circle class="pl__ring pl__ring--d" cx="155" cy="120" r="70" fill="none" stroke-width="20" stroke-dasharray="0 440" stroke-linecap="round"></circle>
-      </svg>
+      <div class="page-loader-rings" aria-hidden="true">
+        <span class="page-loader-ring"></span>
+        <span class="page-loader-ring"></span>
+        <span class="page-loader-ring"></span>
+      </div>
       <div class="page-loader-text">Chờ chút nhé...</div>
     </div>
   </div>
@@ -1155,47 +375,8 @@
     })();
   </script>
 
-  <script src="/notice.js?v=20260818-4"></script>
-<script src="/voucher.js?v=20260809-1"></script>
-<script>
-  (async function cleanupOldWebsiteCache() {
-    const cleanupVersion = "cleanup-20260818-4";
-
-    if (sessionStorage.getItem(cleanupVersion)) {
-      return;
-    }
-
-    let cleaned = false;
-
-    try {
-      if ("serviceWorker" in navigator) {
-        const registrations =
-          await navigator.serviceWorker.getRegistrations();
-
-        for (const registration of registrations) {
-          await registration.unregister();
-          cleaned = true;
-        }
-      }
-
-      if ("caches" in window) {
-        const cacheNames = await caches.keys();
-
-        for (const cacheName of cacheNames) {
-          await caches.delete(cacheName);
-          cleaned = true;
-        }
-      }
-
-      sessionStorage.setItem(cleanupVersion, "done");
-
-      if (cleaned) {
-        window.location.reload();
-      }
-    } catch (error) {
-      console.warn("Không thể dọn cache cũ:", error);
-    }
-  })();
-</script>
+  <script src="/voucher-config.js?v=20260907-p2-defaults-1"></script>
+  <script src="/voucher.js?v=20260907-p2-title-link-icon-1"></script>
+  <script src="/notice.js?v=20260907-p2-title-link-icon-1"></script>
 </body>
 </html>

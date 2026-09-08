@@ -1,11 +1,37 @@
 const express = require("express");
+const compression = require("compression");
 const path = require("path");
 const fs = require("fs/promises");
+const crypto = require("crypto");
+const VOUCHER_CONFIG = require("./public/voucher-config");
 
 require("dotenv").config();
 
+function readDurationSetting(name, fallback, min = 100, max = 60000) {
+  const value = Number(process.env[name]);
+  return Number.isFinite(value)
+    ? Math.max(min, Math.min(max, Math.round(value)))
+    : fallback;
+}
+
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
+const MAX_INPUT_URL_LENGTH = 4096;
+const EXTERNAL_REQUEST_TIMEOUT_MS = readDurationSetting(
+  "EXTERNAL_REQUEST_TIMEOUT_MS",
+  8000
+);
+const PRODUCT_INFO_TIMEOUT_MS = readDurationSetting(
+  "PRODUCT_INFO_TIMEOUT_MS",
+  1000,
+  100,
+  1000
+);
+const VOUCHER_TOTAL_TIMEOUT_MS = readDurationSetting(
+  "VOUCHER_TOTAL_TIMEOUT_MS",
+  15000
+);
+const MAX_SHOPEE_REDIRECTS = 3;
 
 const AFFILIATE_ID = String(process.env.AFFILIATE_ID || "").trim();
 const SHARE_CHANNEL_CODE = String(process.env.SHARE_CHANNEL_CODE ?? "").trim();
@@ -16,12 +42,12 @@ const SITE_DOMAIN_TEXT = String(process.env.SITE_DOMAIN_TEXT || "linkcuaban.vn")
 const VOUCHER_IMAGE_URL = String(process.env.VOUCHER_IMAGE_URL || "/images/voucher.jpg").trim();
 
 const AFFIPAD_API_KEY = String(process.env.AFFIPAD_API_KEY || "").trim();
-const AFFIPAD_TOOL_ID_1 = String(
-  process.env.AFFIPAD_TOOL_ID_1 || process.env.AFFIPAD_TOOL_ID || ""
-).trim();
-const AFFIPAD_TOOL_ID_2 = String(process.env.AFFIPAD_TOOL_ID_2 || "").trim();
-const AFFIPAD_TOOL_ID_3 = String(process.env.AFFIPAD_TOOL_ID_3 || "").trim();
-const AFFIPAD_TOOL_ID_4 = String(process.env.AFFIPAD_TOOL_ID_4 || "").trim();
+const AFFIPAD_TOOL_IDS = [
+  String(process.env.AFFIPAD_TOOL_ID_1 || process.env.AFFIPAD_TOOL_ID || "").trim(),
+  String(process.env.AFFIPAD_TOOL_ID_2 || "").trim(),
+  String(process.env.AFFIPAD_TOOL_ID_3 || "").trim(),
+  String(process.env.AFFIPAD_TOOL_ID_4 || "").trim()
+];
 
 const NOTICE_FILE =
   process.env.NOTICE_FILE || path.join(__dirname, "notice.json");
@@ -29,14 +55,63 @@ const VOUCHER_NOTICE_FILE =
   process.env.VOUCHER_NOTICE_FILE || path.join(__dirname, "voucher-notice.json");
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
+const ADMIN_SESSION_SECRET = String(
+  process.env.ADMIN_SESSION_SECRET || ADMIN_PASSWORD
+).trim();
+const ADMIN_SESSION_COOKIE = "admin_session";
+const ADMIN_SESSION_TTL_MS = 60 * 60 * 1000;
+const ADMIN_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+const ADMIN_RATE_LIMIT_MAX = 120;
+const ADMIN_LOGIN_FAILURE_MAX = 5;
 
-if (!AFFILIATE_ID) {
-  console.error("Thiếu AFFILIATE_ID trong file .env hoặc Railway Variables");
-  process.exit(1);
-}
+app.set("trust proxy", 1);
+app.disable("x-powered-by");
+app.use(compression({ threshold: 1024 }));
+
+app.use((req, res, next) => {
+  req.requestId = crypto.randomUUID();
+  res.setHeader("X-Request-Id", req.requestId);
+
+  const contentSecurityPolicy = [
+    "default-src 'self'",
+    "base-uri 'self'",
+    "connect-src 'self'",
+    "font-src 'self' data:",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+    "img-src 'self' data: https:",
+    "object-src 'none'",
+    "script-src 'self' 'unsafe-inline'",
+    "style-src 'self' 'unsafe-inline'"
+  ];
+
+  res.set({
+    "Content-Security-Policy": contentSecurityPolicy.join("; "),
+    "Cross-Origin-Opener-Policy": "same-origin",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "X-XSS-Protection": "0"
+  });
+
+  const forwardedProtocol = String(req.headers["x-forwarded-proto"] || "")
+    .split(",")[0]
+    .trim();
+
+  if (req.secure || forwardedProtocol === "https") {
+    res.setHeader("Strict-Transport-Security", "max-age=15552000");
+  }
+
+  next();
+});
 
 app.get("/", (_req, res) => {
-  res.redirect(302, "/voucher");
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate"
+  );
+  res.sendFile(path.join(__dirname, "public", "voucher.html"));
 });
 
 // Vô hiệu hóa các service worker cũ từng được website sử dụng.
@@ -98,17 +173,15 @@ app.use(
         return;
       }
 
-      if ([".js", ".css", ".json"].includes(extension)) {
-        res.setHeader("Cache-Control", "no-cache, must-revalidate");
-      }
+      res.setHeader("Cache-Control", "no-cache, must-revalidate");
     }
   })
 );
 
-app.use(express.json());
+app.use(express.json({ limit: "16kb", strict: true }));
 
 app.get(["/voucher", "/voucher/"], (_req, res) => {
-  res.sendFile(path.join(__dirname, "public", "voucher.html"));
+  res.redirect(301, "/");
 });
 
 function normalizeUrl(rawUrl) {
@@ -131,6 +204,85 @@ function parseUrlSafe(url) {
   }
 }
 
+function createHttpError(statusCode, code, message) {
+  const error = new Error(message);
+  error.statusCode = statusCode;
+  error.code = code;
+  error.expose = statusCode < 500 || [502, 504].includes(statusCode);
+  return error;
+}
+
+function asyncHandler(handler) {
+  return (req, res, next) => {
+    Promise.resolve(handler(req, res, next)).catch(next);
+  };
+}
+
+async function fetchWithTimeout(
+  url,
+  options = {},
+  {
+    timeoutMs = EXTERNAL_REQUEST_TIMEOUT_MS,
+    parentSignal,
+    serviceName = "Dịch vụ bên ngoài",
+    consumeResponse
+  } = {}
+) {
+  if (parentSignal?.aborted) {
+    throw createHttpError(
+      504,
+      "TOTAL_TIMEOUT",
+      "Yêu cầu tạo link đã vượt quá thời gian xử lý."
+    );
+  }
+
+  const controller = new AbortController();
+  let requestTimedOut = false;
+  const timeout = setTimeout(() => {
+    requestTimedOut = true;
+    controller.abort();
+  }, timeoutMs);
+  const abortFromParent = () => controller.abort(parentSignal.reason);
+
+  parentSignal?.addEventListener("abort", abortFromParent, { once: true });
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
+
+    return typeof consumeResponse === "function"
+      ? await consumeResponse(response)
+      : response;
+  } catch (error) {
+    if (controller.signal.aborted) {
+      if (parentSignal?.aborted && !requestTimedOut) {
+        throw createHttpError(
+          504,
+          "TOTAL_TIMEOUT",
+          "Yêu cầu tạo link đã vượt quá thời gian xử lý."
+        );
+      }
+
+      throw createHttpError(
+        504,
+        "UPSTREAM_TIMEOUT",
+        `${serviceName} phản hồi quá lâu.`
+      );
+    }
+
+    throw createHttpError(
+      502,
+      "UPSTREAM_NETWORK_ERROR",
+      `Không kết nối được tới ${serviceName}.`
+    );
+  } finally {
+    clearTimeout(timeout);
+    parentSignal?.removeEventListener("abort", abortFromParent);
+  }
+}
+
 function isShopeeProductHost(hostname = "") {
   return /(^|\.)shopee\.vn$/i.test(hostname) && !/^s\.shopee\.vn$/i.test(hostname);
 }
@@ -140,12 +292,21 @@ function isShopeeRedirectHost(hostname = "") {
 }
 
 function isShopeeShortHost(hostname = "") {
-  return /(^|\.)shp\.ee$/i.test(hostname);
+  return /^(vn\.)?shp\.ee$/i.test(hostname);
 }
 
 function isAllowedShopeeInputUrl(url) {
   const parsed = parseUrlSafe(url);
   if (!parsed) return false;
+
+  if (
+    parsed.protocol !== "https:" ||
+    parsed.username ||
+    parsed.password ||
+    parsed.port
+  ) {
+    return false;
+  }
 
   return (
     isShopeeProductHost(parsed.hostname) ||
@@ -172,23 +333,53 @@ function buildAffiliateLink(originUrl, affiliateId, shareChannelCode, subId) {
   return `https://s.shopee.vn/an_redir?${params.toString()}`;
 }
 
-async function resolveShopeeRedirectUrl(inputUrl) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 10000);
+async function resolveShopeeRedirectUrl(inputUrl, parentSignal) {
+  let currentUrl = inputUrl;
 
-  try {
-    const response = await fetch(inputUrl, {
+  for (let redirectCount = 0; redirectCount <= MAX_SHOPEE_REDIRECTS; redirectCount += 1) {
+    if (!isAllowedShopeeInputUrl(currentUrl)) {
+      throw createHttpError(
+        400,
+        "INVALID_REDIRECT_DOMAIN",
+        "Link Shopee chuyển hướng tới domain hoặc protocol không được phép."
+      );
+    }
+
+    const response = await fetchWithTimeout(currentUrl, {
       method: "GET",
-      redirect: "follow",
-      signal: controller.signal,
+      redirect: "manual",
       headers: {
         "user-agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
         "accept-language": "vi,en-US;q=0.9,en;q=0.8"
       }
+    }, {
+      parentSignal,
+      serviceName: "Shopee"
     });
 
-    const finalUrl = response.url || inputUrl;
+    if (response.status >= 300 && response.status < 400) {
+      const location = response.headers.get("location");
+
+      if (response.body && typeof response.body.cancel === "function") {
+        try {
+          await response.body.cancel();
+        } catch {}
+      }
+
+      if (!location) {
+        throw createHttpError(
+          502,
+          "INVALID_REDIRECT",
+          "Shopee trả về chuyển hướng không hợp lệ."
+        );
+      }
+
+      currentUrl = new URL(location, currentUrl).toString();
+      continue;
+    }
+
+    const finalUrl = response.url || currentUrl;
 
     if (response.body && typeof response.body.cancel === "function") {
       try {
@@ -197,12 +388,16 @@ async function resolveShopeeRedirectUrl(inputUrl) {
     }
 
     return finalUrl;
-  } finally {
-    clearTimeout(timeout);
   }
+
+  throw createHttpError(
+    400,
+    "TOO_MANY_REDIRECTS",
+    "Link Shopee chuyển hướng quá nhiều lần."
+  );
 }
 
-async function resolveOriginUrl(inputUrl) {
+async function resolveOriginUrl(inputUrl, parentSignal) {
   const parsed = parseUrlSafe(inputUrl);
 
   if (!parsed) {
@@ -214,7 +409,7 @@ async function resolveOriginUrl(inputUrl) {
   }
 
   if (isShopeeRedirectHost(parsed.hostname) || isShopeeShortHost(parsed.hostname)) {
-    const finalUrl = await resolveShopeeRedirectUrl(inputUrl);
+    const finalUrl = await resolveShopeeRedirectUrl(inputUrl, parentSignal);
     const finalParsed = parseUrlSafe(finalUrl);
 
     if (finalParsed && isShopeeProductHost(finalParsed.hostname)) {
@@ -310,9 +505,25 @@ app.get("/api/config", (_req, res) => {
  * Giữ nguyên cách tạo:
  * resolveOriginUrl -> canonicalizeShopeeProductUrl -> buildAffiliateLink
  */
-app.get("/api/create-link", async (req, res) => {
+app.get("/api/create-link", async (req, res, next) => {
+  const totalController = new AbortController();
+  const totalTimeout = setTimeout(
+    () => totalController.abort(),
+    VOUCHER_TOTAL_TIMEOUT_MS
+  );
+
   try {
-    const inputUrl = normalizeUrl(req.query.url);
+    const rawInputUrl = String(req.query.url || "").trim();
+
+    if (rawInputUrl.length > MAX_INPUT_URL_LENGTH) {
+      return res.status(400).json({
+        success: false,
+        code: "URL_TOO_LONG",
+        message: "Link Shopee quá dài."
+      });
+    }
+
+    const inputUrl = normalizeUrl(rawInputUrl);
     const sub1 = String(req.query.sub1 || DEFAULT_SUB1).trim();
     const sub2 = String(req.query.sub2 || "").trim();
     const sub3 = String(req.query.sub3 || "").trim();
@@ -329,11 +540,23 @@ app.get("/api/create-link", async (req, res) => {
     if (!isAllowedShopeeInputUrl(inputUrl)) {
       return res.status(400).json({
         success: false,
-        message: "Chỉ hỗ trợ link từ shopee.vn, s.shopee.vn hoặc vn.shp.ee."
+        code: "INVALID_SHOPEE_URL",
+        message: "Chỉ hỗ trợ link HTTPS từ shopee.vn, s.shopee.vn hoặc vn.shp.ee."
       });
     }
 
-    const resolvedUrl = await resolveOriginUrl(inputUrl);
+    if (!AFFILIATE_ID) {
+      return res.status(503).json({
+        success: false,
+        code: "LEGACY_API_NOT_CONFIGURED",
+        message: "API tạo link cũ chưa được cấu hình."
+      });
+    }
+
+    const resolvedUrl = await resolveOriginUrl(
+      inputUrl,
+      totalController.signal
+    );
     const originUrl = canonicalizeShopeeProductUrl(resolvedUrl);
     const subId = buildSubId(sub1, sub2, sub3, sub4, sub5);
 
@@ -357,10 +580,9 @@ app.get("/api/create-link", async (req, res) => {
       subids: { sub1, sub2, sub3, sub4, sub5 }
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error?.message || "Có lỗi khi tạo link."
-    });
+    next(error);
+  } finally {
+    clearTimeout(totalTimeout);
   }
 });
 
@@ -410,8 +632,8 @@ function isDirectShopeeProductUrl(rawUrl) {
   return Boolean(getShopeeProductIds(rawUrl));
 }
 
-async function convertVoucherWithAffipad(url, toolId) {
-  const response = await fetch("https://api.affipad.com/v1/fb-convert", {
+async function convertVoucherWithAffipad(url, toolId, parentSignal) {
+  const { response, data } = await fetchWithTimeout("https://api.affipad.com/v1/fb-convert", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${AFFIPAD_API_KEY}`,
@@ -423,9 +645,14 @@ async function convertVoucherWithAffipad(url, toolId) {
       useCache: true,
       useShortLink: true
     })
+  }, {
+    parentSignal,
+    serviceName: "AffiPad",
+    consumeResponse: async (externalResponse) => ({
+      response: externalResponse,
+      data: await externalResponse.json()
+    })
   });
-
-  const data = await response.json();
 
   if (!response.ok || !data?.success) {
     throw new Error(data?.error?.message || "Không đổi được link AffiPad.");
@@ -434,9 +661,9 @@ async function convertVoucherWithAffipad(url, toolId) {
   return data.data;
 }
 
-async function fetchAffipadProductInfo(url) {
+async function fetchAffipadProductInfo(url, parentSignal) {
   try {
-    const response = await fetch("https://api.affipad.com/v1/product-info", {
+    const { response, data } = await fetchWithTimeout("https://api.affipad.com/v1/product-info", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${AFFIPAD_API_KEY}`,
@@ -445,9 +672,15 @@ async function fetchAffipadProductInfo(url) {
       body: JSON.stringify({
         url
       })
+    }, {
+      timeoutMs: PRODUCT_INFO_TIMEOUT_MS,
+      parentSignal,
+      serviceName: "AffiPad",
+      consumeResponse: async (externalResponse) => ({
+        response: externalResponse,
+        data: await externalResponse.json()
+      })
     });
-
-    const data = await response.json();
 
     if (!response.ok || !data?.success) {
       return null;
@@ -593,20 +826,17 @@ function buildShopeeImageUrl(imageId) {
   return `https://down-vn.img.susercontent.com/file/${imageId}`;
 }
 
-async function fetchShopeeProductInfo(originUrl) {
+async function fetchShopeeProductInfo(originUrl, parentSignal) {
   const ids = getShopeeIdsFromProductUrl(originUrl);
   if (!ids) return null;
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 10000);
 
   try {
     const apiUrl =
       `https://shopee.vn/api/v4/item/get?shopid=${ids.shopId}&itemid=${ids.itemId}`;
 
-    const response = await fetch(apiUrl, {
+    const { response, data } = await fetchWithTimeout(apiUrl, {
       method: "GET",
-      signal: controller.signal,
+      redirect: "manual",
       headers: {
         accept: "application/json",
         referer: originUrl,
@@ -614,13 +844,20 @@ async function fetchShopeeProductInfo(originUrl) {
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/145.0.0.0 Safari/537.36",
         "accept-language": "vi,en-US;q=0.9,en;q=0.8"
       }
+    }, {
+      timeoutMs: PRODUCT_INFO_TIMEOUT_MS,
+      parentSignal,
+      serviceName: "Shopee",
+      consumeResponse: async (externalResponse) => ({
+        response: externalResponse,
+        data: externalResponse.ok ? await externalResponse.json() : null
+      })
     });
 
     if (!response.ok) {
       return null;
     }
 
-    const data = await response.json();
     const item = data?.data || data?.item || null;
 
     if (!item) return null;
@@ -641,8 +878,6 @@ async function fetchShopeeProductInfo(originUrl) {
     };
   } catch {
     return null;
-  } finally {
-    clearTimeout(timeout);
   }
 }
 
@@ -671,17 +906,13 @@ function getMetaContent(html, property) {
   return "";
 }
 
-async function fetchShopeePageProductInfo(url) {
+async function fetchShopeePageProductInfo(url, parentSignal) {
   if (!url) return null;
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 10000);
-
   try {
-    const response = await fetch(url, {
+    const { response, html } = await fetchWithTimeout(url, {
       method: "GET",
-      redirect: "follow",
-      signal: controller.signal,
+      redirect: "manual",
       headers: {
         "user-agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/145.0.0.0 Safari/537.36",
@@ -689,13 +920,19 @@ async function fetchShopeePageProductInfo(url) {
           "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
         "accept-language": "vi,en-US;q=0.9,en;q=0.8"
       }
+    }, {
+      timeoutMs: PRODUCT_INFO_TIMEOUT_MS,
+      parentSignal,
+      serviceName: "Shopee",
+      consumeResponse: async (externalResponse) => ({
+        response: externalResponse,
+        html: externalResponse.ok ? await externalResponse.text() : ""
+      })
     });
 
     if (!response.ok) {
       return null;
     }
-
-    const html = await response.text();
 
     const name =
       getMetaContent(html, "og:title") ||
@@ -722,8 +959,6 @@ async function fetchShopeePageProductInfo(url) {
     };
   } catch {
     return null;
-  } finally {
-    clearTimeout(timeout);
   }
 }
 
@@ -731,13 +966,43 @@ async function fetchShopeePageProductInfo(url) {
  * API mới cho shopeevn.net/voucher
  * Dùng AffiPad API và trả thêm productInfo.
  */
-app.post("/api/voucher/convert", async (req, res) => {
+app.post("/api/voucher/convert", async (req, res, next) => {
+  const totalController = new AbortController();
+  const totalTimeout = setTimeout(
+    () => totalController.abort(),
+    VOUCHER_TOTAL_TIMEOUT_MS
+  );
+
   try {
-    const inputUrl = normalizeUrl(req.body?.url);
+    if (
+      !req.body ||
+      typeof req.body !== "object" ||
+      Array.isArray(req.body) ||
+      Object.keys(req.body).some((key) => key !== "url")
+    ) {
+      return res.status(400).json({
+        success: false,
+        code: "INVALID_BODY",
+        message: "Dữ liệu gửi lên không hợp lệ."
+      });
+    }
+
+    const rawInputUrl = String(req.body.url || "").trim();
+
+    if (rawInputUrl.length > MAX_INPUT_URL_LENGTH) {
+      return res.status(400).json({
+        success: false,
+        code: "URL_TOO_LONG",
+        message: "Link Shopee quá dài."
+      });
+    }
+
+    const inputUrl = normalizeUrl(rawInputUrl);
 
     if (!inputUrl) {
       return res.status(400).json({
         success: false,
+        code: "URL_REQUIRED",
         message: "Vui lòng nhập link Shopee."
       });
     }
@@ -745,6 +1010,7 @@ app.post("/api/voucher/convert", async (req, res) => {
     if (/\/video/i.test(inputUrl) || /smtt=/i.test(inputUrl)) {
       return res.status(400).json({
         success: false,
+        code: "PRODUCT_URL_REQUIRED",
         message: "Vui lòng lấy link trực tiếp từ sản phẩm (không lấy link từ video)."
       });
     }
@@ -752,125 +1018,162 @@ app.post("/api/voucher/convert", async (req, res) => {
     if (!isAllowedShopeeInputUrl(inputUrl)) {
       return res.status(400).json({
         success: false,
-        message: "Chỉ hỗ trợ link Shopee."
+        code: "INVALID_SHOPEE_URL",
+        message: "Chỉ hỗ trợ link HTTPS từ shopee.vn, s.shopee.vn hoặc vn.shp.ee."
       });
     }
 
-    if (
-      !AFFIPAD_API_KEY ||
-      !AFFIPAD_TOOL_ID_1 ||
-      !AFFIPAD_TOOL_ID_2 ||
-      !AFFIPAD_TOOL_ID_3
-    ) {
+    const voucherNotice = await readVoucherNotice();
+    const activeVoucherConfigs = VOUCHER_CONFIG.filter(
+      (voucher) => voucherNotice[voucher.visibilityKey] !== false
+    );
+
+    if (!activeVoucherConfigs.length) {
+      return res.status(503).json({
+        success: false,
+        code: "NO_ACTIVE_VOUCHERS",
+        message: "Hiện chưa có voucher nào được bật."
+      });
+    }
+
+    const toolConfigs = activeVoucherConfigs.map((voucher) => ({
+      ...voucher,
+      toolId: AFFIPAD_TOOL_IDS[voucher.slot - 1] || ""
+    }));
+    const missingToolSlots = toolConfigs
+      .filter(({ toolId }) => !toolId)
+      .map(({ slot }) => `AFFIPAD_TOOL_ID_${slot}`);
+
+    if (!AFFIPAD_API_KEY || missingToolSlots.length) {
+      const missingVariables = [
+        ...(!AFFIPAD_API_KEY ? ["AFFIPAD_API_KEY"] : []),
+        ...missingToolSlots
+      ];
+
       return res.status(500).json({
         success: false,
-        message:
-          "Chưa cấu hình AFFIPAD_API_KEY, AFFIPAD_TOOL_ID_1, AFFIPAD_TOOL_ID_2 hoặc AFFIPAD_TOOL_ID_3."
+        code: "SERVER_NOT_CONFIGURED",
+        message: `Chưa cấu hình ${missingVariables.join(", ")}.`
       });
     }
 
-    if (!AFFIPAD_TOOL_ID_4) {
-      return res.status(500).json({
-        success: false,
-        message: "Chưa cấu hình AFFIPAD_TOOL_ID_4 cho Voucher Zalo 25%."
-      });
-    }
-
-    const resolvedUrl = await resolveOriginUrl(inputUrl);
+    const resolvedUrl = await resolveOriginUrl(
+      inputUrl,
+      totalController.signal
+    );
 
     if (!isDirectShopeeProductUrl(resolvedUrl)) {
       return res.status(400).json({
         success: false,
+        code: "PRODUCT_URL_REQUIRED",
         message: "Vui lòng lấy link trực tiếp từ sản phẩm (không lấy link từ video)."
       });
     }
 
     const originUrl = canonicalizeShopeeProductUrl(resolvedUrl);
 
-    const toolConfigs = [
-      {
-        channel: "fb25",
-        label: "Mã FB 25%",
-        toolId: AFFIPAD_TOOL_ID_1
-      },
-      {
-        channel: "ig22",
-        label: "Mã IG 22%",
-        toolId: AFFIPAD_TOOL_ID_2
-      },
-      {
-        channel: "fb22",
-        label: "Mã FB 22%",
-        toolId: AFFIPAD_TOOL_ID_3
-      }
-    ];
-
-    toolConfigs.push({
-      channel: "zalo25",
-      label: "Mã Zalo 25%",
-      toolId: AFFIPAD_TOOL_ID_4
-    });
-
-    const affipadDataList = await Promise.all(
+    const conversionResults = await Promise.allSettled(
       toolConfigs.map(({ toolId }) =>
-        convertVoucherWithAffipad(originUrl, toolId)
+        convertVoucherWithAffipad(
+          originUrl,
+          toolId,
+          totalController.signal
+        )
       )
     );
+    const affipadDataList = [];
+    const affiliateLinks = [];
+    const failedChannels = [];
 
-    const results = affipadDataList.map((data) =>
-      Array.isArray(data.results) ? data.results[0] : null
-    );
+    conversionResults.forEach((result, index) => {
+      const voucher = toolConfigs[index];
+      const data = result.status === "fulfilled" ? result.value : null;
+      const item = Array.isArray(data?.results) ? data.results[0] : null;
+      const affiliateLink = item?.shortUrl || item?.link || "";
 
-    if (!results[3]) {
-      return res.status(502).json({
-        success: false,
-        message: "AffiPad không trả về link Voucher Zalo 25%."
-      });
-    }
+      if (!data || !item || !affiliateLink) {
+        const reason = result.status === "rejected" ? result.reason : null;
+        const timeoutError = ["UPSTREAM_TIMEOUT", "TOTAL_TIMEOUT"].includes(
+          reason?.code
+        );
 
-    if (results.some((item) => !item)) {
-      return res.status(502).json({
-        success: false,
-        message: "AffiPad không trả về đủ ba link FB 25%, IG 22% và FB 22%."
-      });
-    }
+        failedChannels.push({
+          channel: voucher.channel,
+          label: voucher.apiLabel,
+          code: timeoutError ? "TIMEOUT" : "UPSTREAM_ERROR",
+          message: timeoutError
+            ? "Kênh phản hồi quá lâu."
+            : "Kênh tạm thời không khả dụng."
+        });
+        return;
+      }
 
-    const productInfo =
-      normalizeAffipadProductInfo(affipadDataList[0]?.productInfo) ||
-      normalizeAffipadProductInfo(affipadDataList[1]?.productInfo) ||
-      normalizeAffipadProductInfo(affipadDataList[2]?.productInfo) ||
-      (await fetchAffipadProductInfo(originUrl)) ||
-      (await fetchShopeeProductInfo(originUrl)) ||
-      (await fetchShopeePageProductInfo(resolvedUrl)) ||
-      (await fetchShopeePageProductInfo(originUrl)) ||
-      null;
-
-    return res.json({
-      success: true,
-      input_url: inputUrl,
-      url: originUrl,
-      cached: affipadDataList.every((data) => Boolean(data.cached)),
-      productInfo,
-
-      affiliateLinks: results.map((item, index) => ({
-        channel: toolConfigs[index].channel,
-        label: toolConfigs[index].label,
+      affipadDataList.push(data);
+      affiliateLinks.push({
+        channel: voucher.channel,
+        label: voucher.apiLabel,
         affiliate_id: item.affiliateId || "",
-        affiliate_link: item.shortUrl || item.link,
+        affiliate_link: affiliateLink,
         raw_link: item.link || "",
         short_url: item.shortUrl || "",
         shop_id: item.shopId || "",
         item_id: item.itemId || "",
         group_name: item.groupName || ""
-      }))
+      });
+    });
+
+    if (!affiliateLinks.length) {
+      const allTimedOut = failedChannels.every(
+        ({ code }) => code === "TIMEOUT"
+      );
+
+      return res.status(allTimedOut ? 504 : 502).json({
+        success: false,
+        partial: false,
+        code: allTimedOut ? "UPSTREAM_TIMEOUT" : "UPSTREAM_UNAVAILABLE",
+        message: allTimedOut
+          ? "Các kênh voucher phản hồi quá lâu. Vui lòng thử lại."
+          : "Chưa tạo được link voucher. Vui lòng thử lại.",
+        failedChannels
+      });
+    }
+
+    let productInfo = affipadDataList
+      .map((data) => normalizeAffipadProductInfo(data?.productInfo))
+      .find(Boolean);
+
+    if (!productInfo && !totalController.signal.aborted) {
+      const pageUrls = [...new Set([resolvedUrl, originUrl])];
+      const productInfoResults = await Promise.allSettled([
+        fetchAffipadProductInfo(originUrl, totalController.signal),
+        fetchShopeeProductInfo(originUrl, totalController.signal),
+        ...pageUrls.map((url) =>
+          fetchShopeePageProductInfo(url, totalController.signal)
+        )
+      ]);
+
+      productInfo = productInfoResults
+        .map((result) =>
+          result.status === "fulfilled" ? result.value : null
+        )
+        .find(Boolean);
+    }
+
+    return res.json({
+      success: true,
+      partial: failedChannels.length > 0,
+      input_url: inputUrl,
+      url: originUrl,
+      cached: affipadDataList.every((data) => Boolean(data.cached)),
+      productInfo: productInfo || null,
+      activeChannels: toolConfigs.map(({ channel }) => channel),
+      affiliateLinks,
+      failedChannels
     });
   } catch (error) {
-    console.error("Voucher convert error:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: error?.message || "Có lỗi khi tạo link voucher."
-    });
+    next(error);
+  } finally {
+    clearTimeout(totalTimeout);
   }
 });
 
@@ -886,34 +1189,69 @@ const DEFAULT_NOTICE = {
   displaySeconds: 5,
   version: "default"
 };
-const DEFAULT_VOUCHER_NOTICE = {
+const DEFAULT_VOUCHER_NOTICE = VOUCHER_CONFIG.reduce((notice, voucher) => ({
+  ...notice,
+  [voucher.nameKey]: voucher.defaultName,
+  [voucher.visibilityKey]: true,
+  [voucher.badgeKey]: voucher.defaultBadge
+}), {
   enabled: true,
-  title: "0H 3H 9H 12H 15H 20H ➡️ CÓ MÃ 22%",
+  title: "0H 9H 15H 20H ➡️ CÓ MÃ 22%",
   message: "MÃ 20% CÓ SẴN",
   buttonText: "Group FB",
   buttonUrl: "https://www.facebook.com/",
-  imageUrl: "",
+  imageUrl: "/images/2Ma.jpg",
   position: "bottom-right",
   showOncePerSession: false,
-  displaySeconds: 5,
-  voucherName1: "Voucher FB 22%",
-  voucherName2: "Voucher IG 22%",
-  voucherName3: "Voucher FB 20%",
-  voucherName4: "Voucher Zalo 25%",
-  showVoucherFb25: true,
-  showVoucherIg22: true,
-  showVoucherFb22: true,
-  showVoucherZalo25: true,
-  voucherBadgeFb25: "⚡ 0H 3H 9H 12H 15H 20H CÓ MÃ",
-  voucherBadgeIg22: "⚡ 0H 3H 9H 12H 15H 20H CÓ MÃ",
-  voucherBadgeFb22: "⚡ CÓ MÃ",
-  voucherBadgeZalo25: "Đơn tối thiểu 200k",
+  displaySeconds: 10,
   guideTitle: "📌 Hướng dẫn nhận mã giảm giá",
-  guideText:
-    "Chỉ cần dán link Shopee ➡️ Tạo Link ",
+  guideText: "Chỉ cần dán link Shopee ➡️ Tạo Link",
   guideImageUrl: "",
-  version: "voucher-default"
-};
+  version: "voucher-default-20260907"
+});
+
+const atomicWriteQueues = new Map();
+
+async function writeJsonAtomic(filePath, data) {
+  const previousWrite = atomicWriteQueues.get(filePath) || Promise.resolve();
+  const currentWrite = previousWrite.catch(() => {}).then(async () => {
+    const directory = path.dirname(filePath);
+    const temporaryPath = path.join(
+      directory,
+      `.${path.basename(filePath)}.${process.pid}.${crypto.randomUUID()}.tmp`
+    );
+    let fileHandle;
+
+    await fs.mkdir(directory, { recursive: true });
+
+    try {
+      fileHandle = await fs.open(temporaryPath, "wx");
+      await fileHandle.writeFile(JSON.stringify(data, null, 2), "utf8");
+      await fileHandle.sync();
+      await fileHandle.close();
+      fileHandle = null;
+      await fs.rename(temporaryPath, filePath);
+    } catch (error) {
+      if (fileHandle) {
+        await fileHandle.close().catch(() => {});
+      }
+
+      await fs.unlink(temporaryPath).catch(() => {});
+      throw error;
+    }
+  });
+
+  atomicWriteQueues.set(filePath, currentWrite);
+
+  try {
+    await currentWrite;
+  } finally {
+    if (atomicWriteQueues.get(filePath) === currentWrite) {
+      atomicWriteQueues.delete(filePath);
+    }
+  }
+}
+
 async function readNotice() {
   try {
     const raw = await fs.readFile(NOTICE_FILE, "utf8");
@@ -927,8 +1265,6 @@ async function readNotice() {
 }
 
 async function saveNotice(data) {
-  await fs.mkdir(path.dirname(NOTICE_FILE), { recursive: true });
-
   const displaySeconds = Number(data.displaySeconds);
 
   const noticeData = {
@@ -946,20 +1282,29 @@ async function saveNotice(data) {
     version: String(Date.now())
   };
 
-  await fs.writeFile(
-    NOTICE_FILE,
-    JSON.stringify(noticeData, null, 2),
-    "utf8"
-  );
+  await writeJsonAtomic(NOTICE_FILE, noticeData);
 
   return noticeData;
 }
 async function readVoucherNotice() {
   try {
     const raw = await fs.readFile(VOUCHER_NOTICE_FILE, "utf8");
+    const savedNotice = JSON.parse(raw);
+
+    // Chuyển khóa từ cấu hình cũ: slot 1 từng mang tên FB 25%, slot 3 từng mang tên FB 22%.
+    if (
+      Object.hasOwn(savedNotice, "showVoucherFb25") &&
+      !Object.hasOwn(savedNotice, "showVoucherFb20")
+    ) {
+      savedNotice.showVoucherFb20 = savedNotice.showVoucherFb22;
+      savedNotice.showVoucherFb22 = savedNotice.showVoucherFb25;
+      savedNotice.voucherBadgeFb20 = savedNotice.voucherBadgeFb22;
+      savedNotice.voucherBadgeFb22 = savedNotice.voucherBadgeFb25;
+    }
+
     return {
       ...DEFAULT_VOUCHER_NOTICE,
-      ...JSON.parse(raw)
+      ...savedNotice
     };
   } catch {
     return DEFAULT_VOUCHER_NOTICE;
@@ -967,9 +1312,15 @@ async function readVoucherNotice() {
 }
 
 async function saveVoucherNotice(data) {
-  await fs.mkdir(path.dirname(VOUCHER_NOTICE_FILE), { recursive: true });
-
   const displaySeconds = Number(data.displaySeconds);
+
+  const voucherFields = VOUCHER_CONFIG.reduce((fields, voucher) => ({
+    ...fields,
+    [voucher.nameKey]:
+      String(data[voucher.nameKey] || "").trim() || voucher.defaultName,
+    [voucher.visibilityKey]: data[voucher.visibilityKey] !== false,
+    [voucher.badgeKey]: String(data[voucher.badgeKey] || "").trim()
+  }), {});
 
   const noticeData = {
     enabled: Boolean(data.enabled),
@@ -983,103 +1334,442 @@ async function saveVoucherNotice(data) {
     displaySeconds: Number.isFinite(displaySeconds)
       ? Math.max(0, Math.min(300, Math.round(displaySeconds)))
       : DEFAULT_VOUCHER_NOTICE.displaySeconds,
-    voucherName1:
-      String(data.voucherName1 || "").trim() || DEFAULT_VOUCHER_NOTICE.voucherName1,
-    voucherName2:
-      String(data.voucherName2 || "").trim() || DEFAULT_VOUCHER_NOTICE.voucherName2,
-    voucherName3:
-      String(data.voucherName3 || "").trim() || DEFAULT_VOUCHER_NOTICE.voucherName3,
-    voucherName4:
-      String(data.voucherName4 || "").trim() || DEFAULT_VOUCHER_NOTICE.voucherName4,
-    showVoucherFb25: data.showVoucherFb25 !== false,
-    showVoucherIg22: data.showVoucherIg22 !== false,
-    showVoucherFb22: data.showVoucherFb22 !== false,
-    showVoucherZalo25: data.showVoucherZalo25 !== false,
-    voucherBadgeFb25: String(data.voucherBadgeFb25 || "").trim(),
-    voucherBadgeIg22: String(data.voucherBadgeIg22 || "").trim(),
-    voucherBadgeFb22: String(data.voucherBadgeFb22 || "").trim(),
-    voucherBadgeZalo25: String(data.voucherBadgeZalo25 || "").trim(),
+    ...voucherFields,
     guideTitle: String(data.guideTitle || "").trim(),
     guideText: String(data.guideText || "").trim(),
     guideImageUrl: String(data.guideImageUrl || "").trim(),
     version: String(Date.now())
   };
 
-  await fs.writeFile(
-    VOUCHER_NOTICE_FILE,
-    JSON.stringify(noticeData, null, 2),
-    "utf8"
-  );
+  await writeJsonAtomic(VOUCHER_NOTICE_FILE, noticeData);
 
   return noticeData;
 }
 
-function checkAdminPassword(req, res, next) {
-  const password = req.headers["x-admin-password"];
+const adminRateLimitBuckets = new Map();
+const adminLoginFailures = new Map();
 
-  if (!ADMIN_PASSWORD) {
-    return res.status(500).json({
-      message: "Chưa cấu hình ADMIN_PASSWORD"
-    });
+function getClientIp(req) {
+  return String(req.ip || req.socket?.remoteAddress || "unknown");
+}
+
+function safeStringEqual(left, right) {
+  const leftHash = crypto.createHash("sha256").update(String(left)).digest();
+  const rightHash = crypto.createHash("sha256").update(String(right)).digest();
+  return crypto.timingSafeEqual(leftHash, rightHash);
+}
+
+function parseCookies(req) {
+  return String(req.headers.cookie || "")
+    .split(";")
+    .reduce((cookies, part) => {
+      const separatorIndex = part.indexOf("=");
+      if (separatorIndex < 0) return cookies;
+
+      const name = part.slice(0, separatorIndex).trim();
+      const value = part.slice(separatorIndex + 1).trim();
+
+      if (name) {
+        try {
+          cookies[name] = decodeURIComponent(value);
+        } catch {
+          cookies[name] = "";
+        }
+      }
+
+      return cookies;
+    }, {});
+}
+
+function signAdminSessionPayload(payload) {
+  return crypto
+    .createHmac("sha256", ADMIN_SESSION_SECRET)
+    .update(payload)
+    .digest("base64url");
+}
+
+function createAdminSession() {
+  const session = {
+    version: 1,
+    expiresAt: Date.now() + ADMIN_SESSION_TTL_MS,
+    csrfToken: crypto.randomBytes(24).toString("base64url")
+  };
+  const payload = Buffer.from(JSON.stringify(session)).toString("base64url");
+  const signature = signAdminSessionPayload(payload);
+
+  return {
+    session,
+    token: `${payload}.${signature}`
+  };
+}
+
+function verifyAdminSessionToken(token) {
+  if (!ADMIN_SESSION_SECRET || !token) return null;
+
+  const [payload, signature, extra] = String(token).split(".");
+  if (!payload || !signature || extra) return null;
+
+  const expectedSignature = signAdminSessionPayload(payload);
+  if (!safeStringEqual(signature, expectedSignature)) return null;
+
+  try {
+    const session = JSON.parse(
+      Buffer.from(payload, "base64url").toString("utf8")
+    );
+
+    if (
+      session.version !== 1 ||
+      !Number.isFinite(session.expiresAt) ||
+      session.expiresAt <= Date.now() ||
+      typeof session.csrfToken !== "string" ||
+      !session.csrfToken
+    ) {
+      return null;
+    }
+
+    return session;
+  } catch {
+    return null;
+  }
+}
+
+function isSecureRequest(req) {
+  const forwardedProtocol = String(req.headers["x-forwarded-proto"] || "")
+    .split(",")[0]
+    .trim();
+  return Boolean(req.secure || forwardedProtocol === "https");
+}
+
+function setAdminSessionCookie(req, res, token) {
+  const parts = [
+    `${ADMIN_SESSION_COOKIE}=${encodeURIComponent(token)}`,
+    "Path=/api/admin",
+    "HttpOnly",
+    "SameSite=Strict",
+    `Max-Age=${Math.floor(ADMIN_SESSION_TTL_MS / 1000)}`
+  ];
+
+  if (isSecureRequest(req)) {
+    parts.push("Secure");
   }
 
-  if (password !== ADMIN_PASSWORD) {
-    return res.status(401).json({
-      message: "Sai mật khẩu quản trị"
+  res.setHeader("Set-Cookie", parts.join("; "));
+}
+
+function clearAdminSessionCookie(req, res) {
+  const parts = [
+    `${ADMIN_SESSION_COOKIE}=`,
+    "Path=/api/admin",
+    "HttpOnly",
+    "SameSite=Strict",
+    "Max-Age=0"
+  ];
+
+  if (isSecureRequest(req)) {
+    parts.push("Secure");
+  }
+
+  res.setHeader("Set-Cookie", parts.join("; "));
+}
+
+function adminRateLimit(req, res, next) {
+  const now = Date.now();
+  const key = getClientIp(req);
+  let bucket = adminRateLimitBuckets.get(key);
+
+  if (adminRateLimitBuckets.size > 5000) {
+    for (const [storedKey, storedBucket] of adminRateLimitBuckets) {
+      if (storedBucket.resetAt <= now) {
+        adminRateLimitBuckets.delete(storedKey);
+      }
+    }
+  }
+
+  if (!bucket || bucket.resetAt <= now) {
+    bucket = { count: 0, resetAt: now + ADMIN_RATE_LIMIT_WINDOW_MS };
+  }
+
+  bucket.count += 1;
+  adminRateLimitBuckets.set(key, bucket);
+
+  const remaining = Math.max(0, ADMIN_RATE_LIMIT_MAX - bucket.count);
+  res.setHeader("RateLimit-Limit", String(ADMIN_RATE_LIMIT_MAX));
+  res.setHeader("RateLimit-Remaining", String(remaining));
+  res.setHeader(
+    "RateLimit-Reset",
+    String(Math.max(1, Math.ceil((bucket.resetAt - now) / 1000)))
+  );
+
+  if (bucket.count > ADMIN_RATE_LIMIT_MAX) {
+    const retryAfter = Math.max(1, Math.ceil((bucket.resetAt - now) / 1000));
+    res.setHeader("Retry-After", String(retryAfter));
+    return res.status(429).json({
+      success: false,
+      code: "ADMIN_RATE_LIMITED",
+      message: "Thao tác admin quá nhiều. Vui lòng thử lại sau.",
+      requestId: req.requestId
     });
   }
 
   next();
 }
 
+function getLoginFailureState(req) {
+  const now = Date.now();
+  const key = getClientIp(req);
+  const current = adminLoginFailures.get(key);
+
+  if (adminLoginFailures.size > 5000) {
+    for (const [storedKey, storedState] of adminLoginFailures) {
+      if (storedState.resetAt <= now) {
+        adminLoginFailures.delete(storedKey);
+      }
+    }
+  }
+
+  if (!current || current.resetAt <= now) {
+    const fresh = { count: 0, resetAt: now + ADMIN_RATE_LIMIT_WINDOW_MS };
+    adminLoginFailures.set(key, fresh);
+    return { key, state: fresh };
+  }
+
+  return { key, state: current };
+}
+
+function requireAdminSession(req, res, next) {
+  const token = parseCookies(req)[ADMIN_SESSION_COOKIE];
+  const session = verifyAdminSessionToken(token);
+
+  if (!session) {
+    clearAdminSessionCookie(req, res);
+    return res.status(401).json({
+      success: false,
+      code: "ADMIN_AUTH_REQUIRED",
+      message: "Phiên đăng nhập admin không hợp lệ hoặc đã hết hạn.",
+      requestId: req.requestId
+    });
+  }
+
+  req.adminSession = session;
+  next();
+}
+
+function requireAdminCsrf(req, res, next) {
+  const csrfToken = String(req.headers["x-csrf-token"] || "");
+
+  if (!csrfToken || !safeStringEqual(csrfToken, req.adminSession.csrfToken)) {
+    return res.status(403).json({
+      success: false,
+      code: "INVALID_CSRF_TOKEN",
+      message: "Yêu cầu admin không hợp lệ.",
+      requestId: req.requestId
+    });
+  }
+
+  const origin = String(req.headers.origin || "");
+  const requestHost = String(req.headers.host || "");
+
+  if (origin) {
+    try {
+      if (new URL(origin).host !== requestHost) {
+        throw new Error("Origin không hợp lệ");
+      }
+    } catch {
+      return res.status(403).json({
+        success: false,
+        code: "INVALID_ORIGIN",
+        message: "Nguồn gửi yêu cầu admin không hợp lệ.",
+        requestId: req.requestId
+      });
+    }
+  }
+
+  next();
+}
+
+app.use("/api/admin", adminRateLimit);
+
+app.post("/api/admin/login", (req, res) => {
+  if (!ADMIN_PASSWORD || !ADMIN_SESSION_SECRET) {
+    return res.status(503).json({
+      success: false,
+      code: "ADMIN_NOT_CONFIGURED",
+      message: "Chưa cấu hình xác thực admin.",
+      requestId: req.requestId
+    });
+  }
+
+  const { key, state } = getLoginFailureState(req);
+
+  if (state.count >= ADMIN_LOGIN_FAILURE_MAX) {
+    const retryAfter = Math.max(
+      1,
+      Math.ceil((state.resetAt - Date.now()) / 1000)
+    );
+    res.setHeader("Retry-After", String(retryAfter));
+    return res.status(429).json({
+      success: false,
+      code: "ADMIN_LOGIN_LOCKED",
+      message: "Đăng nhập sai quá nhiều lần. Vui lòng thử lại sau.",
+      requestId: req.requestId
+    });
+  }
+
+  const password = String(req.body?.password || "");
+
+  if (!password || password.length > 256 || !safeStringEqual(password, ADMIN_PASSWORD)) {
+    state.count += 1;
+    adminLoginFailures.set(key, state);
+    return res.status(401).json({
+      success: false,
+      code: "INVALID_ADMIN_CREDENTIALS",
+      message: "Mật khẩu quản trị không đúng.",
+      requestId: req.requestId
+    });
+  }
+
+  adminLoginFailures.delete(key);
+  const { session, token } = createAdminSession();
+  setAdminSessionCookie(req, res, token);
+
+  return res.json({
+    success: true,
+    csrfToken: session.csrfToken,
+    expiresAt: session.expiresAt
+  });
+});
+
+app.get("/api/admin/session", requireAdminSession, (req, res) => {
+  res.json({
+    success: true,
+    csrfToken: req.adminSession.csrfToken,
+    expiresAt: req.adminSession.expiresAt
+  });
+});
+
+app.post(
+  "/api/admin/logout",
+  requireAdminSession,
+  requireAdminCsrf,
+  (req, res) => {
+    clearAdminSessionCookie(req, res);
+    res.json({ success: true });
+  }
+);
+
 app.get("/api/notice", async (_req, res) => {
   const notice = await readNotice();
   res.json(notice);
 });
 
-app.post("/api/admin/notice", checkAdminPassword, async (req, res) => {
-  const notice = await saveNotice(req.body);
-  res.json({
-    success: true,
-    notice
-  });
-});
+app.post(
+  "/api/admin/notice",
+  requireAdminSession,
+  requireAdminCsrf,
+  asyncHandler(async (req, res) => {
+    const notice = await saveNotice(req.body);
+    res.json({
+      success: true,
+      notice
+    });
+  })
+);
 app.get("/api/voucher/notice", async (_req, res) => {
   const notice = await readVoucherNotice();
   res.json(notice);
 });
 
-app.post("/api/admin/voucher-notice", checkAdminPassword, async (req, res) => {
-  try {
+app.post(
+  "/api/admin/voucher-notice",
+  requireAdminSession,
+  requireAdminCsrf,
+  asyncHandler(async (req, res) => {
     const notice = await saveVoucherNotice(req.body);
     res.json({
       success: true,
       notice
     });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error?.message || "Không lưu được cấu hình Voucher."
-    });
-  }
-});
+  })
+);
 
 app.get("/admin/notice", (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "admin-notice.html"));
 });
 
-app.get("*", (req, res) => {
+app.use((req, res) => {
   const extension = path.extname(req.path).toLowerCase();
 
+  if (req.path.startsWith("/api/")) {
+    return res.status(404).json({
+      success: false,
+      code: "API_NOT_FOUND",
+      message: "API không tồn tại.",
+      requestId: req.requestId
+    });
+  }
+
   // File tài nguyên không tồn tại phải trả 404.
-  if (extension) {
+  if (extension || !["GET", "HEAD"].includes(req.method)) {
     return res.status(404).type("text/plain").send("Not found");
   }
 
-  // Mọi đường dẫn trang không tồn tại đều quay về trang Voucher mới.
-  res.redirect(302, "/voucher");
+  // Mọi đường dẫn trang không tồn tại đều quay về trang chính Voucher.
+  res.redirect(302, "/");
 });
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server đang chạy tại port ${PORT}`);
+app.use((error, req, res, next) => {
+  if (res.headersSent) {
+    return next(error);
+  }
+
+  let statusCode = Number(error?.statusCode || error?.status || 500);
+  let code = error?.code || "INTERNAL_ERROR";
+  let message = error?.message || "Có lỗi khi xử lý yêu cầu.";
+  let expose = Boolean(error?.expose);
+
+  if (error?.type === "entity.too.large") {
+    statusCode = 413;
+    code = "BODY_TOO_LARGE";
+    message = "Dữ liệu gửi lên vượt quá giới hạn 16 KB.";
+    expose = true;
+  } else if (error instanceof SyntaxError && error?.type === "entity.parse.failed") {
+    statusCode = 400;
+    code = "INVALID_JSON";
+    message = "JSON gửi lên không hợp lệ.";
+    expose = true;
+  }
+
+  const requestId = req.requestId || crypto.randomUUID();
+
+  const logDetails = {
+    requestId,
+    method: req.method,
+    path: req.path,
+    statusCode,
+    code
+  };
+
+  if (statusCode >= 500) {
+    console.error("Request failed", {
+      ...logDetails,
+      error: error?.stack || String(error)
+    });
+  } else {
+    console.warn("Request rejected", logDetails);
+  }
+
+  return res.status(statusCode).json({
+    success: false,
+    code,
+    message: expose ? message : "Có lỗi khi xử lý yêu cầu.",
+    requestId
+  });
 });
+
+module.exports = app;
+
+if (require.main === module) {
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server đang chạy tại port ${PORT}`);
+  });
+}

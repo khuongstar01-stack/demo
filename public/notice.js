@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
+  const voucherDefinitions = Array.isArray(window.VOUCHER_CONFIG)
+    ? window.VOUCHER_CONFIG
+    : [];
   const noticeEl = document.getElementById("floatingNotice");
   const titleEl = document.getElementById("floatingNoticeTitle");
   const messageEl = document.getElementById("floatingNoticeMessage");
@@ -9,94 +12,48 @@ document.addEventListener("DOMContentLoaded", async () => {
   const voucherGuideTextEl = document.getElementById("voucherGuideText");
   const voucherGuideImageEl = document.getElementById("voucherGuideImage");
   const voucherOptionsEl = document.getElementById("voucherOptions");
-  const voucherOptionFb25El = document.getElementById("voucherOptionFb25");
-  const voucherOptionIg22El = document.getElementById("voucherOptionIg22");
-  const voucherOptionFb22El = document.getElementById("voucherOptionFb22");
-  const voucherOptionZalo25El = document.getElementById("voucherOptionZalo25");
-  const voucherName1El = document.getElementById("voucherName1");
-  const voucherName2El = document.getElementById("voucherName2");
-  const voucherName3El = document.getElementById("voucherName3");
-  const voucherName4El = document.getElementById("voucherName4");
-  const voucherBadgeFb25El = document.getElementById("voucherBadgeFb25");
-  const voucherBadgeIg22El = document.getElementById("voucherBadgeIg22");
-  const voucherBadgeFb22El = document.getElementById("voucherBadgeFb22");
-  const voucherBadgeZalo25El = document.getElementById("voucherBadgeZalo25");
+  const mainPageEl = document.querySelector("main");
 
   if (!noticeEl || !titleEl || !messageEl || !buttonEl || !closeBtn) return;
 
   let autoCloseTimer;
+  let noticeIsOpen = false;
+  let previouslyFocusedEl = null;
+  const originalMainAriaHidden = mainPageEl?.getAttribute("aria-hidden");
 
   function renderVoucherBadge(element, text) {
     if (!element) return;
 
+    if (typeof window.renderVoucherBadge === "function") {
+      window.renderVoucherBadge(element, text);
+      return;
+    }
+
     const badgeText = String(text || "").trim();
-    element.replaceChildren();
+    element.textContent = badgeText;
     element.classList.toggle("hidden", !badgeText);
-
-    if (!badgeText) return;
-
-    const upperText = badgeText.toUpperCase();
-    const hasFullSchedule = ["0H", "3H", "9H", "12H", "15H", "20H"].every(
-      (time) => new RegExp(`(^|\\s)${time}(?=\\s|$)`).test(upperText)
-    );
-
-    const lines = hasFullSchedule
-      ? ["⚡ 0H·3H·9H", "12H·15H·20H CÓ MÃ"]
-      : [badgeText];
-
-    lines.forEach((line) => {
-      const lineElement = document.createElement("span");
-      lineElement.className = "voucher-badge-line";
-      lineElement.textContent = line;
-      element.appendChild(lineElement);
-    });
   }
 
   function updateVoucherGuide(config) {
-    const voucherNames = [
-      { element: voucherName1El, text: config.voucherName1 },
-      { element: voucherName2El, text: config.voucherName2 },
-      { element: voucherName3El, text: config.voucherName3 },
-      { element: voucherName4El, text: config.voucherName4 }
-    ];
+    const voucherOptions = voucherDefinitions.map((voucher) => {
+      const option = document.getElementById(`voucherOption${voucher.slot}`);
+      const name = document.getElementById(`voucherName${voucher.slot}`);
+      const badge = document.getElementById(`voucherBadge${voucher.slot}`);
+      const buyButton = document.getElementById(`buyNowBtn${voucher.slot}`);
+      const configuredName = String(config[voucher.nameKey] || "").trim();
+      const displayName = configuredName || voucher.defaultName;
+      const visible = config[voucher.visibilityKey] !== false;
 
-    voucherNames.forEach(({ element, text }) => {
-      const name = String(text || "").trim();
-      if (element && name) element.textContent = name;
-    });
-
-    const voucherOptions = [
-      {
-        element: voucherOptionFb25El,
-        visible: config.showVoucherFb25 !== false
-      },
-      {
-        element: voucherOptionIg22El,
-        visible: config.showVoucherIg22 !== false
-      },
-      {
-        element: voucherOptionFb22El,
-        visible: config.showVoucherFb22 !== false
-      },
-      {
-        element: voucherOptionZalo25El,
-        visible: config.showVoucherZalo25 !== false
+      if (name) {
+        name.textContent = displayName;
       }
-    ];
 
-    voucherOptions.forEach(({ element, visible }) => {
-      element?.classList.toggle("hidden", !visible);
-    });
+      buyButton?.setAttribute("aria-label", `Mua ngay với ${displayName}`);
 
-    const voucherBadges = [
-      { element: voucherBadgeFb25El, text: config.voucherBadgeFb25 },
-      { element: voucherBadgeIg22El, text: config.voucherBadgeIg22 },
-      { element: voucherBadgeFb22El, text: config.voucherBadgeFb22 },
-      { element: voucherBadgeZalo25El, text: config.voucherBadgeZalo25 }
-    ];
+      option?.classList.toggle("hidden", !visible);
+      renderVoucherBadge(badge, config[voucher.badgeKey]);
 
-    voucherBadges.forEach(({ element, text }) => {
-      renderVoucherBadge(element, text);
+      return { element: option, visible };
     });
 
     if (voucherOptionsEl) {
@@ -137,7 +94,71 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.body.classList.remove("notice-open");
   }
 
+  function setBackgroundUnavailable(unavailable) {
+    if (!mainPageEl) return;
+
+    if ("inert" in mainPageEl) {
+      mainPageEl.inert = unavailable;
+    }
+
+    if (unavailable) {
+      mainPageEl.setAttribute("aria-hidden", "true");
+    } else if (originalMainAriaHidden === null) {
+      mainPageEl.removeAttribute("aria-hidden");
+    } else {
+      mainPageEl.setAttribute("aria-hidden", originalMainAriaHidden);
+    }
+  }
+
+  function getFocusableElements() {
+    return [...noticeEl.querySelectorAll(
+      'a[href]:not([tabindex="-1"]), button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )].filter((element) => !element.classList.contains("hidden"));
+  }
+
+  function handleModalKeyboard(event) {
+    if (!noticeIsOpen) return;
+
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeNotice(activeConfig, activeStorageKey);
+      return;
+    }
+
+    if (event.key !== "Tab") return;
+
+    const focusableElements = getFocusableElements();
+    if (!focusableElements.length) {
+      event.preventDefault();
+      noticeEl.querySelector(".floating-notice-card")?.focus();
+      return;
+    }
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+    const activeElementIndex = focusableElements.indexOf(document.activeElement);
+
+    if (activeElementIndex === -1) {
+      event.preventDefault();
+      (event.shiftKey ? lastElement : firstElement).focus();
+    } else if (event.shiftKey && document.activeElement === firstElement) {
+      event.preventDefault();
+      lastElement.focus();
+    } else if (!event.shiftKey && document.activeElement === lastElement) {
+      event.preventDefault();
+      firstElement.focus();
+    } else if (!noticeEl.contains(document.activeElement)) {
+      event.preventDefault();
+      firstElement.focus();
+    }
+  }
+
+  let activeConfig = null;
+  let activeStorageKey = "";
+
   function closeNotice(config, storageKey) {
+    if (!noticeIsOpen) return;
+    noticeIsOpen = false;
     noticeEl.classList.remove("show");
 
     if (config?.showOncePerSession && storageKey) {
@@ -146,15 +167,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     clearTimeout(autoCloseTimer);
     unlockPageScroll();
+    setBackgroundUnavailable(false);
 
     setTimeout(() => {
       noticeEl.classList.add("hidden");
+      if (previouslyFocusedEl?.isConnected) {
+        previouslyFocusedEl.focus({ preventScroll: true });
+      }
     }, 250);
   }
 
+  document.addEventListener("keydown", handleModalKeyboard);
+
   try {
-    const isVoucherPage =
-      window.location.pathname.replace(/\/+$/, "") === "/voucher";
+    const pagePath = window.location.pathname.replace(/\/+$/, "");
+    const isVoucherPage = pagePath === "" || pagePath === "/voucher";
 
     const noticeApiUrl = isVoucherPage
       ? "/api/voucher/notice"
@@ -176,6 +203,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const noticeVersion = config.version || "default";
     const storageKey = `floating_notice_closed_${noticeVersion}`;
+    activeConfig = config;
+    activeStorageKey = storageKey;
 
     if (config.showOncePerSession && sessionStorage.getItem(storageKey)) {
       return;
@@ -221,9 +250,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     setTimeout(() => {
+      previouslyFocusedEl = document.activeElement;
       noticeEl.classList.remove("hidden");
       noticeEl.classList.add("show");
+      noticeIsOpen = true;
       lockPageScroll();
+      closeBtn.focus({ preventScroll: true });
+      setBackgroundUnavailable(true);
 
       const displaySeconds = Number(config.displaySeconds ?? 5);
 
