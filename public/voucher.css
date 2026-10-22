@@ -454,25 +454,38 @@ svg {
   display: grid;
   gap: 12px;
   margin-top: 14px;
+  container-name: vouchers;
+  container-type: inline-size;
 }
 
 .affiliate-option {
+  --voucher-icon-size: clamp(24px, 7.5vw, 54px);
   display: grid;
-  grid-template-columns: 40px minmax(0, 1fr) auto auto;
-  gap: 6px;
+  grid-template-columns: var(--voucher-icon-size) minmax(0, 1.2fr) minmax(0, .98fr) minmax(0, .97fr);
+  grid-template-areas: "icon copy badge action";
+  column-gap: clamp(2px, .7vw, 8px);
+  column-gap: clamp(2px, .7cqi, 8px);
   align-items: center;
   min-width: 0;
-  padding: 9px;
-  border: 2px solid transparent;
+  padding: clamp(4px, 1.5vw, 12px);
+  padding: clamp(4px, 1.5cqi, 12px);
+  border: 1px solid transparent;
   border-radius: 18px;
   background: #fff;
   box-shadow: 0 8px 22px rgb(45 51 68 / 6%);
 }
 
+@supports (width: 1cqi) {
+  .affiliate-option {
+    --voucher-icon-size: clamp(24px, 7.5cqi, 54px);
+  }
+}
+
 .affiliate-icon {
+  grid-area: icon;
   display: grid;
-  width: 40px;
-  height: 40px;
+  width: var(--voucher-icon-size);
+  height: var(--voucher-icon-size);
   place-items: center;
   flex: 0 0 auto;
   border-radius: 50%;
@@ -485,45 +498,50 @@ svg {
 }
 
 .affiliate-copy {
+  grid-area: copy;
   min-width: 0;
 }
 
 .affiliate-title {
   margin: 0;
-  overflow: hidden;
   color: var(--color-text);
-  font-size: 13px;
+  font-size: clamp(10px, 3vw, 20px);
+  font-size: clamp(10px, 3.3cqi, 20px);
   font-weight: 900;
-  line-height: 1.25;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .affiliate-subtitle {
   margin: 2px 0 0;
-  overflow: hidden;
-  color: var(--color-muted);
-  font-size: 12px;
+  font-size: clamp(9.5px, 2.8vw, 17px);
+  font-size: clamp(9.5px, 2.95cqi, 17px);
   color: #242424;
   font-weight: 800;
-  line-height: 1.25;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .voucher-badge {
-  max-width: 112px;
-  padding: 6px 8px;
+  grid-area: badge;
+  justify-self: center;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  padding: 4px 2px;
+  padding-inline: clamp(2px, .5cqi, 6px);
   border: 1px solid rgb(255 122 0 / 28%);
   border-radius: var(--radius-pill);
   background: linear-gradient(135deg, #fff8d9, #ffe8c7);
   box-shadow: 0 4px 12px rgb(255 112 0 / 14%);
   color: #e65100;
-  font-size: 12px;
+  font-size: clamp(10px, 3vw, 14px);
+  font-size: clamp(10px, 3.3cqi, 14px);
   font-weight: 850;
   line-height: 1.15;
   text-align: center;
   white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .voucher-badge-line {
@@ -531,9 +549,10 @@ svg {
 }
 
 .voucher-badge-schedule {
-  font-size: 10px;
+  font-size: clamp(8px, 2.3vw, 12px);
+  font-size: clamp(8px, 2.55cqi, 12px);
   letter-spacing: 0;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .voucher-badge-status {
@@ -541,23 +560,30 @@ svg {
 }
 
 .voucher-action {
+  grid-area: action;
   position: relative;
   display: inline-flex;
-  min-width: 91px;
+  width: 100%;
+  min-width: 44px;
+  max-width: 100%;
   min-height: 44px;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: clamp(2px, .65vw, 6px);
+  gap: clamp(2px, .65cqi, 6px);
   overflow: hidden;
-  padding: 0 7px;
+  padding: 0 3px;
+  padding-inline: clamp(3px, 1cqi, 12px);
   border: 0;
   border-radius: 12px;
   box-shadow: 0 6px 16px rgb(24 119 242 / 32%);
   color: #fff;
   cursor: pointer;
-  font-size: 13px;
+  font-size: clamp(9px, 2.8vw, 18px);
+  font-size: clamp(9px, 3.05cqi, 18px);
   font-weight: 900;
-  line-height: 1;
+  line-height: 1.2;
+  white-space: nowrap;
   isolation: isolate;
   text-decoration: none;
   animation: voucher-action-breathe 3s ease-in-out infinite;
@@ -613,8 +639,10 @@ svg {
 }
 
 .voucher-cart-icon {
-  width: 17px;
-  height: 17px;
+  width: clamp(11px, 3vw, 23px);
+  width: clamp(11px, 3.4cqi, 23px);
+  height: auto;
+  aspect-ratio: 1;
   flex: 0 0 auto;
   transform-origin: center;
   animation: voucher-cart-nudge 1.8s ease-in-out infinite;
@@ -1124,58 +1152,6 @@ body.notice-open {
     padding-left: clamp(8px, 3vw, 13px);
   }
 
-  .affiliate-option {
-    grid-template-columns: 38px minmax(0, 1fr) 90px 104px;
-    gap: 4px;
-    padding: 8px 7px;
-    border-radius: 18px;
-  }
-
-  .affiliate-icon {
-    width: 38px;
-    height: 38px;
-  }
-
-  .affiliate-title,
-  .voucher-badge,
-  .voucher-action {
-    font-size: 12px;
-  }
-
-  .affiliate-subtitle {
-    font-size: 11.5px;
-    letter-spacing: -.65px;
-  }
-
-  .affiliate-title {
-    display: -webkit-box;
-    overflow: hidden;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    text-overflow: ellipsis;
-    white-space: normal;
-  }
-
-  .voucher-badge {
-    width: 100%;
-    max-width: 90px;
-    padding: 5px 1px;
-  }
-
-  .voucher-action {
-    width: 104px;
-    min-width: 104px;
-    padding-right: 7px;
-    padding-left: 7px;
-    font-size: 13px;
-    white-space: nowrap;
-  }
-
-  .voucher-cart-icon {
-    width: 16px;
-    height: 16px;
-  }
-
   .notice-modal {
     padding: 8px;
   }
@@ -1186,52 +1162,9 @@ body.notice-open {
   }
 }
 
-@media (max-width: 360px) {
-  .affiliate-subtitle {
-    display: none;
-  }
-}
-
 @media (max-width: 350px) {
   .hero-title {
     font-size: 22px;
-  }
-
-  .card {
-    padding-right: 7px;
-    padding-left: 7px;
-  }
-
-  .affiliate-option {
-    grid-template-columns: 32px minmax(0, 1fr) 90px 88px;
-    gap: 3px;
-    padding: 7px 5px;
-  }
-
-  .affiliate-icon {
-    width: 32px;
-    height: 32px;
-  }
-
-  .voucher-badge {
-    max-width: 90px;
-    padding-right: 2px;
-    padding-left: 2px;
-  }
-
-  .voucher-action {
-    width: 88px;
-    min-width: 88px;
-    gap: 3px;
-    padding-right: 5px;
-    padding-left: 5px;
-    font-size: 12px;
-  }
-
-  .voucher-cart-icon {
-    display: block;
-    width: 15px;
-    height: 15px;
   }
 }
 
@@ -1356,52 +1289,6 @@ body.notice-open {
 
   .affiliate-options {
     gap: 14px;
-  }
-
-  .affiliate-option {
-    grid-template-columns: 54px minmax(0, 1fr) 144px 152px;
-    gap: 12px;
-    padding: 13px 16px;
-    border-radius: 22px;
-  }
-
-  .affiliate-icon {
-    width: 54px;
-    height: 54px;
-  }
-
-  .affiliate-title {
-    font-size: 20px;
-  }
-
-  .affiliate-subtitle {
-    font-size: 17px;
-  }
-
-  .voucher-badge {
-    width: 144px;
-    max-width: 144px;
-    padding: 8px 11px;
-    font-size: 12px;
-  }
-
-  .voucher-badge-schedule {
-    font-size: 11px;
-  }
-
-  .voucher-action {
-    width: 152px;
-    min-width: 152px;
-    min-height: 52px;
-    gap: 8px;
-    padding: 0 16px;
-    border-radius: 17px;
-    font-size: 18px;
-  }
-
-  .voucher-cart-icon {
-    width: 23px;
-    height: 23px;
   }
 
   .facebook-group-link {

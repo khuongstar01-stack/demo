@@ -566,4 +566,92 @@ setInterval(() => {
   if (!document.hidden) void checkForAppUpdate();
 }, VERSION_CHECK_INTERVAL_MS);
 
+// Đo chữ thực tế để font khác nhau vẫn vừa các cột của thẻ ngang.
+function initializeVoucherTextFit() {
+  const container = document.getElementById("voucherOptions");
+  const context = document.createElement("canvas").getContext("2d");
+
+  if (!container || !context) return;
+
+  let pendingFrame = 0;
+  let lastWidth = -1;
+
+  function fitText() {
+    pendingFrame = 0;
+    const elements = [...container.querySelectorAll(
+      ".affiliate-title, .affiliate-subtitle, .voucher-badge-schedule, .voucher-action > span"
+    )];
+
+    // Trả về cỡ chữ CSS trước khi đo, tránh co nhỏ dần qua các lần xoay màn hình.
+    elements.forEach((element) => element.style.removeProperty("font-size"));
+    const updates = [];
+
+    elements.forEach((element) => {
+      const text = element.textContent.trim();
+      const rect = element.getBoundingClientRect();
+      if (!text || rect.width <= 0 || rect.height <= 0) return;
+
+      const style = getComputedStyle(element);
+      const fontSize = Number.parseFloat(style.fontSize);
+      const letterSpacing = Number.parseFloat(style.letterSpacing) || 0;
+      context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+      const textWidth = context.measureText(text).width + letterSpacing * (text.length - 1);
+      let availableWidth = rect.width;
+
+      if (element.parentElement?.classList.contains("voucher-action")) {
+        const button = element.parentElement;
+        const buttonStyle = getComputedStyle(button);
+        const icon = button.querySelector(".voucher-cart-icon");
+        availableWidth = button.clientWidth
+          - (Number.parseFloat(buttonStyle.paddingLeft) || 0)
+          - (Number.parseFloat(buttonStyle.paddingRight) || 0)
+          - (icon?.getBoundingClientRect().width || 0)
+          - (Number.parseFloat(buttonStyle.columnGap) || 0);
+      }
+
+      if (availableWidth <= 0 || textWidth <= availableWidth) return;
+
+      const minimumSize = element.classList.contains("voucher-badge-schedule") ? 6 : 8;
+      const fittedSize = Math.max(
+        minimumSize,
+        Math.min(fontSize, fontSize * Math.max(0, availableWidth - 0.75) / textWidth)
+      );
+      updates.push([element, fittedSize]);
+    });
+
+    updates.forEach(([element, size]) => {
+      element.style.fontSize = `${Math.floor(size * 100) / 100}px`;
+    });
+  }
+
+  function scheduleFit() {
+    if (!pendingFrame) pendingFrame = requestAnimationFrame(fitText);
+  }
+
+  if ("ResizeObserver" in window) {
+    new ResizeObserver(([entry]) => {
+      const width = entry.contentRect.width;
+      if (Math.abs(width - lastWidth) < 0.25) return;
+      lastWidth = width;
+      scheduleFit();
+    }).observe(container);
+  } else {
+    window.addEventListener("resize", scheduleFit, { passive: true });
+  }
+
+  new MutationObserver(scheduleFit).observe(container, {
+    childList: true,
+    characterData: true,
+    subtree: true
+  });
+
+  if (document.fonts) {
+    document.fonts.ready.then(scheduleFit);
+    document.fonts.addEventListener("loadingdone", scheduleFit);
+  }
+
+  scheduleFit();
+}
+
+initializeVoucherTextFit();
 resetResult();
